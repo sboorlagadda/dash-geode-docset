@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Member Discovery Works |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_topology_concepts docs_topologies_and_comm_topology_concepts_how_member_discovery_works">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Member Discovery Works
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Apache Geode provides various options for member discovery within a distributed system and between clients and servers.</p>
+
+<ul>
+<li>  <a href="how_member_discovery_works.html#how_member_discovery_works__section_F2B8EBF2909440BD90B4CDEE0CAA0C2A">Peer Member Discovery</a></li>
+<li>  <a href="how_member_discovery_works.html#how_member_discovery_works__section_E26DFAFE9E994C0C9A489E325E345816">Standalone Member</a></li>
+<li>  <a href="how_member_discovery_works.html#how_member_discovery_works__section_37DE53BDCDB541618C6DF4E47A1F2B73">Client Discovery of Servers</a></li>
+</ul>
+
+<h2 id="peer-member-discovery"><a id="how_member_discovery_works__section_F2B8EBF2909440BD90B4CDEE0CAA0C2A" class="no-quick-link"></a>Peer Member Discovery</h2>
+
+<p>Peer member discovery is what defines a distributed system. All applications and cache servers that use the same settings for peer discovery are members of the same distributed system. Each system member has a unique identity and knows the identities of the other members. A member can belong to only one distributed system at a time. Once they have found each other, members communicate directly, independent of the discovery mechanism. In peer discovery, Geode uses a membership coordinator to manage member joins and departures.</p>
+
+<p>Members discover each other using one or more locators. A locator provides both discovery and load balancing services. Peer locators manage a dynamic list of distributed system members. New members connect to one of the locators to retrieve the member list, which it uses to join the system.</p>
+
+<p><img src="../../images_svg/locator_discovery.svg" id="how_member_discovery_works__image_dm3_y3x_15" class="image" /></p>
+
+<p><strong>Note:</strong>
+Multiple locators ensure the most stable start up and availability for your distributed system.</p>
+
+<h2 id="standalone-member"><a id="how_member_discovery_works__section_E26DFAFE9E994C0C9A489E325E345816" class="no-quick-link"></a>Standalone Member</h2>
+
+<p>The standalone member has no peers, does no peer discovery, and so does not use locators. It creates a distributed system connection only to access the Geode caching features. Running standalone has a faster startup and is appropriate for any member that is isolated from other applications. The primary use case is for client applications. Standalone members can be accessed and monitored if you enable the member to become a JMX Manager.</p>
+
+<h2 id="client-discovery-of-servers"><a id="how_member_discovery_works__section_37DE53BDCDB541618C6DF4E47A1F2B73" class="no-quick-link"></a>Client Discovery of Servers</h2>
+
+<p>Locators provide clients with dynamic server discovery and server load balancing. Clients are configured with locator information for the server system, and turn to the locators for directions to the servers to use. The servers can come and go and their capacity to service new client connections can vary. The locators continuously monitor server availability and server load information, providing clients with connection information for the server with the least load at any time.</p>
+
+<p><strong>Note:</strong>
+For performance and cache coherency, clients must run as standalone members or in different distributed systems than their servers.</p>
+
+<p>You do not need to run any special processes to use locators for server discovery. The locators that provide peer discovery in the server system also provide server discovery for clients to the server system. This is the standard configuration.</p>
+
+<p><img src="../../images_svg/cs_locator_discovery.svg" id="how_member_discovery_works__image_ED0D22E30A274675ADF0815D102A7D5B" class="image" /></p>
+
+<h2 id="multi-site-discovery"><a id="how_member_discovery_works__section_1CB9D1439346415FB630E9DCD373CAC9" class="no-quick-link"></a>Multi-site Discovery</h2>
+
+<p>In a multi-site (WAN) configuration, a Geode cluster uses locators to discover remote Geode clusters as well as to discover local Geode members. Each locator in a WAN configuration uniquely identifies the local cluster to which it belongs, and it can also identify locators in remote Geode clusters to which it will connect for WAN distribution.</p>
+
+<p>When a locator starts up, it contacts each remote locator to exchange information about the available locators and gateway receiver configurations in the remote cluster. In addition to sharing information about its own cluster, a locator shares information that it has obtained from all other connected clusters. Each time a new locator starts up or an existing locator shuts down, the changed information is broadcast to other connected Geode clusters across the WAN.</p>
+
+<p>See <a href="multisite_overview.html#topic_1742957C8D4B4F7590847EB8DB6CD4F7">Discovery for Multi-Site Systems</a> for more information.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

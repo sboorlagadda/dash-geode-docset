@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Recovering from Crashes with a Peer-to-Peer Configuration |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_troubleshooting docs_managing_troubleshooting_recovering_from_p2p_crashes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Recovering from Crashes with a Peer-to-Peer Configuration
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>When a member crashes, the remaining members continue operation as though the missing application or cache server had never existed. The recovery process differs according to region type and scope, as well as data redundancy configuration.</p>
+
+<p><a id="rec_app_p2p_crash__section_1C54E03359AB4775A9211899A63362A4"></a>
+The other system members are told that it has left unexpectedly. If any remaining system member is waiting for a response (ACK), the ACK still succeeds and returns, because every member that is still alive has responded. If the lost member had ownership of a GLOBAL entry, then the next attempt to obtain that ownership acts as if no owner exists.</p>
+
+<p>Recovery depends on how the member has its cache configured. This section covers the following:</p>
+
+<ul>
+<li>  Recovery for Partitioned Regions</li>
+<li>  Recovery for Distributed Regions</li>
+<li>  Recovery for Regions of Local Scope</li>
+<li>  Recovering Data From Disk</li>
+</ul>
+
+<p>To tell whether the regions are partitioned, distributed, or local, check the <code>cache.xml</code> file. If the file contains a local scope setting, the region has no connection to any other member:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes scope="local"&gt;
+</code></pre>
+
+<p>If the file contains any other scope setting, it is configuring a distributed region. For example:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes scope="distributed-no-ack"&gt;
+</code></pre>
+
+<p>If the file includes either of the following lines, it is configuring a partitioned region.</p>
+<pre class="highlight plaintext"><code>&lt;partition-attributes...
+&lt;region-attributes data-policy="partition"/&gt;
+&lt;region-attributes data-policy="persistent-partition"/&gt;
+</code></pre>
+
+<p>The reassigned clients continue operating smoothly, as in the failover case. A successful rebalancing operation does not create any data loss.</p>
+
+<p>If rebalancing fails, the client fails over to an active server with the normal failover behavior.</p>
+
+<h2 id="recovery-for-partitioned-regions"><a id="rec_app_p2p_crash__section_0E7D482DD8E84250A10070431B29AAC5" class="no-quick-link"></a>Recovery for Partitioned Regions</h2>
+
+<p>When an application or cache server crashes, any data in local memory is lost, including any entries in a local partitioned region data store.</p>
+
+<p><strong>Recovery for Partitioned Regions With Data Redundancy</strong></p>
+
+<p>If the partitioned region is configured for redundancy and a member crashes, the system continues to operate with the remaining copies of the data. You may need to perform recovery actions depending on how many members you have lost and how you have configured redundancy in your system.</p>
+
+<p>By default, Geode does not make new copies of the data until a new member is brought online to replace the member that crashed. You can control this behavior using the recovery delay attributes. For more information, see <a href="../../developing/partitioned_regions/configuring_ha_for_pr.html">Configure High Availability for a Partitioned Region</a>.</p>
+
+<p>To recover, start a replacement member. The new member regenerates the lost copies and returns them to the configured redundancy level.</p>
+
+<p><strong>Note:</strong>
+Make sure the replacement member has at least as much local memory as the old one— the <code>local-max-memory</code> configuration setting must be the same or larger. Otherwise, you can get into a situation where some entries have all their redundant copies but others don’t. In addition, until you have restarted a replacement member, any code that attempts to create or update data mapped to partition region bucket copies (primary and secondary) that have been lost can result in an exception. (New transactions unrelated to the lost data can fail as well simply because they happen to map to&ndash; or &ldquo;resolve&rdquo; to&ndash; a common bucketId).</p>
+
+<p>Even with high availability, you can lose data if too many applications and cache servers fail at the same time. Any lost data is replaced with new data created by the application as it returns to active work.</p>
+
+<p><em>The number of members that can fail at the same time without losing data is equal to the number of redundant copies configured for the region.</em> So if redundant-copies=1, then at any given time only one member can be down without data loss. If a second goes down at the same time, any data stored by those two members will be lost.</p>
+
+<p>You can also lose access to all copies of your data through network failure. See <a href="recovering_from_network_outages.html#rec_network_crash">Understanding and Recovering from Network Outages</a>.</p>
+
+<p><strong>Recovery Without Data Redundancy</strong></p>
+
+<p>If a member crashes and there are no redundant copies, any logic that tries to interact with the bucket data is <em>blocked</em> until the primary buckets are restored from disk. (If you do not have persistence enabled, Geode will reallocate the buckets on any available remaining nodes, however you will need to recover any lost data using external mechanisms.)</p>
+
+<p>To recover, restart the member. The application returns to active work and automatically begins to create new data.</p>
+
+<p>If the members with the relevant disk stores cannot be restarted, then you will have to revoke the missing disk stores manually using gfsh. See <a href="../../tools_modules/gfsh/command-pages/revoke.html">revoke missing-disk-store</a>.</p>
+
+<p><strong>Maintaining and Recovering Partitioned Region Redundancy</strong></p>
+
+<p>The following alert [ALERT-1] (warning) is generated when redundancy for a partitioned region drops:</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>[warning 2008/08/26 17:57:01.679 PDT dataStoregemfire5_jade1d_6424
+&lt;PartitionedRegion Message Processor2&gt; tid=0x5c] Redundancy has dropped below 3
+configured copies to 2 actual copies for /partitionedRegion
+</code></pre>
+<pre class="highlight plaintext"><code>[warning 2008/08/26 18:13:09.059 PDT dataStoregemfire5_jade1d_6424
+&lt;DM-MemberEventInvoker&gt; tid=0x1d5] Redundancy has dropped below 3
+configured copies to 1 actual copy for /partitionedRegion
+</code></pre>
+
+<p>The following alert [ALERT-2] (warning) is generated when, after creation of a partitioned region bucket, the program is unable to find enough members to host the configured redundant copies:</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>[warning 2008/08/27 17:39:28.876 PDT gemfire_2_4 &lt;RMI TCP Connection(67)-192.0.2.0&gt;
+tid=0x1786] Unable to find sufficient members to host a bucket in the partitioned region.
+Region name = /partitionedregion Current number of available data stores: 1 number
+successfully allocated = 1 number needed = 2 Data stores available:
+[pippin(21944):41927/42712] Data stores successfully allocated:
+[pippin(21944):41927/42712] Consider starting another member
+</code></pre>
+
+<p>The following alert [EXCEPTION-1] (warning) and exception is generated when, after the creation of a partitioned region bucket, the program is unable to find any members to host the primary copy:</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>[warning 2008/08/27 17:39:23.628 PDT gemfire_2_4 &lt;RMI TCP Connection(66)-192.0.2.0&gt; 
+tid=0x1888] Unable to find any members to host a bucket in the partitioned region.
+Region name = /partitionedregion Current number of available data stores: 0 number
+successfully allocated = 0 number needed = 2 Data stores available:
+[] Data stores successfully allocated: [] Consider starting another member
+</code></pre>
+
+<p>Exception:</p>
+<pre class="highlight plaintext"><code>org.apache.geode.cache.PartitionedRegionStorageException: Unable to find any members to
+                    host a bucket in the partitioned region.
+</code></pre>
+
+<ul>
+<li>  Region name = /partitionedregion</li>
+<li>  Current number of available data stores: 0</li>
+<li>  Number successfully allocated = 0; Number needed = 2</li>
+<li>  Data stores available: []</li>
+<li>  Data stores successfully allocated: []</li>
+</ul>
+
+<p>Response:</p>
+
+<ul>
+<li>  Add additional members configured as data stores for the partitioned region.</li>
+<li>  Consider starting another member.</li>
+</ul>
+
+<h2 id="recovery-for-distributed-regions"><a id="rec_app_p2p_crash__section_19CFA40F5EE64C4F8062BFBF7A6C1571" class="no-quick-link"></a>Recovery for Distributed Regions</h2>
+
+<p>Restart the process. The system member recreates its cache automatically. If replication is used, data is automatically loaded from the replicated regions, creating an up-to-date cache in sync with the rest of the system. If you have persisted data but no replicated regions, data is automatically loaded from the disk store files. Otherwise, the lost data is replaced with new data created by the application as it returns to active work.</p>
+
+<h2 id="recovery-for-regions-of-local-scope"><a id="rec_app_p2p_crash__section_745AB095D1FA48E392F2C1B95DC18090" class="no-quick-link"></a>Recovery for Regions of Local Scope</h2>
+
+<p>Regions of local scope have no memory backup, but may have data persisted to disk. If the region is configured for persistence, the data remains in the region’s disk directories after a crash. The data on disk will be used to initialize the region when you restart.</p>
+
+<h2 id="recovering-data-from-disk"><a id="rec_app_p2p_crash__section_D9202624335D45BFA2FCC55D702125F7" class="no-quick-link"></a>Recovering Data from Disk</h2>
+
+<p>When you persist a region, the entry data on disk outlives the region in memory. If the member exits or crashes, the data remains in the region’s disk directories. See <a href="../disk_storage/chapter_overview.html">Disk Storage</a>. If the same region is created again, this saved disk data can be used to initialize the region.</p>
+
+<p>Some general considerations for disk data recovery:</p>
+
+<ul>
+<li>  Region persistence causes only entry keys and values to be stored to disk. Statistics and user attributes are not stored.</li>
+<li>  If the application was writing to the disk asynchronously, the chances of data loss are greater. The choice is made at the region level, with the disk-synchronous attribute.</li>
+<li>  When a region is initialized from disk, last modified time is persisted from before the member exit or crash. For information on how this might affect the region data, see <a href="../../developing/expiration/chapter_overview.html">Expiration</a>.</li>
+</ul>
+
+<p><strong>Disk Recovery for Disk Writing—Synchronous Mode and Asynchronous Mode</strong></p>
+
+<p><strong>Synchronous Mode of Disk Writing</strong></p>
+
+<p>Alert 1:</p>
+<pre class="highlight plaintext"><code>DiskAccessException has occurred while writing to the disk for region &lt;Region_Name&gt;.
+Attempt will be made to destroy the region locally.
+</code></pre>
+
+<p>Alert 2:</p>
+<pre class="highlight plaintext"><code>Encountered Exception in destroying the region locally
+</code></pre>
+
+<p>Description:</p>
+
+<p>These are error log-level alerts. Alert 2 is generated only if there was an error in destroying the region. If Alert 2 is not generated, then the region was destroyed successfully. The message indicating the successful destruction of a region is logged at the information level.</p>
+
+<p>Alert 3:</p>
+<pre class="highlight plaintext"><code>Problem in stopping Cache Servers. Failover of clients is suspect
+</code></pre>
+
+<p>Description:</p>
+
+<p>This is an error log-level alert that is generated only if servers were supposed to stop but encountered an exception that prevented them from stopping.</p>
+
+<p>Response:</p>
+
+<p>The region may no longer exist on the member. The cache servers may also have been stopped. Recreate the region and restart the cache servers.</p>
+
+<p><strong>Asynchronous Mode of Disk Writing</strong></p>
+
+<p>Alert 1:</p>
+<pre class="highlight plaintext"><code>Problem in Asynch writer thread for region &lt;Region_name&gt;. It will terminate.
+</code></pre>
+
+<p>Alert 2:</p>
+<pre class="highlight plaintext"><code>Encountered Exception in destroying the region locally
+</code></pre>
+
+<p>Description:</p>
+
+<p>These are error log-level alerts. Alert 2 is generated only if there was an error in destroying the region. If Alert 2 is not generated, then the region was destroyed successfully. The message indicating the successful destruction of a region is logged at the information level.</p>
+
+<p>Alert 3:</p>
+<pre class="highlight plaintext"><code>Problem in stopping Cache Servers. Failover of clients is suspect
+</code></pre>
+
+<p>Description:</p>
+
+<p>This is an error log-level alert that is generated only if servers were supposed to stop but encountered an exception that prevented them from stopping.</p>
+
+<p>Response:</p>
+
+<p>The region may no longer exist on the member. The cache servers may also have been stopped. Recreate the region and restart the cache servers.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

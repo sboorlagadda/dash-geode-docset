@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Peer Communication |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_p2p_configuration docs_topologies_and_comm_p2p_configuration_setting_up_peer_communication">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Peer Communication
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default Apache Geode uses TCP for communication between members of a single distributed system. You can modify this at the member and region levels.</p>
+
+<p><a id="setting_up_communication__section_34509F5B17A943D8BBF19A3497E32BAE"></a>
+Before you begin, you should have already determined the address and port settings for multicast, including any bind addresses. See <a href="../topology_concepts/chapter_overview.html">Topology and Communication General Concepts</a>.</p>
+
+<p>See the <a href="../../reference/book_intro.html#reference">Reference</a>.</p>
+
+<ol>
+<li><p><strong>Configure general messaging to use TCP or UDP unicast</strong>.</p>
+
+<p>TCP is the default protocol for communication. To use it, just make sure you do not have it disabled in <code>gemfire.properties</code>. Either have no entry for <code>disable-tcp</code>, or have this entry:</p>
+<pre class="highlight plaintext"><code>disable-tcp=false
+</code></pre>
+
+<p>To use UDP unicast for general messaging, add this entry to <code>gemfire.properties</code>:</p>
+<pre class="highlight plaintext"><code>disable-tcp=true
+</code></pre>
+
+<p>The <code>disable-tcp</code> setting has no effect on the use of TCP locators or the TCP connections used to detect failed members.</p></li>
+<li><p><strong>Configure any regions you want to distribute using UDP multicast</strong>.</p>
+
+<ol>
+<li><p>Configure UDP multicast for region messaging, set non-default multicast address and port selections in <code>gemfire.properties</code>:</p>
+<pre class="highlight plaintext"><code>mcast-address=&lt;address&gt;
+mcast-port=&lt;port&gt;
+</code></pre></li>
+<li><p>In <code>cache.xml</code>, enable multicast for each region that needs multicast messaging:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes multicast-enabled="true"/&gt; 
+</code></pre>
+
+<p><strong>Note:</strong>
+Improperly configured multicast can affect production systems. If you intend to use multicast on a shared network, work with your network administrator and system administrator from the planning stage of the project. In addition, you may need to address interrelated setup and tuning issues at the Geode, operating system, and network level.</p></li>
+</ol></li>
+</ol>
+
+<p>Once your members establish their connections to each other, they will send distributed data and messages according to your configuration.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

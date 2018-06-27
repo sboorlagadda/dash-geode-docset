@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Using gfsh to Manage a Remote Cluster Over HTTP or HTTPS |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_gfsh_remote">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Using gfsh to Manage a Remote Cluster Over HTTP or HTTPS
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can connect <code>gfsh</code> via HTTP or HTTPS to a remote cluster and manage the cluster using <code>gfsh</code> commands.</p>
+
+<p>To connect <code>gfsh</code> using the HTTP protocol to a remote cluster:</p>
+
+<ol>
+<li> Launch <code>gfsh</code>. See <a href="../../tools_modules/gfsh/starting_gfsh.html#concept_DB959734350B488BBFF91A120890FE61">Starting gfsh</a>.</li>
+<li><p>When starting the remote cluster on the remote host, you can optionally specify <code>--http-bind-address</code> and <code>--http-service-port</code> as Geode properties when starting up your JMX manager (server or locator). These properties can be then used in the URL used when connecting from your local system to the HTTP service in the remote cluster. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --J=-Dgemfire.jmx-manager=true \
+--J=-Dgemfire.jmx-manager-start=true --http-service-port=8080 \
+--http-service-bind-address=myremotecluster.example.com
+</code></pre>
+
+<p>This command must be executed directly on the host machine that will ultimately act as the remote server that hosts the HTTP service for remote administration. (You cannot launch a server remotely.)</p></li>
+<li><p>On your local system, run the <code>gfsh connect</code> command to connect to the remote system. Include the <code>--use-http</code> and <code>--url</code> parameters. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;connect --use-http=true --url="http://myremotecluster.example.com:8080/geode/v1"
+
+Successfully connected to: Geode Manager's HTTP service @ http://myremotecluster.example.com:8080/geode/v1
+</code></pre>
+
+<p>See <a href="../../tools_modules/gfsh/command-pages/connect.html">connect</a>.</p>
+
+<p><code>gfsh</code> is now connected to the remote system. Most <code>gfsh</code> commands will now execute on the remote system; however, there are exceptions. The following commands are executed on the local cluster:</p>
+
+<ul>
+<li>  <code>alter disk-store</code></li>
+<li>  <code>compact offline-disk-store</code></li>
+<li>  <code>describe offline-disk-store</code></li>
+<li>  <code>help</code></li>
+<li>  <code>hint</code></li>
+<li>  <code>sh</code> (for executing OS commands)</li>
+<li>  <code>sleep</code></li>
+<li>  <code>start jconsole</code> (however, you can connect JConsole to a remote cluster when gfsh is connected to the cluster via JMX)</li>
+<li>  <code>start jvisualvm</code></li>
+<li>  <code>start locator</code></li>
+<li>  <code>start server</code></li>
+<li>  <code>start vsd</code></li>
+<li>  <code>status locator</code><code>*</code></li>
+<li>  <code>status server</code><code>*</code></li>
+<li>  <code>stop locator</code><code>*</code></li>
+<li>  <code>stop server</code><code>*</code></li>
+<li>  <code>run</code> (for executing gfsh scripts)</li>
+<li>  <code>validate disk-store</code></li>
+<li>  <code>version</code></li>
+</ul>
+
+<p><code>*</code>You can stop and obtain the status of <em>remote locators and servers</em> when <code>gfsh</code> is connected to the cluster via JMX or HTTP/S by using the <code>--name</code> option for these <code>stop</code>/<code>status</code> commands. If you are using the <code>--pid</code> or <code>--dir</code> option for these commands, then the<code>stop</code>/<code>status</code> commands are executed only locally.</p></li>
+</ol>
+
+<p>To configure SSL for the remote connection (HTTPS), enable SSL for the <code>http</code> component
+in <span class="ph filepath">gemfire.properties</span> or <span class="ph
+filepath">gfsecurity-properties</span> or upon server startup. See
+<a href="../../managing/security/ssl_overview.html">SSL</a> for details on configuring SSL parameters. These
+SSL parameters also apply to all HTTP services hosted on the configured JMX Manager, which can
+include the following:</p>
+
+<ul>
+<li>  Developer REST API service</li>
+<li>  Pulse monitoring tool</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

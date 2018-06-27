@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      deploy |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_deploy">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    deploy
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Deploy JAR-packaged applications to a member or members.</p>
+
+<p>Only one of either <code>--jars</code> or <code>--dir</code> may be specified.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>deploy [--groups=value(,value)*] [--jars=value(,value)*] [--dir=value]
+</code></pre>
+
+<p><a id="concept_6B38CB283BC048778A8E3908C1BDF221__table_gfk_42h_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;groups</span></td>
+<td>Group(s) to which the specified JARs will be deployed. If this option is not specified, the deployment will occur on all members.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--jars</span></td>
+<td>Path(s) of the JAR(s) to deploy.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory from which to deploy the JARs.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Deploy Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>deploy --jars=group1_functions.jar --groups=Group1
+
+deploy --dir=libs/group1-libs --groups=Group2
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt; deploy --jars=group1_functions.jar --groups=Group1
+
+ Member   |     Deployed JAR     |                Deployed JAR Location            
+--------- | -------------------- | ---------------------------------------------------
+datanode1 | group1_functions.jar | /usr/local/gemfire/deploy/GF#group1_functions.jar#1
+datanode2 | group1_functions.jar | /usr/local/gemfire/deploy/GF#group1_functions.jar#1
+
+
+gfsh&gt; deploy --dir=libs/group1-libs --groups=Group2
+
+Deploying files: group2_functions.jar, group2_dependencies.jar
+Total file size is: 0.64MB
+
+Continue?  (Y/n): Y
+
+ Member   |      Deployed JAR       |             Deployed JAR Location            
+--------- | ----------------------- | ---------------------------------------------
+datanode3 | group2_functions.jar    | /usr/local/gemfire/deploy/GF#group2_functions.jar#1
+datanode3 | group2_dependencies.jar | /usr/local/gemfire/deploy/GF#group2_dependencies.jar#1 
+datanode4 | group2_functions.jar    | /usr/local/gemfire/deploy/GF#group2_functions.jar#1
+datanode4 | group2_dependencies.jar | /usr/local/gemfire/deploy/GF#group2_dependencies.jar#1
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

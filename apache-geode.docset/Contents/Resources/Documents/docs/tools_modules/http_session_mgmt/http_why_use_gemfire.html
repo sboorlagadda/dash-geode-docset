@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Advantages of Using Geode for Session Management |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_http_why_use_gemfire">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Advantages of Using Geode for Session Management
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The HTTP Session Management Module enables you to customize how you manage your session data.</p>
+
+<p>Depending on your usage model, the HTTP Session Management Module enables you to accomplish the following tasks:</p>
+
+<ul>
+<li>  Replicate session data across multiple peers.</li>
+<li>  Partition data across multiple servers.</li>
+<li>  Manage your session data in many other customizable ways.</li>
+</ul>
+
+<p>Using Geode for session management has many advantages:</p>
+
+<p><dt><strong>tc Server integration</strong></dt>
+<dd>The Geode module offers clean integration into the tc Server environment with minimal configuration changes necessary.</dd></p>
+
+<p><dt><strong>Scalability</strong></dt>
+<dd>Applications with a small number of frequently-accessed sessions can <strong>replicate</strong> session information on all members in the system. However, when the number of concurrent sessions being managed is large, data can be <strong>partitioned</strong> across any number of servers (either embedded within your application server process or managed by Geode cache servers), which allows for <strong>linear scaling</strong>. Additionally, capacity can be <strong>dynamically added or removed</strong> in a running system and Geode re-executes a non-blocking, rebalancing logic to migrate data from existing members to the newly added members. When the session state memory requirements exceed available memory, each partition host can <strong>overflow to disk</strong>.</dd></p>
+
+<p><dt><strong>Server-managed session state</strong></dt>
+<dd>Session state can be managed independent of the application server cluster. This allows applications or servers to come and go without impacting session lifetimes.</dd></p>
+
+<p><dt><strong>Shared nothing cluster-wide persistence</strong></dt>
+<dd>Session state can be persisted (and recovered) - invaluable for scenarios where sessions manage critical application state or have long lifetimes. Geode uses a shared nothing persistence model where each member can continuously append to rolling log files without ever needing to seek on disk, providing very high disk throughput. When data is partitioned, the total disk throughput can come close to the aggregate disk transfer rates across each of the members storing data on disk.</dd></p>
+
+<p><dt><strong>Session deltas</strong></dt>
+<dd>When session attributes are updated, only the updated state that is sent over the wire (to cache servers and to replicas). This provides fast updates even for large sessions. Session state is always managed in a serialized state on the servers, avoiding the need for the cache servers to be aware of the application classes.</dd></p>
+
+<p><dt><strong>Tiered caching</strong></dt>
+<dd>Applications can configure a local or near cache for in-process caching of the most frequently used session state. This local cache delegates to a farm of cache servers where the entire session state is partitioned across any number of peer cache servers. The local cache can be configured to consume a certain percentage of the total heap available before least-recently used (LRU) eviction. This is a simpler and more effective way to manage LRU caches as opposed to alternate strategies based on count or memory size, which increase the risk of getting an &ldquo;OutOfMemoryException&rdquo;.</dd></p>
+
+<p><dt><strong>Application server sizing</strong></dt>
+<dd>Another aspect of tiered-caching functionality is that session replication can be configured so that session objects are stored external to the application server process. This allows the heap settings on the application server to be much smaller than they would otherwise need to be.</dd></p>
+
+<p><dt><strong>High availability (HA), disk-based overflow, synchronization to backend data store, other Geode features</strong></dt>
+<dd>All the popular Geode features are available. For example: more than one synchronous copy of the session state can be maintained providing high availability (HA); the session cache can overflow to disk if the memory capacity in the cache server farm becomes insufficient; state information can be written to a backend database in a synchronous or asynchronous manner.</dd></p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

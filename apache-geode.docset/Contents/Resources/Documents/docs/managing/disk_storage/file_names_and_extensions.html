@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Disk Store File Names and Extensions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_file_names_and_extensions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Disk Store File Names and Extensions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Disk store files include store management files, access control files, and the operation log, or oplog, files, consisting of one file for deletions and another for all other operations.</p>
+
+<p><a id="file_names_and_extensions__section_AE90870A7BDB425B93111D1A6E166874"></a>
+The next tables describe file names and extensions; they are followed by example disk store files.</p>
+
+<h2 id="file-names"><a id="file_names_and_extensions__section_C99ABFDB1AEA4FE4B38F5D4F1D612F71" class="no-quick-link"></a>File Names</h2>
+
+<p>File names have three parts: usage identifier, disk store name, and oplog sequence number.</p>
+
+<p><strong>First Part of File Name: Usage Identifier</strong></p>
+
+<table><thead>
+<tr>
+<th>Values</th>
+<th>Used for</th>
+<th>Examples</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>OVERFLOW</td>
+<td>Oplog data from overflow regions and queues only.</td>
+<td>OVERFLOWoverflowDS1_1.crf</td>
+</tr>
+<tr>
+<td>BACKUP</td>
+<td>Oplog data from persistent and persistent+overflow regions and queues.</td>
+<td>BACKUPoverflowDS1.if, BACKUPDEFAULT.if</td>
+</tr>
+<tr>
+<td>DRLK_IF</td>
+<td>Access control - locking the disk store.</td>
+<td>DRLK_IFoverflowDS1.lk, DRLK_IFDEFAULT.lk</td>
+</tr>
+</tbody></table>
+
+<p><strong>Second Part of File Name: Disk Store Name</strong></p>
+
+<table><thead>
+<tr>
+<th>Values</th>
+<th>Used for</th>
+<th>Examples</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>&lt;disk store name&gt;</td>
+<td>Non-default disk stores.</td>
+<td>name=&ldquo;overflowDS1&rdquo; DRLK_IFoverflowDS1.lk, name=&ldquo;persistDS1&rdquo; BACKUPpersistDS1_1.crf</td>
+</tr>
+<tr>
+<td>DEFAULT</td>
+<td>Default disk store name, used when persistence or overflow are specified on a region or queue but no disk store is named.</td>
+<td>DRLK_IFDEFAULT.lk, BACKUPDEFAULT_1.crf</td>
+</tr>
+</tbody></table>
+
+<p><strong>Third Part of File Name: oplog Sequence Number</strong></p>
+
+<table><thead>
+<tr>
+<th>Values</th>
+<th>Used for</th>
+<th>Examples</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Sequence number in the format _n</td>
+<td>Oplog data files only. Numbering starts with 1.</td>
+<td>OVERFLOWoverflowDS1_1.crf, BACKUPpersistDS1_2.crf, BACKUPpersistDS1_3.crf</td>
+</tr>
+</tbody></table>
+
+<h2 id="file-extensions"><a id="file_names_and_extensions__section_4FC89D10D6304088882B2E278A889A9B" class="no-quick-link"></a>File Extensions</h2>
+
+<table><thead>
+<tr>
+<th>File extension</th>
+<th>Used for</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>if</td>
+<td>Disk store metadata</td>
+<td>Stored in the first disk-dir listed for the store. Negligible size - not considered in size control.</td>
+</tr>
+<tr>
+<td>lk</td>
+<td>Disk store access control</td>
+<td>Stored in the first disk-dir listed for the store. Negligible size - not considered in size control.</td>
+</tr>
+<tr>
+<td>crf</td>
+<td>Oplog: create, update, and invalidate operations</td>
+<td>Pre-allocated 90% of the total max-oplog-size at creation.</td>
+</tr>
+<tr>
+<td>drf</td>
+<td>Oplog: delete operations</td>
+<td>Pre-allocated 10% of the total max-oplog-size at creation.</td>
+</tr>
+<tr>
+<td>krf</td>
+<td>Oplog: key and crf offset information</td>
+<td>Created after the oplog has reached the max-oplog-size. Used to improve performance at startup.</td>
+</tr>
+</tbody></table>
+
+<p>Example files for disk stores persistDS1 and overflowDS1:</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -tlr persistData1/
+total 8
+-rw-rw-r--   1 person users        188 Mar  4 06:17 BACKUPpersistDS1.if
+-rw-rw-r--   1 person users          0 Mar  4 06:18 BACKUPpersistDS1_1.drf
+-rw-rw-r--   1 person users         38 Mar  4 06:18 BACKUPpersistDS1_1.crf
+
+bash-2.05$ ls -tlr overflowData1/
+total 1028
+-rw-rw-r--   1 person users          0 Mar  4 06:21 DRLK_IFoverflowDS1.lk
+-rw-rw-r--   1 person users          0 Mar  4 06:21 BACKUPoverflowDS1.if
+-rw-rw-r--   1 person users 1073741824 Mar  4 06:21 OVERFLOWoverflowDS1_1.crf
+</code></pre>
+
+<p>Example default disk store files for a persistent region:</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -tlr
+total 106
+-rw-rw-r--   1 person users       1010 Mar  8 15:01 defTest.xml
+drwxrwxr-x   2 person users        512 Mar  8 15:01 backupDirectory
+-rw-rw-r--   1 person users          0 Mar  8 15:01 DRLK_IFDEFAULT.lk
+-rw-rw-r--   1 person users  107374183 Mar  8 15:01 BACKUPDEFAULT_1.drf
+-rw-rw-r--   1 person users  966367641 Mar  8 15:01 BACKUPDEFAULT_1.crf
+-rw-rw-r--   1 person users        172 Mar  8 15:01 BACKUPDEFAULT.if
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

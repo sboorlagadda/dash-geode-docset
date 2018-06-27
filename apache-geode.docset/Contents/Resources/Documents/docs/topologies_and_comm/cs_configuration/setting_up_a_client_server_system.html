@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring a Client/Server System |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_cs_configuration docs_topologies_and_comm_cs_configuration_setting_up_a_client_server_system">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring a Client/Server System
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Configure your server and client processes and data regions to run your client/server system.</p>
+
+<p><strong>Prerequisites</strong>
+-   Configure your server system using locators for member discovery. See <a href="../p2p_configuration/setting_up_a_p2p_system.html">Configuring Peer-to-Peer Discovery</a> and <a href="../../basic_config/the_cache/managing_a_peer_server_cache.html#creating_and_closing_a_peer_cache">Managing a Peer or Server Cache</a>.
+-   Configure your clients as standalone applications. See <a href="../../basic_config/the_cache/managing_a_client_cache.html#managing_a_client_cache">Managing a Client Cache</a>.
+-   Be familiar with cache region configuration. See <a href="../../basic_config/data_regions/chapter_overview.html#data_regions">Data Regions</a>.
+-   Be familiar with server and client configuration properties. See <a href="../../reference/topics/chapter_overview_cache_xml.html#cache_xml">cache.xml</a>.</p>
+
+<p><strong>Procedure</strong></p>
+
+<ol>
+<li><p>Configure servers to listen for clients by completing one or both of the following tasks. </p>
+
+<ul>
+<li><p>Configure each application server as a server by specifying the <code>&lt;cache-server&gt;</code> element in the application&rsquo;s <code>cache.xml</code> and optionally specifying a non-default port to listen on for client connections.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>&lt;cache-server port="40404" ... /&gt;
+</code></pre></li>
+<li><p>Optional. Configure each <code>cacheserver</code> process with a non-default port to listen on for client connections.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>prompt&gt; cacheserver start -port="44454"
+</code></pre></li>
+</ul></li>
+<li><p>Configure clients to connect to servers. In the client <code>cache.xml</code>, use the server system&rsquo;s locator list to configure your client server pools and configure your client regions to use the pools. 
+For example:</p>
+<pre class="highlight plaintext"><code>&lt;client-cache&gt;
+   &lt;pool name="publisher" subscription-enabled="true"&gt;
+      &lt;locator host="lucy" port="41111"/&gt; 
+      &lt;locator host="lucy" port="41111"/&gt; 
+   &lt;/pool&gt;
+   ...
+   &lt;region name="clientRegion" ...
+      &lt;region-attributes pool-name="publisher" ...
+</code></pre>
+
+<p>You do not need to provide the complete list of locators to the clients at startup, but you should provide as complete a list as possible. The locators maintain a dynamic list of locators and servers and provide the information to the clients as needed.</p></li>
+<li><p>Configure the server data regions for client/server work, following these guidelines. These do not need to be performed in this order. </p>
+
+<ol>
+<li><p>Configure your server regions as partitioned or replicated, to provide a coherent cache view of server data to all clients. 
+<strong>Note:</strong>
+If you do not configure your server regions as partitioned or replicated, you can get unexpected results with calls that check server region contents, such as <code>keySetOnServer</code> and <code>containsKeyOnServer</code>. You might get only partial results, and you might also get inconsistent responses from two consecutive calls. These results occur because the servers report only on their local cache content and, without partitioned or replicated regions, they might not have a complete view of the data in their local caches.</p></li>
+<li><p>When you define your replicated server regions, use any of the <code>REPLICATE</code> <code>RegionShortcut</code> settings except for <code>REPLICATE_PROXY</code>. Replicated server regions must have <code>distributed-ack</code> or <code>global</code> <code>scope</code>, and every server that defines the region must store data. The region shortcuts use <code>distributed-ack</code> scope and all non-proxy settings store data. </p></li>
+<li><p>When you define your partitioned server regions, use the <code>PARTITION</code> <code>RegionShortcut</code> options. 
+You can have local data storage in some servers and no local storage in others.</p></li>
+</ol></li>
+</ol>
+
+<p>When you start the server and client systems, the client regions will use the server regions for cache misses, event subscriptions, querying, and other caching activities.</p>
+
+<p><strong>What to do next</strong></p>
+
+<p>Configure your clients to use the cache and to subscribe to events from the servers as needed by your application. See <a href="../../developing/events/configure_client_server_event_messaging.html#receiving_events_from_servers">Configuring Client/Server Event Messaging</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

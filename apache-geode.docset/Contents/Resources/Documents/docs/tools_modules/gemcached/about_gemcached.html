@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Gemcached Works |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gemcached docs_tools_modules_gemcached_about_gemcached">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Gemcached Works
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Applications use memcached clients to access data stored in embedded Gemcached servers.</p>
+
+<p>Applications can use memcached clients that are written in Python, C#, Ruby, PHP, and other programming languages. Each memcached server in a cluster stores data as key/value pairs. A memcached client maintains a list of these servers, determines which server has the required data, and accesses the data directly on that server.</p>
+
+<p>To integrate memcached with Apache Geode, you embed a Gemcached server within a Geode cache server. These <em>Gemcached</em> servers take the place of memcached servers. The memcached client uses its normal wire protocol to communicate with the Gemcached servers, which appear to the client as memcached servers. No code changes in the clients are needed. Geode manages the distribution and access to data among the embedded Gemcached servers.</p>
+
+<p>As shown in <a href="about_gemcached.html#concept_4C654CA7F6B34E4CA1B0318BC9644536__fig_8BF351B5FAF1490F8B0D0E7F3098BC73">Gemcached Architecture</a>, memcached clients, which ordinarily maintain a list of memcached servers, now maintain a list of embedded Gemcached servers. If more embedded Gemcached servers are added to the cluster, the new servers automatically become part of the cluster. The memcached clients can continue to communicate with the servers on the list, without having to update their list of servers.</p>
+
+<p><a id="concept_4C654CA7F6B34E4CA1B0318BC9644536__fig_8BF351B5FAF1490F8B0D0E7F3098BC73"></a>
+<span class="figtitleprefix">Figure: </span>Gemcached Architecture</p>
+
+<p><img src="../../images/Gemcached.png" id="concept_4C654CA7F6B34E4CA1B0318BC9644536__image_98B6222F29B940CD93381D03325C4455" class="image" /></p>
+
+<p>Memcached clients use the memcached API to read and write data that is stored in memcached servers; therefore, client-side Geode features are not available to these clients. Gemcached servers, however, can use Geode&rsquo;s server-side features and API. These features include the following. (For more detail, see <a href="advantages.html#topic_849581E507544E63AF23793FBC47D778">Advantages of Gemcached over Memcached</a>.)</p>
+
+<ul>
+<li>  Data consistency and scalability.</li>
+<li>  High availability.</li>
+<li>  Read-through, write through, and write behind to a database, implemented from within the distributed Geode cache.</li>
+<li>  Storage keys and values of any type and size.</li>
+<li>  For applications, a choice among partitioned and replicated region configurations.</li>
+<li>  Automatic overflow of data to disk in low-memory scenarios.</li>
+<li>  Efficient persistence of data to disk.</li>
+<li>  Configurable expiration of cached data.</li>
+<li>  Configurable eviction of cached data.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

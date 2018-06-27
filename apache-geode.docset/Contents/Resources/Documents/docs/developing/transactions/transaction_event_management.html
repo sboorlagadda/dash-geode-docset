@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Transaction Events Are Managed |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_transaction_event_management">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Transaction Events Are Managed
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Transactional cache operations are handled somewhat differently inside transactions than out.</p>
+
+<h1 id="during-the-transaction">During the Transaction</h1>
+
+<p>While the transaction is running, each transactional operation is passed to the cache writer local to the transactional view, if one is available. As with cache operations outside of transactions, the cache writer can abort the operation. Each operation the cache writer allows is applied to the transactional view in the cache and appended to the CacheEvent list in the TransactionEvent object.</p>
+
+<h2 id="event-conflation">Event Conflation</h2>
+
+<p>The cache events are conflated, so if a key already has an event in the list, that event is removed and the current operation is added to the end of the list. So this series of calls inside a transaction:</p>
+<pre class="highlight plaintext"><code>    Region.create (A, W);
+    Region.put (A, valX);
+    Region.put (B, valQ);
+    Region.invalidate (A);
+    Region.put (A, valY);
+</code></pre>
+
+<p>results in these events stored in the CacheEvent list:</p>
+<pre class="highlight plaintext"><code>    put (B, valQ)
+    put (A, valY)
+</code></pre>
+
+<h1 id="at-commit-and-after-commit">At commit and after commit</h1>
+
+<p>When the transaction is committed, Geode passes the <code>TransactionEvent</code> to the transaction writer local to the transactional view, if one is available. After commit, Geode :
+    -   Passes the <code>TransactionEvent</code> to each installed transaction listener.
+    -   Walks the <code>CacheEvent</code> list, calling all locally installed listeners for each operation listed.
+    -   Distributes the <code>TransactionEvent</code> to all interested caches.
+        <strong>Note:</strong>
+        For Geode and global JTA transactions, the <code>EntryEvent</code> object contains the Geode transaction ID. JTA transaction events do not contain the JTA transaction ID.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

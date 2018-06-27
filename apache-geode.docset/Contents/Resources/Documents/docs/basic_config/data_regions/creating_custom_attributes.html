@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Creating Custom Attributes for Regions and Entries |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_data_regions docs_basic_config_data_regions_creating_custom_attributes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Creating Custom Attributes for Regions and Entries
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Use custom attributes to store information related to your region or its entries in your cache. These attributes are only visible to the local application and are not distributed.</p>
+
+<p><a id="creating_custom_attributes__section_A8752F55C157480FAF435738D6244503"></a>
+You can define custom user attributes so you can associate data with the region or entry and retrieve it later. Unlike the other configuration settings, these attributes are used only by your application.</p>
+
+<p><strong>Note:</strong>
+User attributes are not distributed.</p>
+
+<ol>
+<li> Create a Java <code>Object</code> with your attribute definitions.</li>
+<li><p>Attach the object to the region or to an entry:</p>
+
+<ul>
+<li>  <code>Region.setUserAttribute(userAttributeObject)</code></li>
+<li>  <code>Region.getEntry(key).setUserAttribute(userAttributeObject)</code></li>
+</ul></li>
+<li><p>Get the attribute value:</p>
+
+<ul>
+<li>  <code>Region.getUserAttribute()</code></li>
+<li>  <code>Region.getEntry(key).getUserAttribute()</code></li>
+</ul></li>
+</ol>
+
+<p>This example stores attributes for later retrieval by a cache writer.</p>
+<pre class="highlight plaintext"><code>// Attach a user attribute to a Region with database info for table portfolio
+Object myAttribute = "portfolio"; 
+final Region portfolios = 
+      new RegionFactory().setCacheWriter(new PortfolioDBWriter()).create("Portfolios"); 
+Portfolios.setUserAttribute(myAttribute);
+</code></pre>
+<pre class="highlight plaintext"><code>//Implement a cache writer that reads the user attribute setting
+public class PortfolioDBWriter extends CacheWriterAdapter {
+  public void beforeCreate(RegionEvent event) {
+    table = (String)event.getRegion().getUserAttribute();
+    // update database table using name from attribute
+        . . .
+  }
+}
+</code></pre>
+
+<h2 id="limitations-and-alternatives"><a id="creating_custom_attributes__section_A5CB456E4E96410584F8856EAFB5BB83" class="no-quick-link"></a>Limitations and Alternatives</h2>
+
+<p>User attributes are not distributed to other processes, so if you need to define each attribute in every process that uses the region or entry. You need to update every instance of the region separately. User attributes are not stored to disk for region persistence or overflow, so they cannot be recovered to reinitialize the region.</p>
+
+<p>If your application requires features not supported by user attributes, an alternative is to create a separate region to hold this data instead. For instance, a region, AttributesRegion, defined by you, could use region names as keys and the user attributes as values. Changes to AttributesRegion would be distributed to other processes, and you could configure the region for persistence or overflow if needed.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

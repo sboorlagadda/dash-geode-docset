@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Provisioning Bandwidth for Multicast |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_multicast_communication_provisioning_bandwidth">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Provisioning Bandwidth for Multicast
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Multicast installations require more planning and configuration than TCP installations. With IP multicast, you gain scalability but lose the administrative convenience of TCP.</p>
+
+<p><a id="multicast__section_B7DA88707CBF4713A1E287CAA9A80EB9"></a>
+When you install an application that runs over TCP, the network is almost always set up for TCP and other applications are already using it. When you install an application to run over IP multicast it may be the first multicast application on the network.</p>
+
+<p>Multicast is very dependent on the environment in which it runs. Its operation is affected by the network hardware, the network software, the machines, which Geode processes run on which machines, and whether there are any competing applications. You could find that your site has connectivity in TCP but not in multicast because some switches and network cards do not support multicast. Your network could have latent problems that you would never see otherwise. To successfully implement a distributed Geode system using multicast requires the cooperation of both system and network administrators.</p>
+
+<p><strong>Bounded Operation Over Multicast</strong></p>
+
+<p>Group rate control is required for Geode systems to maintain cache coherence. If your application delivers the same data to a group of members, your system tuning effort needs to focus on the slow receivers.</p>
+
+<p>If some of your members have trouble keeping up with the incoming data, the other members in the group may be impacted. At best, slow receivers cause the producer to use buffering, adding latency for the slow receiver and perhaps for all of them. In the worst case, throughput for the group can stop entirely while the producer’s CPU, memory and network bandwidth are dedicated to serving the slow receivers.</p>
+
+<p>To address this issue, you can implement a bounded operation policy, which sets boundaries for the producer’s operation. The appropriate rate limits are determined through tuning and testing to allow the fastest operation possible while minimizing data loss and latency in the group of consumers. This policy is suited to applications such as financial market data, where high throughput, reliable delivery and network stability are required. With the boundaries set correctly, your producer’s traffic cannot cause a network outage.</p>
+
+<p>Multicast protocols typically have a flow control protocol built into them to keep processes from being overrun. The Geode flow control protocol uses the mcast-flow-control property to set producer and consumer boundaries for multicast flow operations. The property provides these three configuration settings:</p>
+
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><p><code class="ph codeph">byteAllowance</code></p></td>
+<td><p>Number of bytes that can be sent without a recharge.</p></td>
+</tr>
+<tr class="even">
+<td><p><code class="ph codeph">rechargeThreshold</code></p></td>
+<td><p>Tells consumers how low the producer’s initial to remaining allowance ratio should be before sending a recharge.</p></td>
+</tr>
+<tr class="odd">
+<td><code class="ph codeph">rechargeBlockMs</code></td>
+<td><p>Tells the producer how long to wait for a recharge before requesting one.</p></td>
+</tr>
+</tbody>
+</table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

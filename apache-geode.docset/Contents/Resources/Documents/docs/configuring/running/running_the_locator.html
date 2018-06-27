@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Running Geode Locator Processes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_running_the_locator">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Running Geode Locator Processes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The locator is a Geode process that tells new, connecting members where running members are located and provides load balancing for server use.</p>
+
+<p><a id="running_the_locator__section_E9C98E8756524552BEA9B0CA49A2069E"></a>
+You can run locators as peer locators, server locators, or both:</p>
+
+<ul>
+<li>  Peer locators give joining members connection information to members already running in the locator&rsquo;s distributed system.</li>
+<li>  Server locators give clients connection information to servers running in the locator&rsquo;s distributed system. Server locators also monitor server load and send clients to the least-loaded servers.</li>
+</ul>
+
+<p>By default, locators run as peer and server locators.</p>
+
+<p>You can run the locator standalone or embedded within another Geode process. Running your locators standalone provides the highest reliability and availability of the locator service as a whole.</p>
+
+<h2 id="locator-configuration-and-log-files"><a id="running_the_locator__section_0733348268AF4D5F8851B999A6A36C53" class="no-quick-link"></a>Locator Configuration and Log Files</h2>
+
+<p>Locator configuration and log files have the following properties:</p>
+
+<ul>
+<li>  When you start a standalone locator using <code>gfsh</code>, <code>gfsh</code> will automatically load the required JAR file <code>lib/geode-dependencies.jar</code> into the CLASSPATH of the JVM process. If you start a standalone locator using the <code>LocatorLauncher</code> API, you must specify this JAR file inside the command used to launch the locator process. For more information on CLASSPATH settings in Geode, see <a href="../../getting_started/setup_classpath.html">CLASSPATH Settings for Geode Processes</a>. You can modify the CLASSPATH by specifying the <code>--classpath</code> parameter.</li>
+<li><p>Locators are members of the distributed system just like any other member. In terms of <code>mcast-port</code> and <code>locators</code> configuration, a locator should be configured in the same manner as a server. Therefore, if there are two other locators in the distributed system, each locator should reference the other locators (just like a server member would). For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start locator --name=locator1 --port=9009 --mcast-port=0 \
+--locators='host1[9001],host2[9003]'
+</code></pre></li>
+<li><p>You can configure locators within the <code>gemfire.properties</code> file or by specifying start-up parameters on the command line. If you are specifying the locator&rsquo;s configuration in a properties file, locators require the same <code>gemfire.properties</code> settings as other members of the distributed system and the same <code>gfsecurity.properties</code> settings if you are using a separate, restricted access security settings file.</p>
+
+<p>For example, to configure both locators and a multicast port in <code>gemfire.properties:</code></p>
+<pre class="highlight plaintext"><code>locators=host1[9001],host2[9003]
+mcast-port=0
+</code></pre></li>
+<li><p>There is no cache configuration specific to locators.</p></li>
+<li><p>For logging output, the locator creates a log file in its current working directory. Log file output defaults to <code>locator_name.log</code> in the locator&rsquo;s working directory. If you restart a locator with a previously used locator name, the existing <em>locator_name</em>.log file is automatically renamed for you (for example, <code>locator1-01-01.log</code> or <code>locator1-02-01.log</code>). You can modify the level of logging details in this file by specifying a level in the <code>--log-level</code> argument when starting up the locator.</p></li>
+<li><p>By default, a locator will start in a subdirectory (named after the locator) under the directory where <code>gfsh</code> is executed. This subdirectory is considered the current working directory. You can also specify a different working directory when starting the locator in <code>gfsh</code>.</p></li>
+<li><p>By default, a locator that has been shutdown and disconnected due to a network partition event or member unresponsiveness will restart itself and automatically try to reconnect to the existing distributed system. When a locator is in the reconnecting state, it provides no discovery services for the distributed system. See <a href="../../managing/member-reconnect.html">Handling Forced Cache Disconnection Using Autoreconnect</a> for more details.</p></li>
+</ul>
+
+<h2 id="locators-and-the-cluster-configuration-service"><a id="running_the_locator__section_wst_ykb_rr" class="no-quick-link"></a>Locators and the Cluster Configuration Service</h2>
+
+<p>Locators use the cluster configuration service to save configurations that apply to all cluster members, or to members of a specified group. The configurations are saved in the Locator&rsquo;s directory and are propagated to all locators in a distributed system. When you start servers using <code>gfsh</code>, the servers receive the group-level and cluster-level configurations from the locators.</p>
+
+<p>See <a href="../cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<h2 id="start-the-locator"><a id="running_the_locator__section_FF25228E30624E04ACA8784A2183D585" class="no-quick-link"></a>Start the Locator</h2>
+
+<p>Use the following guidelines to start the locator:</p>
+
+<ul>
+<li><p><strong>Standalone locator</strong>. Start a standalone locator in one of these ways:</p>
+
+<ul>
+<li><p>Use the <code>gfsh</code> command-line utility. See <a href="../../tools_modules/gfsh/chapter_overview.html"><code>gfsh</code></a> for more information on using <code>gfsh</code>. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=locator1
+
+gfsh&gt; start locator --name=locator2 --bind-address=192.0.2.0 --port=13489
+</code></pre></li>
+<li><p>Start the locator using the <code>main</code> method in the <code>org.apache.geode.distributed.LocatorLauncher</code> class and the Java executable. Specifically, you use the <code>LocatorLauncher</code> class API to run an embedded Locator service in Java application processes that you have created. The directory where you execute the java command becomes the working directory for the locator process.</p></li>
+<li><p>When starting up multiple locators, do not start them up in parallel (in other words, simultaneously). As a best practice, you should wait approximately 30 seconds for the first locator to complete startup before starting any other locators. To check the successful startup of a locator, check for locator log files. To view the uptime of a running locator, you can use the <code>gfsh status locator</code> command.</p></li>
+</ul></li>
+<li><p><strong>Embedded (colocated) locator</strong>. Manage a colocated locator at member startup or through the APIs:</p>
+
+<ul>
+<li><p>Use the <code>gemfire.properties</code> <code>start-locator</code> setting to start the locator automatically inside your Geode member. See the <a href="../../reference/book_intro.html#reference">Reference</a>. The locator stops automatically when the member exits. The property has the following syntax:</p>
+<pre class="highlight plaintext"><code>#gemfire.properties
+start-locator=[address]port[,server={true|false},peer={true|false}]
+</code></pre>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>#gemfire.properties
+start-locator=13489
+</code></pre></li>
+<li><p>Use <code>org.apache.geode.distributed.LocatorLauncher</code> API to start the locator inside your code. Use the <code>LocatorLauncher.Builder</code> class to construct an instance of the <code>LocatorLauncher</code>, and then use the <code>start()</code> method to start a Locator service embedded in your Java application process. The other methods in the <code>LocatorLauncher</code> class provide status information about the locator and allow you to stop the locator.</p>
+<pre class="highlight plaintext"><code>import org.apache.geode.distributed.LocatorLauncher;
+
+ public class MyEmbeddedLocator {
+
+    public static void main(String[] args){
+        LocatorLauncher locatorLauncher  = new LocatorLauncher.Builder()
+          .setMemberName("locator1")
+          .setPort(13489)
+          .build();
+
+          locatorLauncher.start();
+
+          System.out.println("Locator successfully started");
+        }
+    }
+</code></pre>
+
+<p>Here&rsquo;s another example that embeds the locator within an application, starts it and then checks the status of the locator before allowing other members to access it:</p>
+<pre class="highlight plaintext"><code>package example;
+
+import ...
+
+class MyApplication implements Runnable {
+
+  private final LocatorLauncher locatorLauncher;
+
+  public MyApplication(final String... args) {
+    validateArgs(args);
+
+    locatorLauncher = new LocatorLauncher.Builder()
+      .setMemberName(args[0])
+      .setPort(Integer.parseInt(args[1])
+      .setRedirectOutput(true)
+      .build();
+  }
+
+  protected void args(final String[] args) {
+    ...
+  }
+
+  public void run() {
+    ...
+
+    // start the Locator in-process
+    locatorLauncher.start();
+
+    // wait for Locator to start and be ready to accept member (client) connections
+    locatorLauncher.waitOnStatusResponse(30, 5, TimeUnit.SECONDS);
+
+    ...
+  }
+
+  public static void main(final String... args) {
+    new MyApplication(args).run();
+  }
+
+}
+</code></pre>
+
+<p>Then to execute the application, you would run:</p>
+<pre class="highlight plaintext"><code>/working/directory/of/MyApplication$ java \
+ -server -classpath "path/to/installation/lib/geode-dependencies.jar:/path/to/application/classes.jar" \
+ example.MyApplication Locator1 11235
+</code></pre>
+
+<p>The directory where you execute the java command becomes the working directory for the locator process.</p></li>
+</ul></li>
+</ul>
+
+<h2 id="check-locator-status"><a id="running_the_locator__section_F58F229D5C7048E9915E0EC470F9A923" class="no-quick-link"></a>Check Locator Status</h2>
+
+<p>If you are connected to the distributed system in <code>gfsh</code>, you can check the status of a running Locator by providing the Locator name. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;status locator --name=locator1
+</code></pre>
+
+<p>If you are not connected to a distributed system, you can check the status of a local Locator by providing the process ID, the Locator&rsquo;s hostname and port, or the Locator&rsquo;s current working directory. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;status locator --pid=2986
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;status locator --host=host1 --port=1035
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>$ gfsh status locator --dir=&lt;locator_working_directory&gt;
+</code></pre>
+
+<p>where &lt;<em>locator_working_directory</em>&gt; corresponds to the local working directory where the locator is running.</p>
+
+<p>If successful, the command returns the following information (with the JVM arguments that were provided at startup):</p>
+<pre class="highlight plaintext"><code>$ gfsh status locator --dir=locator1
+Locator in /home/user/locator1 on ubuntu.local[10334] as locator1 is currently online.
+Process ID: 2359
+Uptime: 17 minutes 3 seconds
+GemFire Version: 8.0.0
+Java Version: 1.8.0_121
+Log File: /home/user/locator1/locator1.log
+JVM Arguments: -Dgemfire.enable-cluster-configuration=true -Dgemfire.load-cluster-configuration-from-dir=false
+ -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/apache_geode/lib/geode-dependencies.jar
+
+Cluster configuration service is up and running.
+</code></pre>
+
+<h2 id="stop-the-locator"><a id="running_the_locator__section_0E4DDED6AB784B0CAFBAD538B227F487" class="no-quick-link"></a>Stop the Locator</h2>
+
+<p>If you are connected to the distributed system in <code>gfsh</code>, you can stop a running locator by providing the locator name. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --name=locator1
+</code></pre>
+
+<p>If you are not connected to a distributed system, you can stop a local locator by specifying the locator&rsquo;s process ID or the locator&rsquo;s current working directory. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --pid=2986
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --dir=&lt;locator_working_directory&gt;
+</code></pre>
+
+<p>where &lt;<em>locator_working_directory</em>&gt; corresponds to the local working directory where the locator is running.</p>
+
+<h2 id="locators-and-multi-site-(wan)-deployments">Locators and Multi-Site (WAN) Deployments</h2>
+
+<p>If you use a multi-site (WAN) configuration, you can connect a locator to a remote site when starting the locator.</p>
+
+<p>To connect a new locator process to a remote locator in a WAN configuration, specify the following at startup:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start locator --name=locator1 --port=9009 --mcast-port=0 \
+--J='-Dgemfire.remote-locators=192.0.2.0[9009],198.51.100.0[9009]'
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring and Using Statistics |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_statistics docs_managing_statistics_setting_up_statistics">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring and Using Statistics
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You configure statistics and statistics archiving in gemfire.properties</p>
+
+<h2 id="configure-statistics"><a id="setting_up_statistics__section_215BB4074BD64834BAADA87BE84C34DE" class="no-quick-link"></a>Configure Statistics</h2>
+
+<p>In this procedure it is assumed that you understand <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ol>
+<li> In gfsh, start your locator running the cluster configuration service (<code>--enable-cluster-configuration=true</code>).</li>
+<li><p>Execute the following command to modify the cluster&rsquo;s configuration:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;alter runtime --enable-statistics=true
+</code></pre>
+
+<p>You can also configure sample rate and the filename of your statistic archive files. See <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_7E6B7E1B972D4F418CB45354D1089C2B">alter runtime</a> for more command options.</p></li>
+<li><p>Alternately, if you are not using the cluster configuration service, configure <code>gemfire.properties</code> for the statistics monitoring and archival that you need:</p>
+
+<ol>
+<li><p>Enable statistics gathering for the distributed system. This is required for all other statistics activities:</p>
+<pre class="highlight plaintext"><code>statistic-sampling-enabled=true
+</code></pre>
+
+<p><strong>Note:</strong>
+Statistics sampling at the default sample rate (1000 milliseconds) does not impact system performance and is recommended in production environments for troubleshooting.</p></li>
+<li><p>Change the statistics sample rate as needed. Example:</p>
+<pre class="highlight plaintext"><code>statistic-sampling-enabled=true
+statistic-sample-rate=2000
+</code></pre></li>
+<li><p>To archive the statistics to disk, enable that and set any file or disk space limits that you need. Example:</p>
+<pre class="highlight plaintext"><code>statistic-sampling-enabled=true
+statistic-archive-file=myStatisticsArchiveFile.gfs
+archive-file-size-limit=100
+archive-disk-space-limit=1000
+</code></pre></li>
+<li><p>If you need time-based statistics, enable that. Time-based statistics require statistics sampling and archival. Example:</p>
+<pre class="highlight plaintext"><code>statistic-sampling-enabled=true
+statistic-archive-file=myStatisticsArchiveFile.gfs
+enable-time-statistics=true
+</code></pre>
+
+<p><strong>Note:</strong>
+Time-based statistics can impact system performance and is not recommended for production environments.</p></li>
+</ol></li>
+<li><p>Enable transient region and entry statistics gathering on the regions where you need it. Expiration requires statistics.</p>
+
+<p>gfsh example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRegion --type=REPLICATE --enable-statistics=true
+</code></pre>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="REPLICATE"&gt;
+    &lt;region-attributes statistics-enabled="true"&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<p><strong>Note:</strong>
+Region and entry statistics are not archived and can only be accessed through the API. As needed, retrieve region and entry statistics through the <code>getStatistics</code> methods of the <code>Region</code> and <code>Region.Entry</code> objects. Example:</p>
+<pre class="highlight plaintext"><code>out.println("Current Region:\n\t" + this.currRegion.getName());
+RegionAttributes attrs = this.currRegion.getAttributes();
+if (attrs.getStatisticsEnabled()) {
+    CacheStatistics stats = this.currRegion.getStatistics();
+    out.println("Stats:\n\tHitCount is " + stats.getHitCount() +
+        "\n\tMissCount is " + stats.getMissCount() +
+        "\n\tLastAccessedTime is " + stats.getLastAccessedTime() +
+        "\n\tLastModifiedTime is " + stats.getLastModifiedTime());
+}
+
+</code></pre></li>
+<li><p>Create and manage any custom statistics that you need through the <code>cache.xml</code> and the API. Example:</p>
+<pre class="highlight plaintext"><code>// Create custom statistics
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+  &lt;!DOCTYPE statistics PUBLIC
+    "-//Example Systems, Inc.//Example Statistics Type//EN"
+    "http://www.example.com/dtd/statisticsType.dtd"&gt;
+  &lt;statistics&gt;
+    &lt;type name="StatSampler"&gt;
+      &lt;description&gt;Stats on the statistic sampler.&lt;/description&gt;
+      &lt;stat name="sampleCount" storage="int" counter="true"&gt;
+        &lt;description&gt;Total number of samples taken by this sampler.&lt;/description&gt;
+        &lt;unit&gt;samples&lt;/unit&gt;
+      &lt;/stat&gt;
+      &lt;stat name="sampleTime" storage="long" counter="true"&gt;
+        &lt;description&gt;Total amount of time spent taking samples.&lt;/description&gt;
+        &lt;unit&gt;milliseconds&lt;/unit&gt;
+      &lt;/stat&gt;
+    &lt;/type&gt;
+  &lt;/statistics&gt;
+</code></pre>
+<pre class="highlight plaintext"><code>// Update custom stats through the API
+this.samplerStats.incInt(this.sampleCountId, 1);
+this.samplerStats.incLong(this.sampleTimeId, nanosSpentWorking / 1000000);
+</code></pre></li>
+<li><p>Access archived statistics through the <code>gfsh show metrics</code> command.</p></li>
+</ol>
+
+<h2 id="controlling-the-size-of-archive-files"><a id="setting_up_statistics__section_D511BB61B27A44749E2012B066A5C906" class="no-quick-link"></a>Controlling the Size of Archive Files</h2>
+
+<p>You can specify limits on the archive files for statistics using <code>alter runtime</code> command. These are the areas of control:</p>
+
+<ul>
+<li>  <strong>Archive File Growth Rate</strong>.
+
+<ul>
+<li>  The <code>--statistic-sample-rate</code> parameter controls how often samples are taken, which affects the speed at which the archive file grows.</li>
+<li>  The <code>--statistic-archive-file</code> parameter controls whether the statistics files are compressed. If you give the file name a <code>.gz</code> suffix, it is compressed, thereby taking up less disk space.</li>
+</ul></li>
+<li><p><strong>Maximum Size of a Single Archive File</strong>. If the value of the <code>--archive-file-size-limit</code> is greater than zero, a new archive is started when the size of the current archive exceeds the limit. Only one archive can be active at a time.
+<strong>Note:</strong>
+If you modify the value of <code>--archive-file-size-limit</code> while the distributed system is running, the new value does not take effect until the current archive becomes inactive (that is, when a new archive is started).</p></li>
+<li><p><strong>Maximum Size of All Archive Files</strong>. The <code>--archive-disk-space-limit</code> parameter controls the maximum size of all inactive archive files combined. By default, the limit is set to 0, meaning that archive space is unlimited. Whenever an archive becomes inactive or when the archive file is renamed, the combined size of the inactive files is calculated. If the size exceeds the <code>--archive-disk-space-limit</code>, the inactive archive with the oldest modification time is deleted. This continues until the combined size is less than the limit. If <code>--archive-disk-space-limit</code> is less than or equal to <code>--archive-file-size-limit</code>, when the active archive is made inactive due to its size, it is immediately deleted.
+<strong>Note:</strong>
+If you modify the value of <code>--archive-disk-space-limit</code> while the distributed system is running, the new value does not take effect until the current archive becomes inactive.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

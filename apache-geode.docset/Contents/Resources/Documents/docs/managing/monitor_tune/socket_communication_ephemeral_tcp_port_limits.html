@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Ephemeral TCP Port Limits |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_socket_communication_ephemeral_tcp_port_limits">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Ephemeral TCP Port Limits
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default, Windows’ ephemeral ports are within the range 1024-4999, inclusive. You can increase the range.</p>
+
+<p><a id="socket_comm__section_F535D5D99206498DBBD5A6CC3230F25B"></a>
+If you are repeatedly receiving the following exception:</p>
+<pre class="highlight plaintext"><code>java.net.BindException: Address already in use: connect
+</code></pre>
+
+<p>and if your system is experiencing a high degree of network activity, such as numerous short-lived client connections, this could be related to a limit on the number of ephemeral TCP ports. While this issue could occur with other operating systems, typically, it is seen only with Windows due to a low default limit.</p>
+
+<p>Perform this procedure to increase the limit:</p>
+
+<ol>
+<li> Open the Windows Registry Editor.</li>
+<li><p>Navigate to the following key:</p>
+<pre class="highlight plaintext"><code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameter
+</code></pre></li>
+<li><p>From the Edit menu, click New, and then add the following registry entry:</p>
+<pre class="highlight plaintext"><code>Value Name: MaxUserPort 
+Value Type: DWORD  
+Value data: 36863
+</code></pre></li>
+<li><p>Exit the Registry Editor, and then restart the computer.</p></li>
+</ol>
+
+<p>This affects all versions of the Windows operating system.</p>
+
+<p><strong>Note for UDP on Unix Systems</strong></p>
+
+<p>Unix systems have a default maximum socket buffer size for receiving UDP multicast and unicast
+transmissions that is lower than the default settings for <code>mcast-recv-buffer-size</code> and
+<code>udp-recv-buffer-size</code>. To achieve high-volume multicast messaging, you should increase the maximum
+Unix buffer size to at least one megabyte.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

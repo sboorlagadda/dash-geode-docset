@@ -1,0 +1,387 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Region Management |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_data_regions docs_basic_config_data_regions_managing_data_regions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Region Management
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="data_regions__section_18A9481217204613958897FE64105097"></a>
+Operations that create, destroy, invalidate, clear, and change the 
+configuration of regions work with gfsh commands, through an XML description,
+and via API calls.</p>
+
+<p>You store your data in region entry key/value pairs, with keys and values being any object types your application needs.
+The <code>org.apache.geode.cache.Region</code> interface implements <code>java.util.Map</code>.</p>
+
+<p>Each region&rsquo;s attributes define how the data in the region is stored, distributed, and managed. Data regions can be distributed, partitioned among system members, or local to the member.</p>
+
+<p><em>Region shortcuts</em> identify commonly-used types of regions.
+See <a href="../../reference/topics/chapter_overview_regionshortcuts.html">Region Shortcuts</a> for more information.</p>
+
+<p><strong>Note:</strong>
+If you change attributes that define a region, you must restart the member for the changes to take effect.</p>
+
+<h1 id="creating-a-region">Creating a Region</h1>
+
+<h3 id="creating-a-region-with-gfsh">Creating a Region with gfsh</h3>
+
+<p>A simple and fast way to create a data region in the Apache Geode cache is to use the <code>gfsh</code> command-line tool.</p>
+
+<p>Region creation is subject to attribute consistency checks, both internal to the cache and, if the region is not local, between all caches where the region is defined.</p>
+
+<p>The <code>gfsh create region</code> <a href="../../tools_modules/gfsh/command-pages/create.html">command reference page</a> details command line options for creating a region with <code>gfsh</code>.</p>
+
+<p>With <code>gfsh</code> connected to a JMX server,
+an example command that creates a replicated region is</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=region1 --type=REPLICATE
+</code></pre>
+
+<p>Export the configuration files of your server so that you can save your region&rsquo;s configuration and recreate the region with the same attributes the next time you start up your cache server. See <a href="../../tools_modules/gfsh/command-pages/export.html#topic_C7C69306F93743459E65D46537F4A1EE">export config</a> for details. </p>
+
+<p><strong>Note:</strong>
+The cluster configuration service, which is enabled by default, automatically saves the configuration on the locators in the distributed system. After you use the gfsh create region command, any new servers that you start that attach to the same locator receive the same configuration. You can also create alternate configurations within a distributed system by specifying a group when creating the region and starting servers. See <a href="../../configuring/cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<h3 id="creating-a-region-through-the-cache.xml-file">Creating a Region Through the cache.xml File</h3>
+
+<p>A common way to create a data region in the Apache Geode cache is through <code>cache.xml</code> declarations.
+When starting the member with the <code>cache.xml</code> file,
+the region will be created.</p>
+
+<p>Region creation is subject to attribute consistency checks, both internal to the cache and, if the region is not local, between all caches where the region is defined.</p>
+
+<ul>
+<li>  In the <code>cache.xml</code> file, create a <code>&lt;region&gt;</code> element for the new region as a subelement to the <code>&lt;cache&gt;</code> element or the <code>&lt;client-cache&gt;</code> element. </li>
+<li>  Define the region&rsquo;s name and use a region shortcut, if one applies.</li>
+<li>  Add other attributes as needed to customize the region’s behavior. </li>
+</ul>
+
+<h3 id="cache.xml-file-examples">cache.xml File Examples</h3>
+
+<p>The <code>region</code> declaration of a replicated region named Portfolios:</p>
+<pre class="highlight plaintext"><code>&lt;region name="Portfolios" refid="REPLICATE"/&gt;
+</code></pre>
+
+<p>The <code>region</code> declaration of a partitioned region named myRegion:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="PARTITION"/&gt;
+</code></pre>
+
+<p>The <code>region</code> declaration of a partitioned region that backs up content
+to disk:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="PARTITION_PERSISTENT"/&gt;
+</code></pre>
+
+<p>The <code>region</code> declaration of a partitioned region configured with
+high availability and a modified storage capacity in the host member:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="PARTITION_REDUNDANT"&gt;
+    &lt;region-attributes&gt;
+        &lt;partition-attributes local-max-memory="512" /&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<p>The <code>region</code> declaration of a replicated region configured with
+an event listener in which entries expire:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="REPLICATE"&gt;
+    &lt;region-attributes statistics-enabled="true"&gt;
+        &lt;entry-time-to-live&gt;
+            &lt;expiration-attributes timeout="60" action="destroy"/&gt;
+        &lt;/entry-time-to-live&gt;
+        &lt;cache-listener&gt;
+            &lt;class-name&gt;myPackage.MyCacheListener&lt;/class-name&gt;
+        &lt;/cache-listener&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h3 id="creating-a-region-through-the-api"><a id="data_regions__section_028F2602395646818680C906F205526B" class="no-quick-link"></a>Creating a Region Through the API</h3>
+
+<p>Geode&rsquo;s regions APIs provide specialized behavior for different system member types.</p>
+
+<ul>
+<li>  <strong>Peer/Server Region APIs</strong>.
+Use these methods, interfaces, and classes for peer/server region creation.
+These are in the <code>org.apache.geode.cache</code> package.
+They correspond to <code>cache.xml</code> declarations within the <code>&lt;cache&gt;</code> element
+for creating and configuring regions.
+
+<ul>
+<li>  <strong><code>org.apache.geode.cache.Cache.createRegionFactory</code></strong> .
+This method takes a <code>RegionShortcut</code> <code>enum</code> to initiate region configuration,
+and it returns a <code>RegionFactory</code>.
+Use <code>createRegionFactory()</code>, not <code>new RegionFactory</code>,
+to create a RegionFactory.</li>
+<li>  <strong><code>org.apache.geode.cache.RegionFactory</code></strong>.
+Provides methods to set individual region attributes and to create the region.
+The <code>create</code> call returns a <code>Region</code>.</li>
+<li>  <strong><code>org.apache.geode.cache.RegionShortcut</code></strong>.
+Defines common region configurations.</li>
+</ul></li>
+<li><p><strong>Client Region APIs</strong>. Use these methods, interfaces, and classes for client region creation. These are in the <code>org.apache.geode.cache.client</code> package. They correspond to <code>cache.xml</code> declarations in the <code>&lt;client-cache&gt;</code> element for creating and configuring regions.</p>
+
+<p>These are client versions of the Peer/Server Region APIs. These client APIs provide similar functionality, but are tailored to the needs and behaviors of client regions.</p>
+
+<ul>
+<li>  <strong><code>org.apache.geode.cache.clientCache.createRegionFactory</code></strong> . This method takes a <code>ClientRegionShortcut</code> <code>enum</code> to initiate region configuration, and returns a <code>ClientRegionFactory</code>.</li>
+<li>  <strong><code>org.apache.geode.cache.client.ClientRegionFactory</code></strong>. Provides methods to set individual region attributes and to create the region. The <code>create</code> call returns <code>Region</code>.</li>
+<li>  <strong><code>org.apache.geode.cache.client.ClientRegionShortcut</code></strong> . Defines
+common region configurations.</li>
+</ul></li>
+<li><p><strong>Region APIs Used For All Member Types</strong>. These interfaces and classes are used universally for region management. These are in the <code>org.apache.geode.cache</code> package.
+They correspond to <code>cache.xml</code> declarations in the <code>&lt;cache&gt;</code> and <code>&lt;client-cache&gt;</code> elements for creating and configuring regions.</p>
+
+<ul>
+<li>  <strong><code>org.apache.geode.cache.Region</code></strong> . Interface for managing regions and their entries.</li>
+<li>  <strong><code>org.apache.geode.cache.RegionAttributes</code></strong> . Object holding region configuration settings.</li>
+</ul></li>
+</ul>
+
+<p>Use the API to create regions in the cache after startup.
+For run-time region creation, you need to use the API.</p>
+
+<p>Region creation is subject to attribute consistency checks, both internal to the cache and, if the region is not local, between all caches where the region is defined.</p>
+
+<ol>
+<li><p>Use a region shortcut to create your region factory. </p>
+
+<ul>
+<li><p>In peers and servers, use <code>org.apache.geode.cache.RegionFactory</code>.</p></li>
+<li><p>In clients, use <code>org.apache.geode.cache.client.ClientRegionFactory</code>.</p></li>
+</ul></li>
+<li><p>(Optional) Use the region factory to further configure your region. </p></li>
+<li><p>Create your region from the configured region factory. </p></li>
+</ol>
+
+<h3 id="api-examples">API Examples</h3>
+
+<p>Create a replicated region named Portfolios:</p>
+<pre class="highlight plaintext"><code>Cache cache = CacheFactory.create();
+RegionFactory rf = cache.createRegionFactory(REPLICATE);
+Region pfloRegion = rf.create("Portfolios");
+</code></pre>
+
+<p>Create a partitioned region with a listener:</p>
+<pre class="highlight plaintext"><code>RegionFactory rf =   
+    cache.createRegionFactory(RegionShortcut.PARTITION);
+rf.addCacheListener(new LoggingCacheListener());
+custRegion = rf.create("customer");
+</code></pre>
+
+<p>Create a partitioned region with a partition resolver for colocated
+regions:</p>
+<pre class="highlight plaintext"><code>PartitionAttributesFactory paf = new PartitionAttributesFactory&lt;CustomerId, String&gt;();
+paf.setPartitionResolver(new CustomerOrderResolver());
+
+RegionFactory rf = 
+    cache.createRegionFactory(RegionShortcut.PARTITION);
+rf.setPartitionAttributes(paf.create());
+rf.addCacheListener(new LoggingCacheListener());
+custRegion = rf.create("customer");
+</code></pre>
+
+<p>Create a client region with a pool specification:</p>
+<pre class="highlight plaintext"><code>ClientRegionFactory&lt;String,String&gt; cRegionFactory = 
+    cache.createClientRegionFactory(PROXY);
+Region&lt;String, String&gt; region = 
+    cRegionFactory.setPoolName("Pool3").create("DATA");
+</code></pre>
+
+<h2 id="create-and-access-data-subregions"><a id="data_regions__section_jn1_sry_5m" class="no-quick-link"></a>Create and Access Data Subregions</h2>
+
+<p>An individual region can contain multiple subregions.
+Subregions are an older feature that will not be useful in new designs
+and applications.
+They are used to create a hierarchical namespace within a cache,
+providing naming that feels like paths in a file system.
+Here are limitations on the use of subregions:</p>
+
+<ul>
+<li>  A region with LOCAL scope can only have subregions with LOCAL scope.</li>
+<li>  Partitioned region types may not be used with subregions. A subregion may not have a parent that is a partitioned region, and a subregion may not be of type PARTITION.</li>
+<li>  A subregion must have the same scope (GLOBAL, DISTRIBUTED_ACK, DISTRIBUTED_NO_ACK) as its parent region.</li>
+<li>  Subregion names must be unique within the cache.</li>
+</ul>
+
+<p>You can create subregions using one of the following methods:</p>
+
+<ul>
+<li><p>Declaration in the <code>cache.xml</code>:</p>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;cache</span>
+    <span class="na">xmlns=</span><span class="s">"http://geode.apache.org/schema/cache"</span>
+    <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="na">xsi:schemaLocation=</span><span class="s">"http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"</span>
+    <span class="na">version=</span><span class="s">"1.0"</span>
+    <span class="na">lock-lease=</span><span class="s">"120"</span>
+    <span class="na">lock-timeout=</span><span class="s">"60"</span>
+    <span class="na">search-timeout=</span><span class="s">"300"</span><span class="nt">&gt;</span>
+<span class="c">&lt;!-- Create a region named Portfolios --&gt;</span>
+  <span class="nt">&lt;region</span> <span class="na">name=</span><span class="s">"Portfolios"</span> <span class="na">refid=</span><span class="s">"REPLICATE"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;region</span> <span class="na">name=</span><span class="s">"Private"</span> <span class="na">refid=</span><span class="s">"REPLICATE"</span><span class="nt">&gt;</span>
+      ...
+      <span class="nt">&lt;/region&gt;</span>
+  <span class="nt">&lt;/region&gt;</span>
+<span class="nt">&lt;/cache&gt;</span>
+</code></pre>
+
+<p>When the <code>cache.xml</code> is loaded at cache creation, the system automatically creates any declared regions and subregions.</p></li>
+<li><p><code>RegionFactory</code> API calls:</p>
+<pre class="highlight plaintext"><code>Cache cache = CacheFactory.create();
+RegionFactory rf = cache.createRegionFactory(REPLICATE);
+Region pfloRegion = rf.create("Portfolios");
+Region pvtSubregion = rf.createSubregion(pfloRegion, "Private");
+</code></pre></li>
+</ul>
+
+<p><code>Region</code> method calls with a <code>recursive</code> parameter operate on the given
+region(s) and then recursively on all contained subregions. </p>
+
+<h2 id="update-the-configuration-of-data-regions"><a id="data_regions__section_7AD53DCC71064883BFA9C53E6040D85A" class="no-quick-link"></a>Update the Configuration of Data Regions</h2>
+
+<p>Update your region properties and contents through <code>alter region</code> command, the API or from <code>cache.xml</code> file declarations.</p>
+
+<ul>
+<li>  Use the <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_E74ED23CB60342538B2175C326E7D758">gfsh alter region</a> command.</li>
+<li>  In the API, use <code>Cache</code> and <code>Region</code> methods to change configuration parameters and modify region structure and data.</li>
+<li>  Load new XML declarations using the <code>Cache.loadCacheXml</code> method. Where possible, declarations in the new <code>cache.xml</code> file supersede existing definitions. For example, if a region declared in the <code>cache.xml</code> file already exists in the cache, its mutable attributes are modified according to the file declarations. Immutable attributes are not affected. If a region does not already exist, it is created. Entries and indexes are created or updated according to the state of the cache and the file declarations.</li>
+</ul>
+
+<h2 id="invalidate-a-region"><a id="data_regions__section_953E19F03F4541BAA3AE58118E7EA7E4" class="no-quick-link"></a>Invalidate a Region</h2>
+
+<p>An invalidate region operation removes all entry values for a region, while leaving the entry keys intact. This operation can be invoked only through the API on a <code>Region</code> instance. Event notification occurs.</p>
+<pre class="highlight plaintext"><code>// Invalidate the entire distributed region 
+Region.invalidateRegion(); 
+</code></pre>
+
+<p>The API also offers a method to invalidate only the entries within the local cache. This method may not be used on a replicated region, as doing so would invalidate the replication contract.</p>
+<pre class="highlight plaintext"><code>// Invalidate the region within this member
+Region.localInvalidateRegion(); 
+</code></pre>
+
+<h2 id="clear-a-region">Clear a Region</h2>
+
+<p>A clear region operation removes all entries from a region. This operation is not available for partitioned regions. This operation can be invoked through the API on a <code>Region</code> instance:</p>
+<pre class="highlight plaintext"><code>// Remove all entries for the region
+Region.clear(); 
+</code></pre>
+
+<p>It can be invoked with the <code>gfsh</code> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;remove --region=Region1 --all 
+</code></pre>
+
+<p>Event notification occurs for a clear region operation.</p>
+
+<h2 id="destroy-a-region">Destroy a Region</h2>
+
+<p>A destroy region operation removes the entire region. This operation can be invoked through the API on a <code>Region</code> instance:</p>
+<pre class="highlight plaintext"><code>// Remove the entire region
+Region.destroyRegion();
+</code></pre>
+
+<p>A destroy region operation can be invoked with the <code>gfsh</code> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;destroy region --name=Region1
+</code></pre>
+
+<p>Event notification occurs for a destroy region operation.</p>
+
+<p>A region can be destroyed by removing the region&rsquo;s specification from the <code>cache.xml</code> file.</p>
+
+<p>Destroying the region by an API invocation or by using the <code>gfsh                     destroy</code> command while all members are online is the best way to remove a region, as Geode handles all aspects of the removal, including removing the region&rsquo;s persistent disk stores across the online members hosting the region. Destroying the region by removing its specification from the <code>cache.xml</code> file does not remove the region&rsquo;s existing persistent disk stores.</p>
+
+<p>The destroy operation can be propagated only to online members. The system will encounter restart issues if a region is destroyed while some members are online and others are offline. As those members that were offline restart, they will block indefinitely, waiting for persistent region data that no longer exists. To fix this issue, shut down all members that are blocked waiting for the removed region. Once those members are in the offline state, use the <code>gfsh alter                     disk-store</code> command with the <code>--remove</code> option on each offline member to remove the region. Then, restart each member.</p>
+
+<p>An edge case results in issues when destroying a persistent region (R-removed) by removing its specification from the <code>cache.xml</code> file, and region R-removed was colocated with another persistent region (R-remains). The issue occurs because the persistent information contained within R-remains is inconsistent with the (lack of) specification of R-removed. Upon restart of R-remains, its persisted metadata refers to R-removed as a colocated region, and the startup of R-remains is dependent on that removed region. Thus, the startup of R-remains blocks, unable to complete. The issue may manifest with operations on the R-remains region such as a query, put, or get, that never finishes. To fix this issue, shut down all members with the persisted metadata that refers to the removed region. Once those members are in the offline state, use the <code>gfsh alter disk-store</code> command with the <code>--remove</code> option on each offline member to remove the region. Then, restart each member.</p>
+
+<h2 id="close-a-region"><a id="data_regions__section_3C0A7E088FDB413297ED8C0CD606968D" class="no-quick-link"></a>Close a Region</h2>
+
+<p>Use this to stop local caching of persistent and partitioned regions without closing the entire cache:</p>
+<pre class="highlight plaintext"><code>Region.close();
+</code></pre>
+
+<p>The <code>Region.close</code> operation works like the <code>Region.localDestroyRegion</code> operation with these significant differences:</p>
+
+<ul>
+<li>  The <code>close</code> method is called for every callback installed on the region.</li>
+<li>  No events are invoked. Of particular note, the entry events, <code>beforeDestroy</code> and <code>afterDestroy</code>, and the region events, <code>beforeRegionDestroy</code> and <code>afterRegionDestroy</code>, are not invoked. See <a href="../../developing/events/chapter_overview.html#implementing_event_handlers">Events and Event Handling</a>.</li>
+<li>  If persistent, the region is removed from memory but its disk files are retained.</li>
+<li>  If partitioned, the region is removed from the local cache. If the partitioned region is redundant, local data caching fails over to another cache. Otherwise, local data is lost.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

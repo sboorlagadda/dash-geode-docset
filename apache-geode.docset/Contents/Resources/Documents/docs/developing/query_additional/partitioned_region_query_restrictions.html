@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Partitioned Region Query Restrictions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_partitioned_region_query_restrictions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Partitioned Region Query Restrictions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="query-restrictions-in-partitioned-regions"><a id="concept_5353476380D44CC1A7F586E5AE1CE7E8__section_16875A7EA07D42C08FB194F4A854360D" class="no-quick-link"></a>Query Restrictions in Partitioned Regions</h2>
+
+<p>Partitioned region queries function the same as non-partitioned region queries, except for the restrictions listed in this section. Partitioned region queries that do not follow these guidelines generate an <code>UnsupportedOperationException</code>.</p>
+
+<ul>
+<li>  Join queries between partitioned region and between partitioned regions and replicated regions are supported through the function service only. Join queries partitioned regions are not supported through the client server API.</li>
+<li>  You can run join queries on partitioned regions and on partitioned regions and replicated regions only if they are co-located. Equi-join queries are supported only on partitioned regions that are co-located and where the co-located columns are indicated in the WHERE clause of the query. In the case of multi-column partitioning, there should also be an AND clause in the WHERE specification. See <a href="../partitioned_regions/colocating_partitioned_region_data.html#colocating_partitioned_region_data">Colocate Data from Different Partitioned Regions</a> for more information on partitioned region co-location.</li>
+<li>  Equi-join queries are allowed between partitioned regions and between partitioned regions and local replicated regions as long as the local replicated region also exists on all partitioned region nodes. To perform a join query on a partitioned region and another region (partitioned or not), you need to use the <code>query.execute</code> method and supply it with a function execution context. See <a href="../partitioned_regions/join_query_partitioned_regions.html#concept_B930D276F49541F282A2CFE639F107DD">Performing an Equi-Join Query on Partitioned Regions</a> for an example.</li>
+<li><p>The query must be just a SELECT expression (as opposed to arbitrary OQL expressions), preceded by zero or more IMPORT statements. For example, this query is not allowed because it is not just a SELECT expression:</p>
+<pre class="highlight plaintext"><code>// NOT VALID for partitioned regions
+(SELECT DISTINCT *FROM /prRgn WHERE attribute &gt; 10).size
+</code></pre>
+
+<p>This query is allowed:</p>
+<pre class="highlight plaintext"><code>// VALID for partitioned regions
+SELECT DISTINCT *FROM /prRgn WHERE attribute &gt; 10
+</code></pre></li>
+<li><p>The SELECT expression itself can be arbitrarily complex, including nested SELECT expressions, as long as only one partitioned region is referenced.</p></li>
+<li><p>The partitioned region reference can only be in the first FROM clause iterator. Additional FROM clause iterators are allowed if they do not reference any regions (such as drilling down into the values in the partitioned region).</p></li>
+<li><p>The first FROM clause iterator must contain only one reference to the partitioned region (the reference can be a parameter, such as $1).</p></li>
+<li><p>The first FROM clause iterator cannot contain a subquery, but subqueries are allowed in additional FROM clause iterators.</p></li>
+<li><p>You can use ORDER BY on partitioned region queries, but the fields that are specified in the ORDER BY clause must be part of the projection list.</p></li>
+<li><p>If a partition region (or a bucket) being queried has been destroyed, the query is reattempted on the new primary for the destroyed bucket (if it exists). After certain number of attempts, a QueryException is thrown if all buckets (calculated at the startup of the query) cannot be queried.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

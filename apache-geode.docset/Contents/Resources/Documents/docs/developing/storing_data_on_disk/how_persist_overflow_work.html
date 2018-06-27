@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Persistence and Overflow Work |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_storing_data_on_disk docs_developing_storing_data_on_disk_how_persist_overflow_work">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Persistence and Overflow Work
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To use Geode persistence and overflow, you should understand how they work with your data.</p>
+
+<p><a id="how_persist_overflow_work__section_jzl_wwb_pr"></a>
+Geode persists and overflows several types of data. You can persist or overflow the application data in your regions. In addition, Geode persists and overflows messaging queues between distributed systems, to manage memory consumption and provide high availability.</p>
+
+<p>Persistent data outlives the member where the region resides and can be used to initialize the region at creation. Overflow acts only as an extension of the region in memory.</p>
+
+<p>The data is written to disk according to the configuration of Geode disk stores. For any disk option, you can specify the name of the disk store to use or use the Geode default disk store. See <a href="../../managing/disk_storage/chapter_overview.html">Disk Storage</a>.</p>
+
+<h2 id="how-data-is-persisted-and-overflowed"><a id="how_persist_overflow_work__section_78F2D1820B6C48859A0E5411CE360105" class="no-quick-link"></a>How Data Is Persisted and Overflowed</h2>
+
+<p>For persistence, the entry keys and values are copied to disk. For overflow, only the entry values are copied. Other data, such as statistics and user attributes, are retained in memory only.</p>
+
+<ul>
+<li>  Data regions are overflowed to disk by least recently used (LRU) entries because those entries are deemed of least interest to the application and therefore less likely to be accessed.</li>
+<li>  Server subscription queues overflow most recently used (MRU) entries. These are the messages that are at the end of the queue and so are last in line to be sent to the client.</li>
+</ul>
+
+<h2 id="persistence"><a id="how_persist_overflow_work__section_1A3AE288145749058880D98C699FE124" class="no-quick-link"></a>Persistence</h2>
+
+<p>Persistence provides a disk backup of region entry data. The keys and values of all entries are saved to disk, like having a replica of the region on disk. Region entry operations such as put and destroy are carried out in memory and on disk.</p>
+
+<p><img src="../../images_svg/developing_persistence.svg" id="how_persist_overflow_work__image_B53E1A5A568D437692247A2FD99348A6" class="image" /></p>
+
+<p>When the member stops for any reason, the region data on disk remains. In partitioned regions, where data buckets are divided among members, this can result in some data only on disk and some on disk and in memory. The disk data can be used at member startup to populate the same region.</p>
+
+<h2 id="overflow"><a id="how_persist_overflow_work__section_55A7BBEB48574F649C40EB5D3E9CD0AC" class="no-quick-link"></a>Overflow</h2>
+
+<p>Overflow limits region size in memory by moving the values of least recently used (LRU) entries to disk. Overflow basically uses disk as a swap space for entry values. If an entry is requested whose value is only on disk, the value is copied back up into memory, possibly causing the value of a different LRU entry to be moved to disk. As with persisted entries, overflowed entries are maintained on disk just as they are in memory.</p>
+
+<p>In this figure, the value of entry X has been moved to disk to make space in memory. The key for X remains in memory. From the distributed system perspective, the value on disk is as much a part of the region as the data in memory.</p>
+
+<p><img src="../../images_svg/developing_overflow.svg" id="how_persist_overflow_work__image_1F89C9FBACB54EDA844778EC60F61B8D" class="image" /></p>
+
+<h2 id="persistence-and-overflow-together"><a id="how_persist_overflow_work__section_9CBEBC0B59554DB49CE4941435793C51" class="no-quick-link"></a>Persistence and Overflow Together</h2>
+
+<p>Used together, persistence and overflow keep all entry keys and values on disk and only the most active entry values in memory. The removal of an entry value from memory due to overflow has no effect on the disk copy as all entries are already on disk.</p>
+
+<p><img src="../../images_svg/developing_persistence_and_overflow.svg" id="how_persist_overflow_work__image_E40D9C2EA238406A991E954477C7EB78" class="image" /></p>
+
+<h2 id="persistence-and-multi-site-configurations">Persistence and Multi-Site Configurations</h2>
+
+<p>Multi-site gateway sender queues overflow most recently used (MRU) entries. These are the messages that are at the end of the queue and so are last in line to be sent to the remote site. You can also configure gateway sender queues to persist for high availability.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

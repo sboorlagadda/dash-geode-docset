@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Socket Communication |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_socket_communication">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Socket Communication
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode processes communicate using TCP/IP and UDP unicast and multicast protocols. In all cases, communication uses sockets that you can tune to optimize performance.</p>
+
+<p>The adjustments you make to tune your Geode communication may run up against operating system limits. If this happens, check with your system administrator about adjusting the operating system settings.</p>
+
+<p>All of the settings discussed here are listed as <code>gemfire.properties</code> and <code>cache.xml</code> settings. They can also be configured through the API and some can be configured at the command line. Before you begin, you should understand Geode <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ul>
+<li><p><strong><a href="socket_communication_setting_socket_buffer_sizes.html">Setting Socket Buffer Sizes</a></strong></p>
+
+<p>When you determine buffer size settings, you try to strike a balance between communication needs and other processing.</p></li>
+<li><p><strong><a href="socket_communication_ephemeral_tcp_port_limits.html">Ephemeral TCP Port Limits</a></strong></p>
+
+<p>By default, Windows’ ephemeral ports are within the range 1024-4999, inclusive.You can increase the range.</p></li>
+<li><p><strong><a href="socket_communication_have_enough_sockets.html">Making Sure You Have Enough Sockets</a></strong></p>
+
+<p>The number of sockets available to your applications is governed by operating system limits.</p></li>
+<li><p><strong><a href="socket_tcp_keepalive.html">TCP/IP KeepAlive Configuration</a></strong></p>
+
+<p>Geode supports TCP KeepAlive to prevent socket connections from being timed out.</p></li>
+<li><p><strong><a href="socket_communication_tcpip_p2p_handshake_timeouts.html">TCP/IP Peer-to-Peer Handshake Timeouts</a></strong></p>
+
+<p>You can alleviate connection handshake timeouts for TCP/IP connections by increasing the connection handshake timeout interval with the system property p2p.handshakeTimeoutMs.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

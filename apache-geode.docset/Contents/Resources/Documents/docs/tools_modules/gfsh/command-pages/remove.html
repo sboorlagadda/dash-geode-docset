@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      remove |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_remove">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    remove
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Remove an entry from a region.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>remove --region=value [--key=value] [--all(=value)?] [--key-class=value]
+</code></pre>
+
+<p><a id="concept_D452C829146D434CB5069126D93944FD__table_lx4_ybg_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--key</span></td>
+<td>String or JSON text that will be used to create a key to retrieve a value .</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;key&#8209;class </span></td>
+<td>Fully qualified class name of the key&rsquo;s type.</td>
+<td>key constraint for the current region or String</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--region</span></td>
+<td><em>Required.</em> Region from which to remove the entry.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--all</span></td>
+<td>Clears the region by removing all entries.</td>
+<td>false</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Remove Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;remove --region=/region1/region12 --key=('id': '133abg134')
+gfsh&gt;remove --region=/region1/region12 --key=('id': '133abg134') --key-class=data.ProfileKey 
+gfsh&gt;remove --region=/region1/region12 --all
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+<pre class="highlight plaintext"><code>"Region name is either empty or Null";
+"Key is either empty or Null";
+"Value is either empty or Null";
+"Region &lt;{0}&gt; not found in any of the members";
+"Region &lt;{0}&gt; Not Found";
+"Key is not present in the region";
+"Cleared all keys in the region";
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

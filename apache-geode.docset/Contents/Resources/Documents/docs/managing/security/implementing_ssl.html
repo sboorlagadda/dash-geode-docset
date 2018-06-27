@@ -1,0 +1,364 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring SSL |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_security docs_managing_security_implementing_ssl">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring SSL
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can configure SSL for authentication between members and to protect your data during
+distribution. You can use SSL alone or in conjunction with the other Geode security options.
+Geode SSL connections use the Java Secure Sockets Extension (JSSE) package.</p>
+
+<h2 id="ssl-configurable-components"><a id="ssl_configurable_components" class="no-quick-link"></a>SSL-Configurable Components</h2>
+
+<p>You can specify that SSL be used system-wide, or you can independently configure SSL for specific
+system components.  The following list shows the system components that can be separately configured
+to communicate using SSL, and the kind of communications to which each component name refers:</p>
+
+<p><dt><strong>cluster</strong></dt>
+<dd>Peer-to-peer communications among members of a distributed system</dd></p>
+
+<p><dt><strong>gateway</strong></dt>
+<dd>Communication across WAN gateways from one site to another</dd></p>
+
+<p><dt><strong>web</strong></dt>
+<dd>All web-based services hosted on the configured server, which can include the Developer REST API
+service, the Management REST API service (used for remote cluster management) and the Pulse
+monitoring tool&rsquo;s web-based user interface.</dd></p>
+
+<p><dt><strong>jmx</strong></dt>
+<dd>Java management extension communications, including communications with the <code>gfsh</code> utility. 
+The Pulse monitoring tool uses JMX for server-side communication with a locator, but SSL
+applies to this connection only if Pulse is located on an app server separate from the
+locator. When Pulse and the locator are colocated, JMX communication between the two does not
+involve a TCP connection, so SSL does not apply.</dd></p>
+
+<p><dt><strong>locator</strong></dt>
+<dd>Communication with and between locators</dd></p>
+
+<p><dt><strong>server</strong></dt>
+<dd>Communication between clients and servers</dd></p>
+
+<p><dt><strong>all</strong></dt>
+<dd>All of the above (use SSL system-wide)</dd></p>
+
+<p>Specifying that a component is enabled for SSL applies to the component&rsquo;s server-socket side and its
+client-socket side.  For example, if you enable SSL for locators, then any process that communicates
+with a locator must also have SSL enabled.</p>
+
+<h2 id="ssl-configuration-properties"><a id="ssl_configuration_properties" class="no-quick-link"></a>SSL Configuration Properties</h2>
+
+<p>You can use Geode configuration properties to enable or disable SSL, to identify SSL ciphers and
+protocols, and to provide the location and credentials for key and trust stores.</p>
+
+<p><dt><strong>ssl-enabled-components</strong></dt>
+<dd>List of components for which to enable SSL. Component list can be &ldquo;all&rdquo; or a comma-separated list of components.</dd></p>
+
+<p><dt><strong>ssl-require-authentication</strong></dt>
+<dd>Requires two-way authentication, applies to all components except web. Boolean - if true (the default), two-way authentication is required.</dd></p>
+
+<p><dt><strong>ssl-web-require-authentication</strong></dt>
+<dd>Requires two-way authentication for web component. Boolean - if true, two-way authentication is required. Default is false (one-way authentication only).</dd></p>
+
+<p><dt><strong>ssl-default-alias</strong></dt>
+<dd>A server uses one key store to hold its SSL certificates. All components on that server can share a
+single certificate, designated by the ssl-default-alias property.  If ssl-default-alias
+is not specified, the first certificate in the key store acts as the default certificate.</dd></p>
+
+<p><dt><strong>ssl-<em>component</em>-alias=string</strong></dt>
+<dd>You can configure a separate certificate for any component. All certificates reside in the same key
+store, but can be designated by separate aliases that incorporate the component name, using this syntax,
+where <em>component</em> is the name of a component. When a component-specific alias is specified, it
+overrides the ssl-default-alias for the <em>component</em> specified.</p>
+
+<p>For example, ssl-locator-alias would specify a name for the locator component&rsquo;s certificate in the system key store.</dd></p>
+
+<p><dt><strong>ssl-ciphers</strong></dt>
+<dd>A comma-separated list of the valid SSL ciphers for SSL-enabled component connections. A setting of &lsquo;any&rsquo;
+uses any ciphers that are enabled by default in the configured JSSE provider.</dd></p>
+
+<p><dt><strong>ssl-protocols</strong></dt>
+<dd>A comma-separated list of the valid SSL-enabled component connections. A setting of &#39;any&rsquo; uses
+any protocol that is enabled by default in the configured JSSE provider.</dd></p>
+
+<p><dt><strong>ssl-keystore, ssl-keystore-password</strong></dt>
+<dd>The path to the key store and the key store password, specified as strings</dd></p>
+
+<p><dt><strong>ssl-truststore, ssl-truststore-password</strong></dt>
+<dd>The path to the trust store and the trust store password, specified as strings</dd></p>
+
+<p><dt><strong>ssl-keystore-type, ssl-truststore-type</strong></dt>
+<dd>The types of the key store and trust store, specified as strings. The default for both is &ldquo;JKS&rdquo;, indicating a Java key store or trust store.</dd></p>
+
+<h3 id="example:-secure-communications-throughout">Example: secure communications throughout</h3>
+
+<p>To implement secure SSL communications throughout an entire distributed system, each process should
+enable SSL for all components.</p>
+<pre class="highlight plaintext"><code>ssl-enabled-components=all
+ssl-keystore=secure/keystore.dat
+ssl-keystore-password=changeit
+ssl-truststore=secure/truststore.dat
+ssl-truststore-password=changeit
+</code></pre>
+
+<p>If the key store has multiple certificates you may want to specify the alias of the one you wish to use for each process.  For instance, <code>ssl-default-alias=Hiroki</code>.</p>
+
+<h3 id="example:-non-secure-cluster-communications,-secure-client/server">Example: non-secure cluster communications, secure client/server</h3>
+
+<p>In this example, SSL is used to secure communications between the client and the server:</p>
+
+<p><strong>Server properties</strong></p>
+
+<p>Cluster SSL is not enabled.</p>
+<pre class="highlight plaintext"><code>ssl-enabled-components=server,locator
+ssl-server-alias=server
+ssl-keystore=secure/keystore.dat
+ssl-keystore-password=changeit
+ssl-truststore=secure/truststore.dat
+ssl-truststore-password=changeit
+ssl-default-alias=Server-Cert
+</code></pre>
+
+<p><strong>Locator properties</strong></p>
+
+<p>Cluster SSL is not enabled.</p>
+<pre class="highlight plaintext"><code>ssl-enabled-components=locator
+ssl-locator-alias=locator
+ssl-keystore=secure/keystore.dat
+ssl-keystore-password=changeit
+ssl-truststore=secure/truststore.dat
+ssl-truststore-password=changeit
+ssl-default-alias=Locator-Cert
+</code></pre>
+
+<p><strong>Client properties</strong></p>
+
+<p>On the client, the list of enabled components reflects the server&rsquo;s configuration so the client
+knows how it is expected to communicate with (for example) servers and locators.  Paths to keystore
+and truststore are local to the client.</p>
+
+<p>In this example, the client&rsquo;s trust store must trust both locator and server certificates.  Since
+the client does not specify a certificate alias, SSL will use the default certificate in its key
+store.</p>
+<pre class="highlight plaintext"><code>ssl-enabled-components=server,locator
+ssl-keystore=secret/keystore.dat
+ssl-keystore-password=changeit
+ssl-truststore=secret/truststore.dat
+ssl-truststore-password=changeit
+</code></pre>
+
+<h2 id="ssl-property-reference-tables"><a id="ssl_property_reference_tables" class="no-quick-link"></a>SSL Property Reference Tables</h2>
+
+<p>The following table lists the components you can configure to use SSL.</p>
+
+<p><span class="tablecap">Table 1. SSL-Configurable Components</span></p>
+
+<table><thead>
+<tr>
+<th>Component</th>
+<th>Communication Types</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>cluster</td>
+<td>Peer-to-peer communications among members of a distributed system</td>
+</tr>
+<tr>
+<td>gateway</td>
+<td>Communication across WAN gateways from one site to another</td>
+</tr>
+<tr>
+<td>web</td>
+<td>Web-based communication, including REST interfaces</td>
+</tr>
+<tr>
+<td>jmx</td>
+<td>Java management extension communications, including gfsh</td>
+</tr>
+<tr>
+<td>locator</td>
+<td>Communication with and between locators</td>
+</tr>
+<tr>
+<td>server</td>
+<td>Communication between clients and servers</td>
+</tr>
+<tr>
+<td>all</td>
+<td>All of the above</td>
+</tr>
+</tbody></table>
+
+<p>The following table lists the properties you can use to configure SSL on your Geode system.</p>
+
+<p><span class="tablecap">Table 2. SSL Configuration Properties</span></p>
+
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ssl&#8209;enabled&#8209;components</td>
+<td>list of components for which to enable SSL</td>
+<td>&ldquo;all&rdquo; or comma-separated list of components: cluster, gateway, web, jmx, locator, server</td>
+</tr>
+<tr>
+<td>ssl-require-authentication</td>
+<td>requires two-way authentication, applies to all components except web</td>
+<td>boolean - if true (the default), two-way authentication is required</td>
+</tr>
+<tr>
+<td>ssl&#8209;web&#8209;require&#8209;authentication</td>
+<td>requires two-way authentication for web component</td>
+<td>boolean - if true, two-way authentication is required. Default is false (one-way authentication only)</td>
+</tr>
+<tr>
+<td>ssl-default-alias</td>
+<td>default certificate name</td>
+<td>string - if empty, use first certificate in key store</td>
+</tr>
+<tr>
+<td>ssl-<em>component</em>-alias</td>
+<td>component-specific certificate name</td>
+<td>string - applies to specified <em>component</em></td>
+</tr>
+<tr>
+<td>ssl-ciphers</td>
+<td>list of SSL ciphers</td>
+<td>comma-separated list (default &ldquo;any&rdquo;)</td>
+</tr>
+<tr>
+<td>ssl-protocols</td>
+<td>list of SSL protocols</td>
+<td>comma-separated list (default &ldquo;any&rdquo;)</td>
+</tr>
+<tr>
+<td>ssl-keystore</td>
+<td>path to key store</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ssl-keystore-password</td>
+<td>key store password</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ssl-truststore</td>
+<td>path to trust store</td>
+<td>string</td>
+</tr>
+<tr>
+<td>ssl-truststore-password</td>
+<td>trust store password</td>
+<td>string</td>
+</tr>
+</tbody></table>
+
+<h2 id="procedure"><a id="implementing_ssl__sec_ssl_impl_proc" class="no-quick-link"></a>Procedure</h2>
+
+<ol>
+<li><p>Make sure your Java installation includes the JSSE API and familiarize yourself with its
+use. For information, see the <a href="http://www.oracle.com/technetwork/java/javase/tech/index-jsp-136007.html">Oracle JSSE website</a>.</p></li>
+<li><p>Configure SSL as needed for each connection type:</p>
+
+<ol>
+<li> Use locators for member discovery within the distributed systems and for client discovery of
+servers. See <a href="../../topologies_and_comm/p2p_configuration/setting_up_a_p2p_system.html">Configuring Peer-to-Peer Discovery</a> and
+<a href="../../topologies_and_comm/cs_configuration/setting_up_a_client_server_system.html#setting_up_a_client_server_system">Configuring a Client/Server System</a>.</li>
+<li><p>Configure SSL properties as necessary for different component types, using the properties
+described above. For example, to enable SSL for
+communication between clients and servers you would configure properties in the
+<code>gemfire.properties</code> file similar to:</p>
+<pre class="highlight plaintext"><code>ssl-enabled-components=server
+ssl-protocols=any
+ssl-ciphers=SSL_RSA_WITH_NULL_MD5, SSL_RSA_WITH_NULL_SHA
+ssl-keystore=/path/to/trusted.keystore
+ssl-keystore-password=password
+ssl-truststore=/path/to/trusted.keystore
+ssl-truststore-password=password
+</code></pre></li>
+</ol></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How to Install Apache Geode |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_getting_started docs_getting_started_installation docs_getting_started_installation_install_standalone">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How to Install Apache Geode
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Build from source or use the ZIP or TAR distribution to install Apache Geode on every physical and virtual machine that will run Apache Geode.</p>
+
+<h2 id="build-from-source-on-unix">Build from Source on Unix</h2>
+
+<ol>
+<li><p>Set the JAVA_HOME environment variable.</p>
+<pre class="highlight plaintext"><code>JAVA_HOME=/usr/java/jdk1.8.0_60
+export JAVA_HOME
+</code></pre></li>
+<li><p>Download the project source from the Releases page found at <a href="http://geode.apache.org/">http://geode.apache.org</a>, and unpack the source code.</p></li>
+<li><p>Within the directory containing the unpacked source code, build without tests:</p>
+<pre class="highlight plaintext"><code>$ ./gradlew build -Dskip.tests=true
+</code></pre>
+
+<p>Or, build with the tests:</p>
+<pre class="highlight plaintext"><code>$ ./gradlew build 
+</code></pre></li>
+<li><p>Verify the installation by invoking <code>gfsh</code> to print version information and exit. On Linux/Unix platforms, the version will be similar to:</p>
+<pre class="highlight plaintext"><code>$ cd geode-assembly/build/install/apache-geode
+$ bin/gfsh version
+v1.1.0
+</code></pre></li>
+</ol>
+
+<h2 id="build-from-source-on-windows">Build from Source on Windows</h2>
+
+<ol>
+<li><p>Set the JAVA_HOME environment variable. For example:</p>
+<pre class="highlight plaintext"><code>$ set JAVA_HOME="C:\Program Files\Java\jdk1.8.0_60" 
+</code></pre></li>
+<li><p>Install Gradle, version 2.3 or a more recent version.</p></li>
+<li><p>Download the project source from the Releases page found at <a href="http://geode.apache.org/">http://geode.apache.org</a>, and unpack the source code.</p></li>
+<li><p>Within the folder containing the unpacked source code, build without the tests:</p>
+<pre class="highlight plaintext"><code>$ gradle build -Dskip.tests=true
+</code></pre>
+
+<p>Or, build with the tests:</p>
+<pre class="highlight plaintext"><code>$ gradle build
+</code></pre></li>
+<li><p>Verify the installation by invoking <code>gfsh</code> to print version information and exit.</p>
+<pre class="highlight plaintext"><code>$ cd geode-assembly\build\install\apache-geode\bin
+$ gfsh.bat version
+v1.1.0
+</code></pre></li>
+</ol>
+
+<h2 id="install-binaries-from-.zip-or-.tar-file"><a id="concept_0129F6A1D0EB42C4A3D24861AF2C5425__section_D3326496B2BB47A7AB0CFC1A5E266842" class="no-quick-link"></a>Install Binaries from .zip or .tar File</h2>
+
+<ol>
+<li> Download the .zip or .tar file from the Releases page found at <a href="http://geode.apache.org/">http://geode.apache.org</a>.</li>
+<li><p>Unzip the .zip file or expand the .tar file, where <code>path_to_product</code> is an absolute path, and the file name will vary due to the version number. For the .zip format:</p>
+<pre class="highlight plaintext"><code>$ unzip apache-geode-1.1.0.zip -d path_to_product
+</code></pre>
+
+<p>For the .tar format:</p>
+<pre class="highlight plaintext"><code>$ tar -xvf apache-geode-1.1.0.tar -C path_to_product
+</code></pre></li>
+<li><p>Set the JAVA_HOME environment variable. On Linux/Unix platforms:</p>
+<pre class="highlight plaintext"><code>JAVA_HOME=/usr/java/jdk1.8.0_60
+export JAVA_HOME
+</code></pre>
+
+<p>On Windows platforms:</p>
+<pre class="highlight plaintext"><code>set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_60 
+</code></pre></li>
+<li><p>Add the Geode scripts to your PATH environment variable. On Linux/Unix platforms:</p>
+<pre class="highlight plaintext"><code>PATH=$PATH:$JAVA_HOME/bin:path_to_product/bin
+export PATH
+</code></pre>
+
+<p>On Windows platforms:</p>
+<pre class="highlight plaintext"><code>set PATH=%PATH%;%JAVA_HOME%\bin;path_to_product\bin 
+</code></pre></li>
+<li><p>To verify the installation, type <code>gfsh version</code> at the command line and note that the output lists the installed version of Geode. For example:</p>
+<pre class="highlight plaintext"><code>$ gfsh version
+v1.1.0
+</code></pre>
+
+<p>For more detailed version information such as the date of the build, build number and JDK version being used, invoke:</p>
+<pre class="highlight plaintext"><code>$ gfsh version --full
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

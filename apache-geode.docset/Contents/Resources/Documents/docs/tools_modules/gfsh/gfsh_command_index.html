@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      gfsh Command Help |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_gfsh_command_index">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    gfsh Command Help
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section provides help and usage information on all <code>gfsh</code> commands, listed alphabetically.</p>
+
+<ul>
+<li><p><strong><a href="command-pages/alter.html">alter</a></strong></p>
+
+<p>Modify an existing Geode resource.</p></li>
+<li><p><strong><a href="command-pages/backup.html">backup disk-store</a></strong></p>
+
+<p>Back up persistent data from all members to the specified directory.</p></li>
+<li><p><strong><a href="command-pages/change.html">change loglevel</a></strong></p>
+
+<p>Changes the logging level on specified members.</p></li>
+<li><p><strong><a href="command-pages/clear.html">clear defined indexes</a></strong></p>
+
+<p>Clears all the defined indexes.</p></li>
+<li><p><strong><a href="command-pages/close.html">close</a></strong></p>
+
+<p>Close durable client CQs and durable clients.</p></li>
+<li><p><strong><a href="command-pages/compact.html">compact</a></strong></p>
+
+<p>Compact online and offline disk-stores.</p></li>
+<li><p><strong><a href="command-pages/configure.html">configure</a></strong></p>
+
+<p>Configure Portable Data eXchange for all the cache(s) in the cluster.</p></li>
+<li><p><strong><a href="command-pages/connect.html">connect</a></strong></p>
+
+<p>Connect to a jmx-manager either directly or via a locator.</p></li>
+<li><p><strong><a href="command-pages/create.html">create</a></strong></p>
+
+<p>Create async-event-queues, disk-stores, gateway receivers, gateway senders, indexes, and regions.</p></li>
+<li><p><strong><a href="command-pages/debug.html">debug</a></strong></p>
+
+<p>Enable or disable debugging output in <code>gfsh</code>.</p></li>
+<li><p><strong><a href="command-pages/define.html">define index</a></strong></p>
+
+<p>Define an index that can be used when executing queries. Then, you can execute a single command to create multiple indexes all at once using <code>create defined          indexes</code>.</p></li>
+<li><p><strong><a href="command-pages/deploy.html">deploy</a></strong></p>
+
+<p>Deploy JAR-packaged applications to a member or members.</p></li>
+<li><p><strong><a href="command-pages/describe.html">describe</a></strong></p>
+
+<p>Display details of a member&rsquo;s configuration, shell connection, disk-stores, members, or regions.</p></li>
+<li><p><strong><a href="command-pages/destroy.html">destroy</a></strong></p>
+
+<p>Delete or unregister functions, remove indexes, disk stores and regions.</p></li>
+<li><p><strong><a href="command-pages/disconnect.html">disconnect</a></strong></p>
+
+<p>Close any active connection(s).</p></li>
+<li><p><strong><a href="command-pages/echo.html">echo</a></strong></p>
+
+<p>Echo the given text, which may include system and user variables.</p></li>
+<li><p><strong><a href="command-pages/execute.html">execute function</a></strong></p>
+
+<p>Execute functions on members or regions.</p></li>
+<li><p><strong><a href="command-pages/exit.html">exit</a></strong></p>
+
+<p>Exit the <code>gfsh</code> shell. You can also use <code>quit</code> to exit the shell.</p></li>
+<li><p><strong><a href="command-pages/export.html">export</a></strong></p>
+
+<p>Export configurations, data, logs and stack-traces.</p></li>
+<li><p><strong><a href="command-pages/gc.html">gc</a></strong></p>
+
+<p>Force GC (Garbage Collection) on a member or members.</p></li>
+<li><p><strong><a href="command-pages/get.html">get</a></strong></p>
+
+<p>Display an entry in a region.</p></li>
+<li><p><strong><a href="command-pages/help.html">help</a></strong></p>
+
+<p>Display syntax and usage information for all the available commands.</p></li>
+<li><p><strong><a href="command-pages/hint.html">hint</a></strong></p>
+
+<p>Display information on topics and a list of commands associated with a topic.</p></li>
+<li><p><strong><a href="command-pages/history.html">history</a></strong></p>
+
+<p>Show or save the command history.</p></li>
+<li><p><strong><a href="command-pages/import.html">import</a></strong></p>
+
+<p>You can import data into a region or import an existing cluster configuration into the cluster.</p></li>
+<li><p><strong><a href="command-pages/list.html">list</a></strong></p>
+
+<p>List existing Geode resources such as deployed applications, disk-stores, functions, members, servers, and regions.</p></li>
+<li><p><strong><a href="command-pages/load-balance.html">load-balance gateway-sender</a></strong></p>
+
+<p>Causes the specified gateway sender to close its current connections and reconnect to remote gateway receivers in a more balanced fashion.</p></li>
+<li><p><strong><a href="command-pages/locate.html">locate entry</a></strong></p>
+
+<p>Locate a region entry on a member.</p></li>
+<li><p><strong><a href="command-pages/netstat.html">netstat</a></strong></p>
+
+<p>Report network information and statistics via the &ldquo;netstat&rdquo; operating system command.</p></li>
+<li><p><strong><a href="command-pages/pause.html">pause gateway-sender</a></strong></p>
+
+<p>Pause a gateway sender.</p></li>
+<li><p><strong><a href="command-pages/pdx.html">pdx rename</a></strong></p>
+
+<p>Renames PDX types in an offline disk store.</p></li>
+<li><p><strong><a href="command-pages/put.html">put</a></strong></p>
+
+<p>Add or update a region entry.</p></li>
+<li><p><strong><a href="command-pages/query.html">query</a></strong></p>
+
+<p>Run queries against Geode regions.</p></li>
+<li><p><strong><a href="command-pages/rebalance.html">rebalance</a></strong></p>
+
+<p>Rebalance partitioned regions.</p></li>
+<li><p><strong><a href="command-pages/remove.html">remove</a></strong></p>
+
+<p>Remove an entry from a region.</p></li>
+<li><p><strong><a href="command-pages/resume.html">resume gateway-sender</a></strong></p>
+
+<p>Resume any gateway senders that you have paused.</p></li>
+<li><p><strong><a href="command-pages/revoke.html">revoke missing-disk-store</a></strong></p>
+
+<p>Instruct the member(s) of a distributed system to stop waiting for a disk store to be available.</p></li>
+<li><p><strong><a href="command-pages/run.html">run</a></strong></p>
+
+<p>Execute a set of GFSH commands.</p></li>
+<li><p><strong><a href="command-pages/set.html">set variable</a></strong></p>
+
+<p>Set variables in the GFSH environment.</p></li>
+<li><p><strong><a href="command-pages/sh.html">sh</a></strong></p>
+
+<p>Execute operating system commands.</p></li>
+<li><p><strong><a href="command-pages/show.html">show</a></strong></p>
+
+<p>Display deadlocks, logs, metrics and missing disk-stores.</p></li>
+<li><p><strong><a href="command-pages/shutdown.html">shutdown</a></strong></p>
+
+<p>Stop all members.</p></li>
+<li><p><strong><a href="command-pages/sleep.html">sleep</a></strong></p>
+
+<p>Delay <code>gfsh</code> command execution.</p></li>
+<li><p><strong><a href="command-pages/start.html">start</a></strong></p>
+
+<p>Start servers, locators, gateway senders and gateway receivers, and monitoring tools.</p></li>
+<li><p><strong><a href="command-pages/status.html">status</a></strong></p>
+
+<p>Check the status of the cluster configuration service and Geode member processes, including locators, gateway receivers, gateway senders, and servers.</p></li>
+<li><p><strong><a href="command-pages/stop.html">stop</a></strong></p>
+
+<p>Stop gateway receivers, gateway senders, locators and servers.</p></li>
+<li><p><strong><a href="command-pages/undeploy.html">undeploy</a></strong></p>
+
+<p>Undeploy the JAR files that were deployed on members or groups using <code>deploy</code> command.</p></li>
+<li><p><strong><a href="command-pages/validate.html">validate offline-disk-store</a></strong></p>
+
+<p>Validate offline disk stores.</p></li>
+<li><p><strong><a href="command-pages/version.html">version</a></strong></p>
+
+<p>Display product version information.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

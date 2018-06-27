@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Handling Missing Disk Stores |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_handling_missing_disk_stores">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Handling Missing Disk Stores
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="handling_missing_disk_stores__section_9345819FC27E41FB94F5E54979B7C506"></a>
+This section applies to disk stores that hold the latest copy of your data for at least one region.</p>
+
+<h2 id="show-missing-disk-stores"><a id="handling_missing_disk_stores__section_9E8FBB7935F34239AD5E65A3E857EEAA" class="no-quick-link"></a>Show Missing Disk Stores</h2>
+
+<p>Using <code>gfsh</code>, the <code>show missing-disk-stores</code> command lists all disk stores with most recent data that are being waited on by other members.</p>
+
+<p>For replicated regions, this command only lists missing members that are preventing other members from starting up. For partitioned regions, this command also lists any offline data stores, even when other data stores for the region are online, because their offline status may be causing <code>PartitionOfflineExceptions</code> in cache operations or preventing the system from satisfying redundancy.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;show missing-disk-stores
+          Disk Store ID              |   Host    |               Directory                                           
+------------------------------------ | --------- | -------------------------------------
+60399215-532b-406f-b81f-9b5bd8d1b55a | excalibur | /usr/local/gemfire/deploy/disk_store1
+</code></pre>
+
+<p><strong>Note:</strong>
+You need to be connected to JMX Manager in <code>gfsh</code> to run this command.</p>
+
+<p><strong>Note:</strong>
+The disk store directories listed for missing disk stores may not be the directories you have currently configured for the member. The list is retrieved from the other running members—the ones who are reporting the missing member. They have information from the last time the missing disk store was online. If you move your files and change the member’s configuration, these directory locations will be stale.</p>
+
+<p>Disk stores usually go missing because their member fails to start. The member can fail to start for a number of reasons, including:</p>
+
+<ul>
+<li>  Disk store file corruption. You can check on this by validating the disk store.</li>
+<li>  Incorrect distributed system configuration for the member</li>
+<li>  Network partitioning</li>
+<li>  Drive failure</li>
+</ul>
+
+<h2 id="revoke-missing-disk-stores"><a id="handling_missing_disk_stores__section_FDF161F935054AB190D9DB0D7930CEAA" class="no-quick-link"></a>Revoke Missing Disk Stores</h2>
+
+<p>This section applies to disk stores for which both of the following are true:</p>
+
+<ul>
+<li>  Disk stores that have the most recent copy of data for one or more regions or region buckets.</li>
+<li>  Disk stores that are unrecoverable, such as when you have deleted them, or their files are corrupted or on a disk that has had a catastrophic failure.</li>
+</ul>
+
+<p>When you cannot bring the latest persisted copy online, use the revoke command to tell the other members to stop waiting for it. Once the store is revoked, the system finds the remaining most recent copy of data and uses that.</p>
+
+<p><strong>Note:</strong>
+Once revoked, a disk store cannot be reintroduced into the system.</p>
+
+<p>Use gfsh show missing-disk-stores to properly identify the disk store you need to revoke. The revoke command takes the disk store ID as input, as listed by that command.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;revoke missing-disk-store --id=60399215-532b-406f-b81f-9b5bd8d1b55a
+Missing disk store successfully revoked
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

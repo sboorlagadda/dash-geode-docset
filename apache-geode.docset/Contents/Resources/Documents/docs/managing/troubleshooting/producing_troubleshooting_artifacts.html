@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Producing Artifacts for Troubleshooting |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_troubleshooting docs_managing_troubleshooting_producing_troubleshooting_artifacts">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Producing Artifacts for Troubleshooting
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>There are several types of files that are critical for troubleshooting.</p>
+
+<p>Geode logs and statistics are the two most important artifacts used in troubleshooting. In addition, they are required for Geode system health verification and performance analysis. For these reasons, logging and statistics should always be enabled, especially in production. Save the following files for troubleshooting purposes:</p>
+
+<ul>
+<li>  Log files. Even at the default logging level, the log contains data that may be important. Save the whole log, not just the stack. For comparison, save log files from before, during, and after the problem occurred.</li>
+<li>  Statistics archive files.</li>
+<li>  Core files or stack traces.</li>
+<li>  For Linux, you can use gdb to extract a stack from a core file.</li>
+<li>  Crash dumps.</li>
+<li>  For Windows, save the user mode dump files. Some locations to check for these files:
+
+<ul>
+<li>  C:\ProgramData\Microsoft\Windows\WER\ReportArchive</li>
+<li>  C:\ProgramData\Microsoft\Windows\WER\ReportQueue</li>
+<li>  C:\Users\<em>UserProfileName</em>\AppData\Local\Microsoft\Windows\WER\ReportArchive</li>
+<li>  C:\Users\<em>UserProfileName</em>\AppData\Local\Microsoft\Windows\WER\ReportQueue</li>
+</ul></li>
+</ul>
+
+<p>When a problem arises that involves more than one process, a network problem is the most likely cause. When you diagnose a problem, create a log file for each member of all the distributed systems involved. If you are running a client/server architecture, create log files for the clients.</p>
+
+<p><strong>Note:</strong>
+You must run a time synchronization service on all hosts for troubleshooting. Synchronized time stamps ensure that log messages on different hosts can be merged to accurately reproduce a chronological history of a distributed run.</p>
+
+<p>For each process, complete these steps:</p>
+
+<ol>
+<li> Make sure the host’s clock is synchronized with the other hosts. Use a time synchronization tool such as Network Time Protocol (NTP).</li>
+<li><p>Enable logging to a file instead of standard output by editing <code>gemfire.properties</code> to include this line:</p>
+<pre class="highlight plaintext"><code>log-file=filename
+</code></pre></li>
+<li><p>Keep the log level at <code>config</code> to avoid filling up the disk while including configuration information. Add this line to <code>gemfire.properties</code>:</p>
+<pre class="highlight plaintext"><code>log-level=config
+</code></pre>
+
+<p><strong>Note:</strong>
+Running with the log level at <code>fine</code> can impact system performance and fill up your disk.</p></li>
+<li><p>Enable statistics gathering for the distributed system either by modifying <code>gemfire.properties</code>:</p>
+<pre class="highlight plaintext"><code>statistic-sampling-enabled=true
+statistic-archive-file=StatisticsArchiveFile.gfs
+</code></pre>
+
+<p>or by using the <code>gfsh alter rutime</code> command:</p>
+<pre class="highlight plaintext"><code>alter runtime --group=myMemberGroup --enable-statistics=true --statistic-archive-file=StatisticsArchiveFile.gfs
+</code></pre>
+
+<p><strong>Note:</strong>
+Collecting statistics at the default sample rate frequency of 1000 milliseconds does not incur performance overhead.</p></li>
+<li><p>Run the application again.</p></li>
+<li><p>Examine the log files. To get the clearest picture, merge the files. To find all the errors in the log file, search for lines that begin with these strings:</p>
+<pre class="highlight plaintext"><code>[error
+[severe
+</code></pre>
+
+<p>For details on merging log files, see the <code>--merge-log</code> argument for the <a href="../../tools_modules/gfsh/command-pages/export.html#topic_B80978CC659244AE91E2B8CE56EBDFE3">export logs</a>command.</p></li>
+<li><p>Export and analyze the stack traces on the member or member group where the application is running. Use the <code>gfsh export stack-traces                         command</code>. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; export stack-traces --file=ApplicationStackTrace.txt --member=member1
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

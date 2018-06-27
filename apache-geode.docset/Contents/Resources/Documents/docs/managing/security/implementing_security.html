@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Security Implementation Introduction and Overview |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_security docs_managing_security_implementing_security">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Security Implementation Introduction and Overview
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="security-features">Security Features</h2>
+
+<p>Encryption, SSL secure communication, authentication, and authorization 
+features help to secure the distributed system.</p>
+
+<p>Security features include:</p>
+
+<ul>
+<li>  <strong>A single security interface for all components</strong>. The single
+authentication and authorization mechanism simplifies the security
+implementation.
+It views and interacts with all components in a consistent manner. </li>
+<li>  <strong>System-wide role-based access control</strong>.
+Roles regiment authorized operations requested by the various components.</li>
+<li>  <strong>SSL communication</strong>. Allows configuration of connections to be 
+SSL-based, rather than plain socket connections.
+You can enable SSL separately for peer-to-peer, client, JMX, gateway senders and receivers, and HTTP connections.</li>
+<li>  <strong>Post processing of region data</strong>. Return values for operations that
+return region values may be formatted.</li>
+</ul>
+
+<h2 id="overview">Overview</h2>
+
+<p>An authentication and authorization mechanism forms the core of
+the internal security of the distributed system.
+Communications may be further protected by enabling SSL for
+data in transit.</p>
+
+<p>Authentication verifies the identity of communicating components,
+leading to control over participation.
+The variety of participants include peer members, servers,
+clients, originators of JMX operations, Pulse,
+gateway senders and receivers representing WAN members of the system,
+and commands arriving from <code>gfsh</code> on behalf of system users
+or administrators.</p>
+
+<p>Connection requests trigger the invocation of an authentication
+callback.
+This special-purpose callback is written as part of the application,
+and it attempts to authenticate the requester by whatever
+algorithm it chooses. 
+The result is either a returned principal representing the requester&rsquo;s
+authenticated identity or an exception indicating that the requester
+has not been authenticated.
+The principal becomes part of any request for operations,
+which go through the authorization process.</p>
+
+<p>Given authentication,
+isolation and access to cache data and system state can be further
+protected by implementing the authorization mechanism,
+also implemented as a special-purpose callback as part of the application.
+For example, the protection may be to permit only certain system administrators
+to start and stop servers. 
+The authority to do this needs to be limited to specific
+verified accounts, preventing those without the authorization. 
+An implementation of the authorization callback will require
+that an authenticate identity accompanies all requests to the system,
+and that the system maintains a representation of which identities
+are permitted to complete which actions or cache commands.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

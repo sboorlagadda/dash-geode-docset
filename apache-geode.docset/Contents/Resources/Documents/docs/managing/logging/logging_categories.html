@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Understanding Log Messages and Their Categories |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_logging docs_managing_logging_logging_categories">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Understanding Log Messages and Their Categories
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>System logging messages typically pertain to startup; logging management; connection and system membership; distribution; or cache, region, and entry management.</p>
+
+<ul>
+<li>  <strong>Startup information</strong>. Describe the Java version, the Geode native version, the host system, current working directory, and environment settings. These messages contain all information about the system and configuration the process is running with.</li>
+<li>  <strong>Logging management</strong>. Pertain to the maintenance of the log files themselves. This information is always in the main log file (see the discussion at Log File Name).</li>
+<li>  <strong>Connections and system membership</strong>. Report on the arrival and departure of distributed system members (including the current member) and any information related to connection activities or failures. This includes information on communication between tiers in a hierarchical cache.</li>
+<li>  <strong>Distribution</strong>. Report on the distribution of data between system members. These messages include information about region configuration, entry creation and modification, and region and entry invalidation and destruction.</li>
+<li>  <strong>Cache, region, and entry management</strong>. Cache initialization, listener activity, locking and unlocking, region initialization, and entry updates.</li>
+</ul>
+
+<h2 id="structure-of-a-log-message"><a id="how_logging_works__section_578DFE8DD92F4237A8571593EAC9C3B1" class="no-quick-link"></a>Structure of a Log Message</h2>
+
+<p>Every logged message contains:</p>
+
+<ul>
+<li>  The message header within square brackets:
+
+<ol>
+<li> The message level</li>
+<li> The time the message was logged</li>
+<li> The ID of the connection and thread that logged the message, which might be the main program or a system management process</li>
+</ol></li>
+<li>  The message itself, which can be a string and/or an exception with the exception stack trace</li>
+</ul>
+<pre class="highlight plaintext"><code>[config 2005/11/08 15:46:08.710 PST PushConsumer main nid=0x1]
+Cache initialized using "file:/Samples/quickstart/xml/PushConsumer.xml".
+</code></pre>
+
+<h2 id="log-file-name"><a id="how_logging_works__section_43A099C67FF04A1EB0A07B617D653A38" class="no-quick-link"></a>Log File Name</h2>
+
+<p>Specify your Geode system member&rsquo;s main log in the gemfire property <code>log-file</code> setting.</p>
+
+<p>Geode uses this name for the most recent log file, actively in use if the member is running, or used for the last run. Geode creates the main log file when the application starts.</p>
+
+<p>By default, the main log contains the entire log for the member session. If you specify a <code>log-file-size-limit</code>, Geode splits the logging into these files:</p>
+
+<ul>
+<li>  <strong>The main, current log</strong>. Holding current logging entries. Named with the string you specified in <code>log-file</code>.</li>
+<li>  <strong>Child logs</strong>. Holding older logging entries. These are created by renaming the main, current log when it reaches the size limit.</li>
+<li>  <strong>A metadata log file, with <code>meta-</code> prefixed to the name</strong>. Used to track of startup, shutdown, child log management, and other logging management operations</li>
+</ul>
+
+<p>The current log is renamed, or rolled, to the next available child log when the specified size limit is reached.</p>
+
+<p>When your application connects with logging enabled, it creates the main log file and, if required, the <code>meta-</code> log file. If the main log file is present when the member starts up, it is renamed to the next available child log to make way for new logging.</p>
+
+<p>Your current, main log file always has the name you specified in <code>log-file</code>. The old log files and child log files have names derived from the main log file name. These are the pieces of a renamed log or child log file name where <code>filename.extension</code> is the <code>log-file</code> specification</p>
+
+<p><img src="../../images/logging-1.gif" id="how_logging_works__image_A144E5195FDA49A1A8914F233495BA88" class="image" /></p>
+
+<p>If child logs are not used, the child file sequence number is a constant 00 (two zeros).</p>
+
+<p>For locators, the log file name is fixed. For the standalone locator started in <code>gfsh</code>, it is always named <code>&lt;locator_name&gt;.log</code> where the locator_name corresponds to the name specified at locator startup. For the locator that runs colocated inside another member, the log file is the member’s log file.</p>
+
+<p>For applications and the servers, your log file specification can be relative or absolute. If no file is specified, the defaults are standard output for applications and <code>&lt;server_name&gt;.log</code> for servers started with gfsh and <code>cacheserver.log</code> for servers started with the older cacheserver script.</p>
+
+<p>To figure out the member&rsquo;s most recent activities, look at the <code>meta-</code> log file or, if no meta file exists, the main log file.</p>
+
+<h2 id="how-the-system-renames-logs"><a id="how_logging_works__section_D464FDFFC30141F385689A47CE5E8D38" class="no-quick-link"></a>How the System Renames Logs</h2>
+
+<p>The log file that you specify is the base name used for all logging and logging archives. If a log file with the specified name already exists at startup, the distributed system automatically renames it before creating the current log file. This is a typical directory listing after a few runs with <code>log-file=system.log</code>:</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -tlra system*
+-rw-rw-r-- 1 jpearson users 11106 Nov 3 11:07 system-01-00.log
+-rw-rw-r-- 1 jpearson users 11308 Nov 3 11:08 system-02-00.log
+-rw-rw-r-- 1 jpearson users 11308 Nov 3 11:09 system.log
+bash-2.05$
+</code></pre>
+
+<p>The first run created <code>system.log</code> with a timestamp of Nov 3 11:07. The second run renamed that file to <code>system-01-00.log</code> and created a new <code>system.log</code> with a timestamp of Nov 3 11:08. The third run renamed that file to <code>system-02-00.log</code> and created the file named <code>system.log</code> in this listing.</p>
+
+<p>When the distributed system renames the log file, it assigns the next available number to the new file, as XX of <code>filename-XX-YY.extension</code>. This next available number depends on existing old log files and also on any old statistics archives. The system assigns the next number that is higher than any in use for statistics or logging. This keeps current log files and statistics archives paired up regardless of the state of the older files in the directory. Thus, if an application is archiving statistics and logging to <code>system.log</code> and <code>statArchive.gfs</code>, and it runs in a Unix directory with these files:</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -tlr stat* system*
+-rw-rw-r-- 1 jpearson users 56143 Nov 3 11:07 statArchive-01-00.gfs
+-rw-rw-r-- 1 jpearson users 56556 Nov 3 11:08 statArchive-02-00.gfs
+-rw-rw-r-- 1 jpearson users 56965 Nov 3 11:09 statArchive-03-00.gfs
+-rw-rw-r-- 1 jpearson users 11308 Nov 3 11:27 system-01-00.log
+-rw-rw-r-- 1 jpearson users 59650 Nov 3 11:34 statArchive.gfs
+-rw-rw-r-- 1 jpearson users 18178 Nov 3 11:34 system.log
+</code></pre>
+
+<p>the directory contents after the run look like this (changed files in <strong>bold</strong>):</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -ltr stat* system*
+-rw-rw-r-- 1 jpearson users 56143 Nov 3 11:07 statArchive-01-00.gfs
+-rw-rw-r-- 1 jpearson users 56556 Nov 3 11:08 statArchive-02-00.gfs
+-rw-rw-r-- 1 jpearson users 56965 Nov 3 11:09 statArchive-03-00.gfs
+-rw-rw-r-- 1 jpearson users 11308 Nov 3 11:27 system-01-00.log
+-rw-rw-r-- 1 jpearson users 59650 Nov 3 11:34 statArchive-04-00.gfs
+-rw-rw-r-- 1 jpearson users 18178 Nov 3 11:34 system-04-00.log
+-rw-rw-r-- 1 jpearson users 55774 Nov 4 10:08 statArchive.gfs
+-rw-rw-r-- 1 jpearson users 17681 Nov 4 10:08 system.log
+
+</code></pre>
+
+<p>The statistics and the log file are renamed using the next integer that is available to both, so the log file sequence jumps past the gap in this case.</p>
+
+<h2 id="log-level"><a id="how_logging_works__section_02D8D53AC740490D842C6525FA7DB815" class="no-quick-link"></a>Log Level</h2>
+
+<p>The higher the log level, the more important and urgent the message. If you are having problems with your system, a first-level approach is to lower the log-level (thus sending more of the detailed messages to the log file) and recreate the problem. The additional log messages often help uncover the source.</p>
+
+<p>These are the levels, in descending order, with sample output:</p>
+
+<ul>
+<li><p><strong>severe (highest level)</strong>. This level indicates a serious failure. In general, severe messages describe events that are of considerable importance that will prevent normal program execution. You will likely need to shut down or restart at least part of your system to correct the situation.</p>
+
+<p>This severe error was produced by configuring a system member to connect to a non-existent locator:</p>
+<pre class="highlight plaintext"><code>[severe 2005/10/24 11:21:02.908 PDT nameFromGemfireProperties
+DownHandler (FD_SOCK) nid=0xf] GossipClient.getInfo():
+exception connecting to host localhost:30303:
+java.net.ConnectException: Connection refused
+</code></pre></li>
+<li><p><strong>error</strong>. This level indicates that something is wrong in your system. You should be able to continue running, but the operation noted in the error message failed.</p>
+
+<p>This error was produced by throwing a <code>Throwable</code> from a <code>CacheListener</code>. While dispatching events to a customer-implemented cache listener, Geode catches any <code>Throwable</code> thrown by the listener and logs it as an error. The text shown here is followed by the output from the <code>Throwable</code> itself.</p>
+<pre class="highlight plaintext"><code>[error 2007/09/05 11:45:30.542 PDT gemfire1_newton_18222
+&lt;vm_2_thr_5_client1_newton_18222-0x472e&gt; nid=0x6d443bb0]
+Exception occurred in CacheListener
+</code></pre></li>
+<li><p><strong>warning</strong>. This level indicates a potential problem. In general, warning messages describe events that are of interest to end users or system managers, or that indicate potential problems in the program or system.</p>
+
+<p>This message was obtained by starting a client with a Pool configured with queueing enabled when there was no server running to create the client’s queue:</p>
+<pre class="highlight plaintext"><code>[warning 2008/06/09 13:09:28.163 PDT &lt;queueTimer-client&gt; tid=0xe]
+QueueManager - Could not create a queue. No queue servers available
+</code></pre>
+
+<p>This message was obtained by trying to get an entry in a client region while there was no server running to respond to the client request:</p>
+<pre class="highlight plaintext"><code>[warning 2008/06/09 13:12:31.833 PDT &lt;main&gt; tid=0x1] Unable to create a
+connection in the allowed time
+org.apache.geode.cache.client.NoAvailableServersException
+    at org.apache.geode.cache.client.internal.pooling.ConnectionManagerImpl.
+borrowConnection(ConnectionManagerImpl.java:166)
+. . .
+org.apache.geode.internal.cache.LocalRegion.get(LocalRegion.java:1122
+)
+</code></pre></li>
+<li><p><strong>info</strong>. This is for informational messages, typically geared to end users and system administrators.</p>
+
+<p>This is a typical info message created at system member startup. This indicates that no other <code>DistributionManager</code>s are running in the distributed system, which means no other system members are running:</p>
+<pre class="highlight plaintext"><code>[info 2005/10/24 11:51:35.963 PDT CacheRunner main nid=0x1]
+DistributionManager straw(7368):41714 started on 192.0.2.0[10333]
+with id straw(7368):41714 (along with 0 other DMs)
+</code></pre>
+
+<p>When another system member joins the distributed system, these info messages are output by the members that are already running:</p>
+<pre class="highlight plaintext"><code>[info 2005/10/24 11:52:03.934 PDT CacheRunner P2P message reader for
+straw(7369):41718 nid=0x21] Member straw(7369):41718 has joined the
+distributed cache.
+</code></pre>
+
+<p>When another member leaves because of an interrupt or through normal program termination:</p>
+<pre class="highlight plaintext"><code>[info 2005/10/24 11:52:05.128 PDT CacheRunner P2P message reader for
+straw(7369):41718 nid=0x21] Member straw(7369):41718 has left the
+distributed cache.
+</code></pre>
+
+<p>And when another member is killed:</p>
+<pre class="highlight plaintext"><code>[info 2005/10/24 13:08:41.389 PDT CacheRunner DM-Puller nid=0x1b] Member
+straw(7685):41993 has unexpectedly left the distributed cache.
+</code></pre></li>
+<li><p><strong>config</strong>. This is the default setting for logging. This level provides static configuration messages that are often used to debug problems associated with particular configurations.</p>
+
+<p>You can use this config message to verify your startup configuration:</p>
+<pre class="highlight plaintext"><code>[config 2008/08/08 14:28:19.862 PDT CacheRunner &lt;main&gt; tid=0x1] Startup Configuration:
+ack-severe-alert-threshold="0"
+ack-wait-threshold="15"
+archive-disk-space-limit="0"
+archive-file-size-limit="0"
+async-distribution-timeout="0"
+async-max-queue-size="8"
+async-queue-timeout="60000"
+bind-address=""
+cache-xml-file="cache.xml"
+conflate-events="server"
+conserve-sockets="true"
+  ...
+socket-buffer-size="32768"
+socket-lease-time="60000"
+ssl-ciphers="any"
+ssl-enabled="false"
+ssl-protocols="any"
+ssl-require-authentication="true"
+start-locator=""
+statistic-archive-file=""
+statistic-sample-rate="1000"
+statistic-sampling-enabled="false"
+tcp-port="0"
+udp-fragment-size="60000"
+udp-recv-buffer-size="1048576"
+udp-send-buffer-size="65535"
+</code></pre></li>
+<li><p><strong>fine</strong>. This level provides tracing information that is generally of interest to developers. It is used for the lowest volume, most important, tracing messages.</p>
+
+<p><strong>Note:</strong>
+Generally, you should only use this level if instructed to do so by technical support. At this logging level, you will see a lot of noise that might not indicate a problem in your application. This level creates very verbose logs that may require significantly more disk space than the higher levels.</p>
+<pre class="highlight plaintext"><code>[fine 2011/06/21 11:27:24.689 PDT &lt;locatoragent_ds_w1-gst-dev04_2104&gt; tid=0xe] SSL Configuration:
+    ssl-enabled = false
+</code></pre></li>
+<li><p><strong>finer, finest, and all</strong>. These levels exist for internal use only. They produce a large amount of data and so consume large amounts of disk space and system resources.
+<strong>Note:</strong>
+Do not use these settings unless asked to do so by technical support.</p></li>
+</ul>
+
+<p><strong>Note:</strong>
+Geode no longer supports setting system properties for VERBOSE logging. To enable VERBOSE logging, see <a href="configuring_log4j2.html">Advanced Users—Configuring Log4j 2 for Geode</a></p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

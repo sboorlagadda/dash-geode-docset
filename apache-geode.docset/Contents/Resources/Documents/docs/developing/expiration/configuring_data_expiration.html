@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configure Data Expiration |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_expiration docs_developing_expiration_configuring_data_expiration">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configure Data Expiration
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Configure the type of expiration and the expiration action to use.</p>
+
+<p><a id="configuring_data_expiration__section_ADB8302125624E01A808EA5E4FF79A5C"></a></p>
+
+<ul>
+<li><p>Set the region&rsquo;s <code>statistics-enabled</code> attribute to true.</p>
+
+<p>The statistics used for expiration are available directly to the application through the <code>CacheStatistics</code> object returned by the <code>Region</code> and <code>Region.Entry</code> <code>getStatistics</code> methods. The <code>CacheStatistics</code> object also provides a method for resetting the statistics counters.</p></li>
+<li><p>Set the expiration attributes by expiration type, with the max times and expiration actions. See the region attributes listings for <code>entry-time-to-live</code>, <code>entry-idle-time</code>, <code>region-time-to-live</code>, and <code>region-idle-time</code> in <a href="../../reference/topics/cache_xml.html#region-attributes">&lt;region-attributes&gt;</a>.</p></li>
+</ul>
+
+<p><strong>For partitioned regions:</strong></p>
+
+<ul>
+<li>On a partitioned region, expiration is supported only for the region&rsquo;s entries, not for the region itself. Region-wide expiration attributes, such as <code>region-time-to-live</code> and <code>region-idle-time</code> do not apply to the data items in partitioned regions.</li>
+<li>To ensure reliable read behavior when working with partitioned regions, use the <code>entry-time-to-live</code> attribute, not the <code>entry-idle-time</code> attribute.</li>
+<li>You cannot use <code>local-destroy</code> or <code>local-invalidate</code> expiration actions in partitioned regions.</li>
+</ul>
+
+<p><strong>Replicated regions example:</strong></p>
+<pre class="highlight plaintext"><code>// Setting standard expiration on an entry
+&lt;region-attributes statistics-enabled="true"&gt; 
+  &lt;entry-idle-time&gt; 
+    &lt;expiration-attributes timeout="60" action="local-invalidate"/&gt; 
+  &lt;/entry-idle-time&gt; 
+&lt;/region-attributes&gt; 
+</code></pre>
+
+<ul>
+<li><p>Override the region-wide settings for specific entries, if required by your application. To do this:</p>
+
+<ol>
+<li><p>Program a custom expiration class that implements <code>org.apache.geode.cache.CustomExpiry</code>. Example:</p>
+<pre class="highlight plaintext"><code>// Custom expiration class
+// Use the key for a region entry to set entry-specific expiration timeouts of 
+//   10 seconds for even-numbered keys with a DESTROY action on the expired entries
+//   Leave the default region setting for all odd-numbered keys. 
+public class MyClass implements CustomExpiry, Declarable 
+{ 
+    private static final ExpirationAttributes CUSTOM_EXPIRY = 
+            new ExpirationAttributes(10, ExpirationAction.DESTROY); 
+    public ExpirationAttributes getExpiry(Entry entry) 
+    { 
+        int key = (Integer)entry.getKey(); 
+        return key % 2 == 0 ? CUSTOM_EXPIRY : null; 
+    }
+}
+</code></pre></li>
+<li><p>Define the class inside the expiration attributes settings for the region. Example:</p>
+<pre class="highlight plaintext"><code>&lt;!-- Set default entry idle timeout expiration for the region --&gt; 
+&lt;!-- Pass entries to custom expiry class for expiration overrides --&gt;
+&lt;region-attributes statistics-enabled="true"&gt; 
+    &lt;entry-idle-time&gt; 
+        &lt;expiration-attributes timeout="60"&gt; 
+            &lt;custom-expiry&gt; 
+                &lt;class-name&gt;com.company.mypackage.MyClass&lt;/class-name&gt; 
+            &lt;/custom-expiry&gt; 
+        &lt;/expiration-attributes&gt; 
+    &lt;/entry-idle-time&gt; 
+&lt;/region-attributes&gt;
+</code></pre></li>
+</ol>
+
+<p>The gfsh equivalent of the above XML is:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; create region --name=region1 --type=REPLICATE --enable-statistics \
+--entry-idle-time-expiration=60 --entry-idle-time-custom-expiry=com.company.mypackage.MyClass
+</code></pre></li>
+<li><p>When the primary expires entries, it requests last-accessed statistics from the secondaries.  The
+primary adopts the most recent access time and reschedules the expiration, if warranted. This is
+done only for distributed expiration actions, and applies to both partitioned and replicated
+regions.</p></li>
+</ul>
+
+<p>You can also configure regions using the gfsh command-line interface. See <a href="../../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_EF03119A40EE492984F3B6248596E1DD">Region Commands</a>.</p>
+
+<h2 id="configuring-the-number-of-threads-for-expiration">Configuring the Number of Threads for Expiration</h2>
+
+<p>You can use the <code>gemfire.EXPIRY_THREADS</code> system property to increase the number of threads that handle expiration. By default, one thread handles expiration, and it is possible for the thread to become overloaded when entries expire faster than the thread can expire them. If a single thread is handling too many expirations, it can result in an OOME. Set the gemfire.EXPIRY_THREADS system property to the desired number when starting the cache server.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

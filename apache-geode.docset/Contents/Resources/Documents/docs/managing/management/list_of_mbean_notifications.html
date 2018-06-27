@@ -1,0 +1,273 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      List of JMX MBean Notifications |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_list_of_mbean_notifications">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    List of JMX MBean Notifications
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="mbean_notifications_list"></a></p>
+
+<p>This topic lists all available JMX notifications emitted by Geode MBeans.</p>
+
+<p>Notifications are emitted by the following MBeans:</p>
+
+<ul>
+<li><p><strong><a href="list_of_mbean_notifications.html#reference_czt_hq2_vj">MemberMXBean Notifications</a></strong></p></li>
+<li><p><strong><a href="list_of_mbean_notifications.html#reference_dzt_hq2_vj">MemberMXBean Gateway Notifications</a></strong></p></li>
+<li><p><strong><a href="list_of_mbean_notifications.html#cacheservermxbean_notifications">CacheServerMXBean Notifications</a></strong></p></li>
+<li><p><strong><a href="list_of_mbean_notifications.html#distributedsystemmxbean_notifications">DistributedSystemMXBean Notifications</a></strong></p></li>
+</ul>
+
+<h2 id="membermxbean-notifications"><a id="reference_czt_hq2_vj" class="no-quick-link"></a>MemberMXBean Notifications</h2>
+
+<table><thead>
+<tr>
+<th>Notification Type</th>
+<th>Notification Source</th>
+<th>Message</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>gemfire.distributedsystem.cache.region.created</td>
+<td>Member name or ID</td>
+<td>Region Created with Name &lt;Region Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.region.closed</td>
+<td>Member name or ID</td>
+<td>Region Destroyed/Closed with Name &lt;Region Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.disk.created</td>
+<td>Member name or ID</td>
+<td>DiskStore Created with Name &lt;DiskStore Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.disk.closed</td>
+<td>Member name or ID</td>
+<td>DiskStore Destroyed/Closed with Name &lt;DiskStore Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.lockservice.created</td>
+<td>Member name or ID</td>
+<td>LockService Created with Name &lt;LockService Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.lockservice.closed</td>
+<td>Member name or ID</td>
+<td>Lockservice Closed with Name &lt;LockService Name&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.async.event.queue.created</td>
+<td>Member name or ID</td>
+<td>Async Event Queue is Created in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.server.started</td>
+<td>Member name or ID</td>
+<td>Cache Server is Started in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.server.stopped</td>
+<td>Member name or ID</td>
+<td>Cache Server is stopped in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.locator.started</td>
+<td>Member name or ID</td>
+<td>Locator is Started in the VM</td>
+</tr>
+</tbody></table>
+
+<h2 id="membermxbean-gateway-notifications"><a id="reference_dzt_hq2_vj" class="no-quick-link"></a>MemberMXBean Gateway Notifications</h2>
+
+<table><thead>
+<tr>
+<th>Notification Type</th>
+<th>Notification Source</th>
+<th>Message</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>gemfire.distributedsystem.gateway.sender.created</td>
+<td>Member name or ID</td>
+<td>GatewaySender Created in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.sender.started</td>
+<td>Member name or ID</td>
+<td>GatewaySender Started in the VM &lt;Sender Id&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.sender.stopped</td>
+<td>Member name or ID</td>
+<td>GatewaySender Stopped in the VM &lt;Sender Id&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.sender.paused</td>
+<td>Member name or ID</td>
+<td>GatewaySender Paused in the VM &lt;Sender Id&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.sender.resumed</td>
+<td>Member name or ID</td>
+<td>GatewaySender Resumed in the VM &lt;Sender Id&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.receiver.created</td>
+<td>Member name or ID</td>
+<td>GatewayReceiver Created in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.receiver.started</td>
+<td>Member name or ID</td>
+<td>GatewayReceiver Started in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.gateway.receiver.stopped</td>
+<td>Member name or ID</td>
+<td>GatewayReceiver Stopped in the VM</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.server.started</td>
+<td>Member name or ID</td>
+<td>Cache Server is Started in the VM</td>
+</tr>
+</tbody></table>
+
+<h2 id="cacheservermxbean-notifications"><a id="cacheservermxbean_notifications" class="no-quick-link"></a>CacheServerMXBean Notifications</h2>
+
+<table><thead>
+<tr>
+<th>Notification Type</th>
+<th>Notification Source</th>
+<th>Message</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>gemfire.distributedsystem.cacheserver.client.joined</td>
+<td>CacheServer MBean Name</td>
+<td>Client joined with Id &lt;Client ID&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cacheserver.client.left</td>
+<td>CacheServer MBean Name</td>
+<td>Client crashed with Id &lt;Client ID&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cacheserver.client.crashed</td>
+<td>CacheServer MBean name</td>
+<td>Client left with Id &lt;Client ID&gt;</td>
+</tr>
+</tbody></table>
+
+<h2 id="distributedsystemmxbean-notifications"><a id="distributedsystemmxbean_notifications" class="no-quick-link"></a>DistributedSystemMXBean Notifications</h2>
+
+<table><thead>
+<tr>
+<th>Notification Type</th>
+<th>Notification Source</th>
+<th>Message</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>gemfire.distributedsystem.cache.member.joined</td>
+<td>Name or ID of member who joined</td>
+<td>Member Joined &lt;Member Name or ID&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.member.departed</td>
+<td>Name or ID of member who departed</td>
+<td>Member Departed &lt;Member Name or ID&gt; has crashed = &lt;true/false&gt;</td>
+</tr>
+<tr>
+<td>gemfire.distributedsystem.cache.member.suspect</td>
+<td>Name or ID of member who is suspected</td>
+<td>Member Suspected &lt;Member Name or ID&gt; By &lt;Who Suspected&gt;</td>
+</tr>
+<tr>
+<td>system.alert.*</td>
+<td>DistributedSystem(&ldquo;&lt;DistributedSystem ID&rdquo;&gt;)</td>
+<td>Alert Message</td>
+</tr>
+</tbody></table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

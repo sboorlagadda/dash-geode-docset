@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Conflating Events in a Queue |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_conflate_multisite_gateway_queue">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Conflating Events in a Queue
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Conflating a queue improves distribution performance. When conflation is enabled, only the latest queued value is sent for a particular key.</p>
+
+<p><a id="conflate_multisite_gateway_queue__section_294AD2E2328E4D6B8D6A73966F7B3B14"></a>
+<strong>Note:</strong>
+Do not use conflation if your receiving applications depend on the specific ordering of entry modifications, or if they need to be notified of every change to an entry.</p>
+
+<p>Conflation is most useful when a single entry is updated frequently, but other sites only need to know the current value of the entry (rather than the value of each update). When an update is added to a queue that has conflation enabled, if there is already an update message in the queue for the entry key, then the existing message assumes the value of the new update and the new update is dropped, as shown here for key A.</p>
+
+<p><img src="../../images/MultiSite-4.gif" id="conflate_multisite_gateway_queue__image_27219DAAB6D643348641389DBAEA1E94" class="image" /></p>
+
+<p><strong>Note:</strong>
+This method of conflation is different from the one used for server-to-client subscription queue conflation and peer-to-peer distribution within a distributed system.</p>
+
+<h2 id="examples—configuring-conflation-for-a-gateway-sender-queue"><a id="conflate_multisite_gateway_queue__section_207FA6BF0F734F9A91EAACB136F8D6B5" class="no-quick-link"></a>Examples—Configuring Conflation for a Gateway Sender Queue</h2>
+
+<p>To enable conflation for a gateway sender queue, use one of the following mechanisms:</p>
+
+<ul>
+<li><p><strong>cache.xml configuration</strong></p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+  &lt;gateway-sender id="NY" parallel="true" 
+   remote-distributed-system-id="1"
+   enable-persistence="true"
+   disk-store-name="gateway-disk-store"
+   enable-batch-conflation="true"/&gt; 
+   ... 
+&lt;/cache&gt;
+</code></pre></li>
+<li><p><strong>Java API configuration</strong></p>
+<pre class="highlight plaintext"><code>Cache cache = new CacheFactory().create();
+
+GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
+gateway.setParallel(true);
+gateway.setPersistenceEnabled(true);
+gateway.setDiskStoreName("gateway-disk-store");
+gateway.setBatchConflationEnabled(true);
+GatewaySender sender = gateway.create("NY", "1");
+sender.start();
+</code></pre>
+
+<p>Entry updates in the current, in-process batch are not eligible for conflation.</p></li>
+<li><p><strong>gfsh:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;create gateway-sender --id="NY" --parallel=true 
+   --remote-distributed-system-id="1"
+   --enable-persistence=true
+   --disk-store-name="gateway-disk-store"
+   --enable-batch-conflation=true
+</code></pre></li>
+</ul>
+
+<p>The following examples show how to configure conflation for an asynchronous event queue:</p>
+
+<ul>
+<li><p><strong>cache.xml configuration</strong></p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+   &lt;async-event-queue id="sampleQueue" persistent="true"
+    disk-store-name="async-disk-store" parallel="false"
+    enable-batch-conflation="true"&gt;
+      &lt;async-event-listener&gt;
+         &lt;class-name&gt;MyAsyncEventListener&lt;/class-name&gt;
+         &lt;parameter name="url"&gt; 
+           &lt;string&gt;jdbc:db2:SAMPLE&lt;/string&gt; 
+         &lt;/parameter&gt; 
+         &lt;parameter name="username"&gt; 
+           &lt;string&gt;gfeadmin&lt;/string&gt; 
+         &lt;/parameter&gt; 
+         &lt;parameter name="password"&gt; 
+           &lt;string&gt;admin1&lt;/string&gt; 
+         &lt;/parameter&gt; 
+   &lt;/async-event-listener&gt;
+ &lt;/async-event-queue&gt;
+...
+&lt;/cache&gt;
+</code></pre></li>
+<li><p><strong>Java API configuration</strong></p>
+<pre class="highlight plaintext"><code>Cache cache = new CacheFactory().create();
+AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
+factory.setPersistent(true);
+factory.setDiskStoreName("async-disk-store");
+factory.setParallel(false);
+factory.setBatchConflationEnabled(true);
+AsyncEventListener listener = new MyAsyncEventListener();
+AsyncEventQueue sampleQueue = factory.create("customerWB", listener);
+</code></pre>
+
+<p>Entry updates in the current, in-process batch are not eligible for conflation.</p></li>
+<li><p><strong>gfsh:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;create async-event-queue --id="sampleQueue" --persistent=true 
+--disk-store="async-disk-store" --parallel="false" 
+--listener=myAsyncEventListener 
+--listener-param=url#jdbc:db2:SAMPLE 
+--listener-param=username#gfeadmin 
+--listener-param=password#admin1
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

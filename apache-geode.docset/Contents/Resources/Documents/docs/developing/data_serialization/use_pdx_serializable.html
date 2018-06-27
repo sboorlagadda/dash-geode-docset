@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Implementing PdxSerializable in Your Domain Object |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_use_pdx_serializable">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Implementing PdxSerializable in Your Domain Object
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>For a domain object with source that you can modify, implement the <code>PdxSerializable</code> interface in the object and use its methods to serialize and deserialize the object&rsquo;s fields.</p>
+
+<p><a id="use_pdx_serializable__section_7F357A8E56B54BFB9A5778C0F89E034E"></a>
+<strong>Procedure</strong></p>
+
+<ol>
+<li><p>In your domain class, implement <code>PdxSerializable</code>, importing the required <code>org.apache.geode.pdx</code> classes.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>import org.apache.geode.pdx.PdxReader;
+import org.apache.geode.pdx.PdxSerializable;
+import org.apache.geode.pdx.PdxWriter;
+
+public class PortfolioPdx implements PdxSerializable {
+  ...
+</code></pre></li>
+<li><p>If your domain class does not have a zero-arg constructor, create one for it.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>public PortfolioPdx(){}
+</code></pre></li>
+<li><p>Program <code>PdxSerializable.toData.</code></p>
+
+<ol>
+<li> Write each standard Java data field of your domain class using the <code>PdxWriter</code> write methods. Geode automatically provides <code>PdxWriter</code> to the <code>toData</code> method for <code>PdxSerializable</code> objects.</li>
+<li> Call the <code>PdxWriter</code> <code>markIdentifyField</code> method for each field you want to have Geode use to identify your object. Put this after the field&rsquo;s write method. Geode uses this information to compare objects for operations like distinct queries. If you do not set as least one identity field, then the <code>equals</code> and <code>hashCode</code> methods will use all PDX fields to compare objects and consequently, will not perform as well. It is important that the fields used by your <code>equals</code> and <code>hashCode</code> implementations are the same fields that you mark as identity fields.</li>
+<li> For a particular version of your class, you need to consistently write the same named field each time. The field names or number of fields must not change from one instance to another for the same class version.</li>
+<li><p>For best performance, do fixed width fields first and then variable length fields.</p>
+
+<p>Example <code>toData</code> code:</p>
+<pre class="highlight plaintext"><code>// PortfolioPdx fields
+  private int id;
+  private String pkid;
+  private Map&lt;String, PositionPdx&gt; positions;
+  private String type;
+  private String status;
+  private String[] names;
+  private byte[] newVal;
+  private Date creationDate;
+  ...
+
+  public void toData(PdxWriter writer)
+  {
+    writer.writeInt("id", id)
+// The markIdentifyField call for a field must 
+// come after the field's write method 
+    .markIdentityField("id")
+    .writeDate("creationDate", creationDate) //fixed length field
+    .writeString("pkid", pkid)
+    .writeObject("positions", positions)
+    .writeString("type", type)
+    .writeString("status", status)
+    .writeStringArray("names", names)
+    .writeByteArray("newVal", newVal)
+  }
+</code></pre></li>
+</ol></li>
+<li><p>Program <code>PdxSerializable.fromData</code> to read your data fields from the serialized form into the object&rsquo;s fields using the <code>PdxReader</code> read methods.</p>
+
+<p>Provide the same names that you did in <code>toData</code> and call the read operations in the same order as you called the write operations in your <code>toData</code> implementation.</p>
+
+<p>Geode automatically provides <code>PdxReader</code> to the <code>fromData</code> method for <code>PdxSerializable</code> objects.</p>
+
+<p>Example <code>fromData</code> code:</p>
+<pre class="highlight plaintext"><code>
+public void fromData(PdxReader reader)
+  {
+    id = reader.readInt("id");
+    creationDate = reader.readDate("creationDate");
+    pkid = reader.readString("pkid");
+    position1 = (PositionPdx)reader.readObject("position1");
+    position2 = (PositionPdx)reader.readObject("position2");
+    positions = (Map&lt;String, PositionPdx&gt;)reader.readObject("positions");
+    type = reader.readString("type");
+    status = reader.readString("status");
+    names = reader.readStringArray("names");
+    newVal = reader.readByteArray("newVal");
+    arrayNull = reader.readByteArray("arrayNull");
+    arrayZeroSize = reader.readByteArray("arrayZeroSize");
+  }
+</code></pre></li>
+</ol>
+
+<p><strong>What to do next</strong></p>
+
+<ul>
+<li>  As needed, configure and program your Geode applications to use <code>PdxInstance</code> for selective object deserialization. See <a href="program_application_for_pdx.html">Programming Your Application to Use PdxInstances</a>.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

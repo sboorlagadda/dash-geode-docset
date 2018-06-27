@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configure Distributed, Replicated, and Preloaded Regions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_distributed_regions docs_developing_distributed_regions_managing_distributed_regions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configure Distributed, Replicated, and Preloaded Regions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Plan the configuration and ongoing management of your distributed, replicated, and preloaded regions, and configure the regions.</p>
+
+<p><a id="configure_distributed_region__section_11E9E1B3EB5845D9A4FB226A992B8D0D"></a>
+Before you begin, understand <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ol>
+<li><p>Choose the region shortcut setting that most closely matches your region configuration. See <strong><code>org.apache.geode.cache.RegionShortcut</code></strong> or <a href="../../reference/topics/chapter_overview_regionshortcuts.html#concept_ymp_rkz_4dffhdfhk">Region Shortcuts</a>. To create a replicated region, use one of the <code>REPLICATE</code> shortcut settings. To create a preloaded region, set your region <code>data-policy</code> to <code>preloaded</code>. This <code>cache.xml</code> declaration creates a replicated region:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes refid="REPLICATE"&gt; 
+&lt;/region-attributes&gt;
+</code></pre>
+
+<p>You can also use gfsh to configure a region. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=regionA --type=REPLICATE
+</code></pre>
+
+<p>See <a href="../region_options/region_types.html#region_types">Region Types</a>.</p></li>
+<li><p>Choose the level of distribution for your region. The region shortcuts in <code>RegionShortcut</code> for distributed regions use <code>distributed-ack</code> scope. If you need a different scope, set the <code>region-attributes</code> <code>scope</code> to <code>distributed-no-ack</code> or <code>global</code>.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes refid="REPLICATE" scope="distributed-no-ack"&gt; 
+&lt;/region-attributes&gt;
+</code></pre></li>
+<li><p>If you are using the <code>distributed-ack</code> scope, optionally enable concurrency checks for the region.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes refid="REPLICATE" scope="distributed-ack" concurrency-checks-enabled="true"&gt; 
+&lt;/region-attributes&gt;
+</code></pre></li>
+<li><p>If you are using <code>global</code> scope, program any explicit locking you need in addition to the automated locking provided by Geode.</p></li>
+</ol>
+
+<h2 id="local-destroy-and-invalidate-in-the-replicated-region"><a id="configure_distributed_region__section_6F53FB58B8A84D0F8086AFDB08A649F9" class="no-quick-link"></a>Local Destroy and Invalidate in the Replicated Region</h2>
+
+<p>Of all the operations that affect the local cache only, only local region destroy is allowed in a replicated region. Other operations are not configurable or throw exceptions. For example, you cannot use local destroy as the expiration action on a replicated region. This is because local operations like entry invalidation and destruction remove data from the local cache only. A replicated region would no longer be complete if data were removed locally but left intact.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

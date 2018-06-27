@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Delta Propagation Properties |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_delta_propagation docs_developing_delta_propagation_delta_propagation_properties">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Delta Propagation Properties
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic describes the properties that can be used to configure delta propagation.</p>
+
+<p>Delta propagation properties can be configured through the API and through the <code>gemfire.properties</code> and <code>cache.xml</code> files.</p>
+
+<h2 id="delta-propagation"><a id="delta_propagation_properties__section_561D6DA876E24469B7536E98AB12F676" class="no-quick-link"></a>delta-propagation</h2>
+
+<p>A <code>gemfire.properties</code> boolean that enables or disables delta propagation. When false, full entry values are sent for every update. The default setting is true, which enables delta propagation.</p>
+
+<p>Disable delta propagation as follows:</p>
+
+<ul>
+<li><p><code>gemfire.properties</code>:</p>
+<pre class="highlight plaintext"><code>delta-propagation=false
+</code></pre></li>
+<li><p>API:</p>
+<pre class="highlight plaintext"><code>Properties props = new Properties();
+props.setProperty("delta-propagation", false);
+this.cache = new ClientCacheFactory(props).create();
+</code></pre></li>
+</ul>
+
+<h2 id="cloning-enabled"><a id="delta_propagation_properties__section_7D4590512D1548FD94F81C8726A2CA44" class="no-quick-link"></a>cloning-enabled</h2>
+
+<p>A region attributes boolean that affects how <code>fromDelta</code> applies deltas to the local cache. When true, the updates are applied to a clone of the value and then the clone is saved to the cache. When false, the value is modified in place in the cache. The default value is false.</p>
+
+<p>Exceptions to this behavior:</p>
+
+<ul>
+<li>  If the <code>Cache</code> attribute <code>copy-on-read</code> is true, cloning is enabled, regardless of what this attribute is set to.</li>
+<li>  If the <code>Region</code> attribute <code>off-heap</code> is true, cloning is enabled, regardless of what this attribute is set to.</li>
+</ul>
+
+<p>Cloning can be expensive, but it ensures that the new object is fully initialized with the delta before any application code sees it.</p>
+
+<p>When cloning is enabled, by default Geode does a deep copy of the object, using serialization. You may be able to improve performance by implementing <code>java.lang.Cloneable</code> and then implementing the <code>clone</code> method, making a deep copy of anything to which a delta may be applied. The goal is to reduce significantly the overhead of copying the object while still retaining the isolation needed for your deltas.</p>
+
+<p>Without cloning:</p>
+
+<ul>
+<li>  It is possible for application code to read the entry value as it is being modified, possibly seeing the value in an intermediate, inconsistent state, with just part of the delta applied. You may choose to resolve this issue by having your application code synchronize on reads and writes.</li>
+<li>  Geode loses any reference to the old value because the old value is transformed in place into the new value. Because of this, your <code>CacheListener</code> sees the same new value returned for <code>EntryEvent.getOldValue</code> and <code>EntryEvent.getNewValue</code> .</li>
+<li>  Exceptions thrown from <code>fromDelta</code> may leave your cache in an inconsistent state. Without cloning, any interruption of the delta application could leave you with some of the fields in your cached object changed and others unchanged. If you do not use cloning, keep this in mind when you program your error handling in your <code>fromDelta</code> implementation.</li>
+</ul>
+
+<p>With cloning:</p>
+
+<ul>
+<li>  The <code>fromDelta</code> method generates more garbage in memory.</li>
+<li>  Performance is reduced.</li>
+</ul>
+
+<p>Enable cloning as follows:</p>
+
+<ul>
+<li><p><code>cache.xml</code>:</p>
+<pre class="highlight plaintext"><code>&lt;region name="region_with_cloning"&gt;
+    &lt;region-attributes refid="REPLICATE" cloning-enabled="true"&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre></li>
+<li><p>API:</p>
+<pre class="highlight plaintext"><code>RegionFactory rf = cache.createRegionFactory(REPLICATE);
+rf.setCloningEnabled(true);
+custRegion = rf.create("customer");
+</code></pre></li>
+<li><p>gfsh:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name="region_with_cloning" --type=REPLICATE
+--enable-cloning=true
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

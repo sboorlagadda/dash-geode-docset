@@ -1,0 +1,581 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      JMX Manager MBeans |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_list_of_mbeans_full">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    JMX Manager MBeans
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_14E3721DD0CF47D7AD8C742DFBE9FB9C"></a></p>
+
+<p>This section describes the MBeans that are available on the JMX Manager node.</p>
+
+<p>The JMX Manager node includes all local beans listed under <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413">Managed Node MBeans</a> and the following beans that are available only on the JMX Manager node:</p>
+
+<ul>
+<li>  <a href="list_of_mbeans_full.html#topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_7B878B450B994514BDFE96571F0D3827">ManagerMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_4D7A4C82DD974BB5A5E52B34A6D888B4">DistributedSystemMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_48384B091AB846E591F22EEA2770DD36">DistributedRegionMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_9E004D8AA3D24647A5C19CAA1879F0A4">DistributedLockServiceMXBean</a></li>
+</ul>
+
+<h2 id="managermxbean"><a id="topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_7B878B450B994514BDFE96571F0D3827" class="no-quick-link"></a>ManagerMXBean</h2>
+
+<p>Represents the Geode Management layer for the hosting member. Controls the scope of management. This MBean provides <code>start</code> and <code>stop</code> methods to turn a managed node into a JMX Manager node or to stop a node from being a JMX Manager. For potential managers (<code>jmx-manager=true</code> and <code>jmx-manager-start=false</code>), this MBean is created when a Locator requests it.</p>
+
+<p><strong>Note:</strong>
+You must configure the node to allow it to become a JMX Manager. See <a href="jmx_manager_operations.html#topic_263072624B8D4CDBAD18B82E07AA44B6">Configuring a JMX Manager</a> for configuration information.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>ALL</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member, service=Manager,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.ManagerMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="distributedsystemmxbean"><a id="topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_4D7A4C82DD974BB5A5E52B34A6D888B4" class="no-quick-link"></a>DistributedSystemMXBean</h2>
+
+<p>System-wide aggregate MBean that provides a high-level view of the entire distributed system including all members (cache servers, peers, locators) and their caches. At any given point of time, it can provide a snapshot of the complete distributed system and its operations.</p>
+
+<p>The DistributedSystemMXBean provides APIs for performing distributed system-wide operations such as backing up all members, shutting down all members or showing various distributed system metrics.</p>
+
+<p>You can attach a standard JMX NotificationListener to this MBean to listen for notifications throughout the distributed system. See <a href="mbean_notifications.html">Geode JMX MBean Notifications</a> for more information.</p>
+
+<p>This MBean also provides some MBean model navigation APIS. These APIs should be used to navigate through all the MBeans exposed by a Geode System.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Aggregate</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Distributed,service=System</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.DistributedSystemMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="distributedregionmxbean"><a id="topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_48384B091AB846E591F22EEA2770DD36" class="no-quick-link"></a>DistributedRegionMXBean</h2>
+
+<p>System-wide aggregate MBean of a named region. It provides a high-level view of a region for all members hosting and/or using that region. For example, you can obtain a list of all members that are hosting the region. Some methods are only available for partitioned regions.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Aggregate</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Distributed,service=Region,name=&lt;regionName&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.DistributedRegionMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="distributedlockservicemxbean"><a id="topic_14E3721DD0CF47D7AD8C742DFBE9FB9C__section_9E004D8AA3D24647A5C19CAA1879F0A4" class="no-quick-link"></a>DistributedLockServiceMXBean</h2>
+
+<p>Represents a named instance of DistributedLockService . Any number of DistributedLockService can be created in a member.</p>
+
+<p>A named instance of DistributedLockService defines a space for locking arbitrary names across the distributed system defined by a specified distribution manager. Any number of DistributedLockService instances can be created with different service names. For all processes in the distributed system that have created an instance of DistributedLockService with the same name, no more than one thread is permitted to own the lock on a given name in that instance at any point in time. Additionally, a thread can lock the entire service, preventing any other threads in the system from locking the service or any names in the service.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Aggregate</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Distributed,service=LockService,name=&lt;dlsName&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.DistributedLockServiceMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="managed-node-mbeans"><a id="topic_48194A5BDF3F40F68E95A114DD702413" class="no-quick-link"></a>Managed Node MBeans</h2>
+
+<p>This section describes the MBeans that are available on all managed nodes.</p>
+
+<p>MBeans that are available on all managed nodes include:</p>
+
+<ul>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_796A989549304BF7A536A33A913322A4">MemberMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_7287A7560650426E9B8249E2D87CE55F">CacheServerMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_577A666924E54352AF69294DC8DEFEBF">RegionMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_2F9F00081BB14CE0ADA251F5B6289BF2">LockServiceMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_1F475F68E73B4EAE875BA40825E736C9">DiskStoreMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_6A77030A15704BFEAEBBD7DB88266BF6">AsyncEventQueueMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#topic_48194A5BDF3F40F68E95A114DD702413__section_BB83107990D346F39271ACCC14CB84A0">LocatorMXBean</a></li>
+<li>  <a href="list_of_mbeans_full.html#LuceneServiceMXBean_desc">LuceneServiceMXBean</a></li>
+</ul>
+
+<p>JMX Manager nodes will have managed node MBeans for themselves since they are also manageable entities in the distributed system.</p>
+
+<h2 id="membermxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_796A989549304BF7A536A33A913322A4" class="no-quick-link"></a>MemberMXBean</h2>
+
+<p>Member&rsquo;s local view of its connection and cache. It is the primary gateway to manage a particular member. It exposes member level attributes and statistics. Some operations like <code>createCacheServer()</code> and <code>createManager()</code> will help to create some Geode resources. Any JMX client can connect to the MBean server and start managing a Geode Member by using this MBean.</p>
+
+<p>See <a href="list_of_mbean_notifications.html#reference_czt_hq2_vj">MemberMXBean Notifications</a> for a list of notifications emitted by this MBean.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.MemberMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="cacheservermxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_7287A7560650426E9B8249E2D87CE55F" class="no-quick-link"></a>CacheServerMXBean</h2>
+
+<p>Represents the Geode CacheServer. Provides data and notifications about server, subscriptions, durable queues and indices.</p>
+
+<p>See <a href="list_of_mbean_notifications.html#cacheservermxbean_notifications">CacheServerMXBean Notifications</a> for a list of notifications emitted by this MBean.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=CacheServer,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.CacheServerMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="regionmxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_577A666924E54352AF69294DC8DEFEBF" class="no-quick-link"></a>RegionMXBean</h2>
+
+<p>Member&rsquo;s local view of region.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=Region,name=&lt;regionName&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.RegionMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="lockservicemxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_2F9F00081BB14CE0ADA251F5B6289BF2" class="no-quick-link"></a>LockServiceMXBean</h2>
+
+<p>Represents a named instance of a LockService . Any number of LockServices can be created in a member.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=LockService,name=&lt;dlsName&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.LockServiceMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="diskstoremxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_1F475F68E73B4EAE875BA40825E736C9" class="no-quick-link"></a>DiskStoreMXBean</h2>
+
+<p>Represents a DiskStore object which provides disk storage for one or more regions</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=DiskStore,name=&lt;name&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.DiskStoreMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="asynceventqueuemxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_6A77030A15704BFEAEBBD7DB88266BF6" class="no-quick-link"></a>AsyncEventQueueMXBean</h2>
+
+<p>An AsyncEventQueueMXBean provides access to an AsyncEventQueue, which represent the channel over which events are delivered to the AsyncEventListener.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=AsyncEventQueue,queue=&lt;queue-id&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..N</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.AsyncEventQueueMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="locatormxbean"><a id="topic_48194A5BDF3F40F68E95A114DD702413__section_BB83107990D346F39271ACCC14CB84A0" class="no-quick-link"></a>LocatorMXBean</h2>
+
+<p>A LocatorMXBean represents a locator.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=Locator,port=&lt;port&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.LocatorMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="luceneservicemxbean"><a id="LuceneServiceMXBean_desc" class="no-quick-link"></a>LuceneServiceMXBean</h2>
+
+<p>The member&rsquo;s local view of existing Lucene indexes.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:service=CacheService,name=LuceneService,type=Member,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.cache.lucene.management.LuceneServiceMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="gatewaysendermxbean"><a id="GatewaySenderMXBean" class="no-quick-link"></a>GatewaySenderMXBean</h2>
+
+<p>A GatewaySenderMXBean represents a gateway sender.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=GatewaySender,gatewaySender=&lt;sender-id&gt;,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.GatewaySenderMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+<h2 id="gatewayreceivermxbean"><a id="GatewayReceiverMXBean" class="no-quick-link"></a>GatewayReceiverMXBean</h2>
+
+<p>A GatewayReceiverMXBean represents a gateway receiver.</p>
+
+<p><strong>MBean Details</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Scope</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Proxied</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Object Name</td>
+<td>GemFire:type=Member,service=GatewayReceiver,member=&lt;name-or-dist-member-id&gt;</td>
+</tr>
+<tr>
+<td>Instances Per Node</td>
+<td>0..1</td>
+</tr>
+</tbody></table>
+
+<p>See the <code>org.apache.geode.management.GatewayReceiverMXBean</code> JavaDocs for information on available MBean methods and attributes.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Using Bind Addresses |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_topology_concepts docs_topologies_and_comm_topology_concepts_using_bind_addresses">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Using Bind Addresses
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You use a bind address configuration to send network traffic through non-default network cards and to distribute the load of network traffic for Geode across multiple cards. If no bind address setting is found, Geode uses the host machine&rsquo;s default address.</p>
+
+<p><a id="using_bind_addresses__section_6063D5004787488A90EC03085991F902"></a>
+Host machines transmit data to the network and receive data from the network through one or more network cards, also referred to as network interface cards (NIC) or LAN cards. A host with more than one card is referred to as a multi-homed host. On multi-homed hosts, one network card is used by default. You can use bind addresses to configure your Geode members to use non-default network cards on a multi-homed host.</p>
+
+<p><strong>Note:</strong>
+When you specify a non-default card address for a process, all processes that connect to it need to use the same address in their connection settings. For example, if you use bind addresses for your server locators, you must use the same addresses to configure the server pools in your clients.</p>
+
+<p>Use IPv4 or IPv6 numeric address specifications for your bind address settings. For information on these specifications, see <a href="IPv4_and_IPv6.html">Choosing Between IPv4 and IPv6</a>. Do not use host names for your address specifications. Host names resolve to default machine addresses.</p>
+
+<h2 id="peer-and-server-communication"><a id="using_bind_addresses__section_63589355AB684F739145E9185806D023" class="no-quick-link"></a>Peer and Server Communication</h2>
+
+<p>You can configure peer, and server communication so that each communication type uses its own address or types use the same address. If no setting is found for a specific communication type, Geode uses the host machine&rsquo;s default address.</p>
+
+<p><strong>Note:</strong>
+Bind addresses set through the APIs, like <code>CacheServer</code> and <code>DistributedSystem</code>, take precedence over the settings discussed here. If your settings are not working, check to make sure there are no bind address settings being done through API calls.</p>
+
+<p>This table lists the settings used for peer and server communication, ordered by precedence. For example, for server communication, Geode searches first for the cache-server bind address, then the <code>gfsh start                     server</code> <code>server-bind-address</code> setting, and so on until a setting is found or all possibilities are exhausted.</p>
+
+<table><thead>
+<tr>
+<th>Property Setting Ordered by Precedence</th>
+<th>Peer</th>
+<th>Server</th>
+<th>Gateway Receiver</th>
+<th>Syntax</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>cache.xml &lt;cache-server&gt; bind-address</td>
+<td></td>
+<td>X</td>
+<td></td>
+<td>&lt;cache-server&gt;bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gfsh start server command-line &ndash;server-bind-address</td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>gfsh start server &ndash;server-bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gemfire.properties server-bind-address</td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>server-bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gemfire.properties bind-address</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>bind-address=<em>address</em></td>
+</tr>
+</tbody></table>
+
+<p>For example, a member started with these configurations in its <code>gemfire.properties</code> and <code>cache.xml</code> files will use two separate addresses for peer and server communication:</p>
+<pre class="highlight plaintext"><code>// gemfire.properties setting for peer communication
+bind-address=192.0.2.0
+</code></pre>
+<pre class="highlight plaintext"><code>//cache.xml settings
+&lt;cache&gt;
+
+// Server communication
+  &lt;cache-server bind-address="192.0.2.1" ...
+
+  &lt;region ...
+</code></pre>
+
+<h2 id="gateway-receiver-communication">Gateway Receiver Communication</h2>
+
+<p>If you are using multi-site (WAN) topology, you can also configure gateway receiver communication (in addition to peer and server communication) so that each communication type uses its own address.</p>
+
+<p>This table lists the settings used for peer, server, and gateway receiver communication, ordered by precedence. For example, for gateway receiver communication, Geode searches first for a <code>cache.xml</code> <code>&lt;gateway-receiver&gt;</code> <code>bind-address</code> setting. If that is not set, Geode searches for the <code>gfsh start server</code> <code>server-bind-address</code> setting, and so on until a setting is found or all possibilities are exhausted.</p>
+
+<table><thead>
+<tr>
+<th>Property Setting Ordered by Precedence</th>
+<th>Peer</th>
+<th>Server</th>
+<th>Gateway Receiver</th>
+<th>Syntax</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>cache.xml &lt;gateway-receiver&gt; bind-address</td>
+<td></td>
+<td></td>
+<td>X</td>
+<td>&lt;gateway-receiver&gt;bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>cache.xml &lt;cache-server&gt; bind-address</td>
+<td></td>
+<td>X</td>
+<td></td>
+<td>&lt;cache-server&gt;bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gfsh start server command-line &ndash;server-bind-address</td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>gfsh start server &ndash;server-bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gemfire.properties server-bind-address</td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>server-bind-address=<em>address</em></td>
+</tr>
+<tr>
+<td>gemfire.properties bind-address</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>bind-address=<em>address</em></td>
+</tr>
+</tbody></table>
+
+<p>For example, a member started with these configurations in its <code>gemfire.properties</code> and <code>cache.xml</code> files will use three separate addresses for peer, server, and gateway receiver communication:</p>
+<pre class="highlight plaintext"><code>// gemfire.properties setting for peer communication
+bind-address=192.0.2.0
+</code></pre>
+<pre class="highlight plaintext"><code>//cache.xml settings
+&lt;cache&gt;
+// Gateway receiver configuration
+  &lt;gateway-receiver start-port="1530" end-port="1551" bind-address="192.0.2.2"/&gt;
+
+// Server communication
+  &lt;cache-server bind-address="192.0.2.1" ...
+
+  &lt;region ...
+</code></pre>
+
+<h2 id="locator-communication"><a id="using_bind_addresses__section_B58645AD8C504AF6822315BB94BA2E0B" class="no-quick-link"></a>Locator Communication</h2>
+
+<p>Set the locator bind address using one of these methods:</p>
+
+<ul>
+<li><p>On the gfsh command line, specify the bind address when you start the locator, the same as you specify any other address:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=my_locator --bind-address=ip-address-to-bind --port=portNumber
+</code></pre></li>
+<li><p>Inside a Geode application, take one of the following actions:</p>
+
+<ul>
+<li>  Automatically start a co-located locator using the gemfire property <code>start-locator</code>, and specifying the bind address for it in that property setting.</li>
+<li>  Use <code>org.apache.geode.distributed.LocatorLauncher</code> API to start the locator inside your code. Use the <code>LocatorLauncher.Builder</code> class to construct an instance of the <code>LocatorLauncher</code>, use the <code>setBindAddress</code> method to specify the IP address to use and then use the start() method to start a Locator service embedded in your Java application process.</li>
+</ul></li>
+</ul>
+
+<p>If your locator uses a bind address, make sure every process that accesses the locator has the address as well. For peer-to-peer access to the locator, use the locator&rsquo;s bind address and the locator&rsquo;s port in your <code>gemfire.properties</code> <code>locators</code> list. For server discovery in a client/server installation, use the locator&rsquo;s bind address and the locator&rsquo;s port in the locator list you provide to in the client’s server pool configuration.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

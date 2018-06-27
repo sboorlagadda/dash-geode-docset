@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      HTTP Session Management Quick Start |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_quick_start">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    HTTP Session Management Quick Start
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>In this section you download, install, and set up the HTTP Session Management modules.</p>
+
+<h2 id="quick-start-instructions"><a id="quick_start__section_6A4A00B6DA404E10A5C29E5E31101445" class="no-quick-link"></a>Quick Start Instructions</h2>
+
+<ol>
+<li><p>Download and install one of the application servers.</p>
+
+<table><thead>
+<tr>
+<th>Supported Application Server</th>
+<th>Version</th>
+<th>Download Location</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>tc Server</td>
+<td>3.2</td>
+<td><a href="https://network.pivotal.io/products/pivotal-tcserver">https://network.pivotal.io/products/pivotal-tcserver</a></td>
+</tr>
+<tr>
+<td>Tomcat</td>
+<td>8.5</td>
+<td><a href="http://tomcat.apache.org/download-80.cgi">http://tomcat.apache.org/download-80.cgi</a></td>
+</tr>
+</tbody></table>
+
+<p>The generic HTTP Session Management Module for AppServers is implemented as a servlet filter and should work on any application server platform that supports the Java Servlet 2.4 specification.</p></li>
+<li><p>The HTTP Session Management Modules installation .zip files are located in the <code>tools/Modules</code> directory of the product installation directory. Locate the .zip file for the HTTP Session Management Module that you wish to install. Unzip the appropriate HTTP Session Management Module into the specified directory for your application server:</p>
+
+<table><thead>
+<tr>
+<th>Supported Application Server</th>
+<th>Version</th>
+<th>Module</th>
+<th>Target Location for Module</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>tc Server</td>
+<td>3.2</td>
+<td>HTTP Session Management Module for Pivotal tc Server</td>
+<td><code>&lt;tc Server root                                                 dir&gt;/templates</code></td>
+</tr>
+<tr>
+<td>Tomcat</td>
+<td>8.5</td>
+<td>HTTP Session Management Module for Tomcat</td>
+<td><code>$CATALINA_HOME</code></td>
+</tr>
+</tbody></table></li>
+<li><p>Complete the appropriate set up instructions for your application server described in the following sections:</p>
+
+<ul>
+<li>  <a href="quick_start.html#quick_start__section_EE60463F524A46B7B83CE74C1C3E8E0E">Additional Quick Start Instructions for tc Server Module</a></li>
+<li>  <a href="quick_start.html#quick_start__section_4689A4FA609A4F4FB091F03E9BECA4DB">Additional Quick Start Instructions for Tomcat Module</a></li>
+<li>  <a href="quick_start.html#quick_start__section_1587C3E55F06406EBD4AB13014A406D4">Additional Instructions for AppServers Module</a></li>
+</ul></li>
+</ol>
+
+<h2 id="additional-quick-start-instructions-for-tc-server-module"><a id="quick_start__section_EE60463F524A46B7B83CE74C1C3E8E0E" class="no-quick-link"></a>Additional Quick Start Instructions for tc Server Module</h2>
+
+<p>These steps provide a basic starting point for using the tc Server module. For more configuration options, see <a href="session_mgmt_tcserver.html">HTTP Session Management Module for Pivotal tc Server</a>. As a prerequisite, module set up requires a JAVA_HOME environment variable set to the java installation.</p>
+
+<ol>
+<li> Navigate to the root directory of tc Server.</li>
+<li><p>Create a Geode instance using one of the provided templates and start the instance after starting up a locator. For example:</p>
+<pre class="highlight plaintext"><code>$ gfsh start locator --name=locator1
+$ ./tcruntime-instance.sh create my_instance_name --template geode-p2p
+$ ./tcruntime-ctl.sh my_instance_name start
+</code></pre>
+
+<p>This will create and run a Geode instance using the peer-to-peer topology and default configuration values. Another Geode instance on another system can be created and started in the same way.</p>
+
+<p>If you need to pin your tc Server instance to a specific tc Server runtime version, use the <code>--version</code> option when creating the instance.</p></li>
+</ol>
+
+<h2 id="additional-quick-start-instructions-for-tomcat-module"><a id="quick_start__section_4689A4FA609A4F4FB091F03E9BECA4DB" class="no-quick-link"></a>Additional Quick Start Instructions for Tomcat Module</h2>
+
+<p>These steps provide a basic starting point for using the Tomcat module. For more configuration options, see <a href="session_mgmt_tomcat.html">HTTP Session Management Module for Tomcat</a>.</p>
+
+<ol>
+<li><p>Modify Tomcat&rsquo;s <code>server.xml</code> and <code>context.xml</code> files. Configuration is slightly different depending on the topology you are setting up and the version of Tomcat you are using.</p>
+
+<p>For example, in a peer-to-peer configuration using Tomcat 7, you would add the following entry within the <code>&lt;server&gt;</code> element of server.xml:</p>
+<pre class="highlight plaintext"><code>&lt;Listener className="org.apache.geode.modules.session.catalina.
+                         PeerToPeerCacheLifecycleListener"
+                         locator="localhost[10334]" /&gt;
+</code></pre>
+
+<p>and the following entry within the <code>&lt;context&gt;</code> tag in the context.xml file:</p>
+<pre class="highlight plaintext"><code>&lt;Manager className="org.apache.geode.modules.session.catalina.
+                         Tomcat7DeltaSessionManager"/&gt; 
+</code></pre>
+
+<p>See <a href="tomcat_setting_up_the_module.html">Setting Up the HTTP Module for Tomcat</a> for additional instructions.</p></li>
+<li><p>Restart the application server.</p></li>
+</ol>
+
+<h2 id="additional-instructions-for-appservers-module"><a id="quick_start__section_1587C3E55F06406EBD4AB13014A406D4" class="no-quick-link"></a>Additional Instructions for AppServers Module</h2>
+
+<p>These steps provide a basic starting point for using the AppServers module with WebLogic, WebSphere or JBoss. For more configuration options, see <a href="session_mgmt_weblogic.html">HTTP Session Management Module for AppServers</a>.</p>
+
+<p><strong>Note:</strong></p>
+
+<ul>
+<li>  The <code>modify_war</code> script relies upon a GEODE environment variable. Set the GEODE environment variable to the Geode product directory; this is the parent directory of <code>bin</code>.</li>
+<li>  The <code>modify_war</code> script, described below, relies on files within the distribution tree and should not be run outside of a complete distribution.</li>
+<li>  The <code>modify_war</code> script is a <code>bash</code> script and does not run on Windows.</li>
+</ul>
+
+<p>To set up the AppServers module, perform the following steps:</p>
+
+<ol>
+<li><p>Run the <code>modify_war</code> script against an existing <code>.war</code> or <code>.ear</code> file to integrate the necessary components. The example below will create a configuration suitable for a peer-to-peer Geode system, placing the necessary libraries into <code>WEB-INF/lib</code> for wars and <code>lib</code> for ears and modifying any <code>web.xml</code> files:</p>
+<pre class="highlight plaintext"><code>$ bin/modify_war -w my-app.war -p gemfire.property.locators=localhost[10334] \
+                  -t peer-to-peer
+</code></pre></li>
+<li><p>A new war file will be created called <code>session-my-app.war</code>. This file can now be deployed to the server.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

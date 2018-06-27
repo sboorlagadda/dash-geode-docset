@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Federated MBean Architecture |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_mbean_architecture">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Federated MBean Architecture
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode uses MBeans to manage and monitor different parts of Geode. Geode&rsquo;s federated MBean architecture is scalable and allows you to have a single-agent view of a Geode distributed system.</p>
+
+<h2 id="federation-of-geode-mbeans-and-mbeanservers"><a id="concept_40A475F186E249C597681069C835CF65__section_19948055E4184110910B11CD979A923A" class="no-quick-link"></a>Federation of Geode MBeans and MBeanServers</h2>
+
+<p>Federation of the MBeanServers means that one member, the JMX Manager Node, can provide a proxied view of all the MBeans that the MBeanServer hosts. Federation also means that operations and notifications are spread across the distributed system.</p>
+
+<p>Geode federation takes care of the following functionality:</p>
+
+<ul>
+<li>  MBean proxy creation</li>
+<li>  MBean state propagation</li>
+<li>  Notifications propagation</li>
+<li>  Operation invocation</li>
+</ul>
+
+<h2 id="mbean-proxy-naming-conventions"><a id="concept_40A475F186E249C597681069C835CF65__section_AD13594ADA814194897488CF96BCC479" class="no-quick-link"></a>MBean Proxy Naming Conventions</h2>
+
+<p>Each Geode MBean follows a particular naming convention for easier grouping. For example:</p>
+<pre class="highlight plaintext"><code>GemFire:type=Member,service=LockService,name=&lt;dlsName&gt;,memberName=&lt;memberName&gt;
+</code></pre>
+
+<p>At the JMX Manager node, this MBean will be registered with GemFire/&lt;memberId&gt; as domain.</p>
+
+<p>The following are some sample MBean names:</p>
+
+<p>MemberMBean:</p>
+<pre class="highlight plaintext"><code>GemFire:type=Member,member=&lt;Node1&gt;
+</code></pre>
+
+<h2 id="use-of-mxbeans"><a id="concept_40A475F186E249C597681069C835CF65__section_8F9D375A185E476FB50E7D6E30BE2FC7" class="no-quick-link"></a>Use of MXBeans</h2>
+
+<p>In its Management API, Geode provides MXBeans to ensure that any MBeans that are created are usable by any client, including remote clients, without requiring the client to access specific classes in order to access contents of the MBean.</p>
+
+<h2 id="mbean-proxy-creation"><a id="concept_40A475F186E249C597681069C835CF65__section_DCC1B2AB80B04E8CBED041C1F3BDAB5F" class="no-quick-link"></a>MBean Proxy Creation</h2>
+
+<p>Geode proxies are inherently local MBeans. Every Geode JMX manager member hosts proxies pointing to the local MBeans of every managed node. Proxy MBeans will also emit any notification emitted by local MBeans in managed nodes when an event occurs in that managed node.</p>
+
+<p><strong>Note:</strong>
+Aggregate MBeans on the JMX Manager node are not proxied.</p>
+
+<ul>
+<li><p><strong><a href="list_of_mbeans.html">List of Geode JMX MBeans</a></strong></p>
+
+<p>This topic provides descriptions for the various management and monitoring MBeans that are available in Geode.</p></li>
+<li><p><strong><a href="mbeans_jconsole.html">Browsing Geode MBeans through JConsole</a></strong></p>
+
+<p>You can browse all the Geode MBeans in your distributed system by using JConsole.</p></li>
+<li><p><strong><a href="mbean_notifications.html">Geode JMX MBean Notifications</a></strong></p>
+
+<p>Apache Geode MBeans emit notifications when specific events occur or if an alert is raised in the Geode system. Using standard JMX APIs, users can add notification handlers to listen for these events.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

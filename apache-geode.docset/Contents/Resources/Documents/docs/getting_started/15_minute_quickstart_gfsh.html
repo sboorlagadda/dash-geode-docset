@@ -1,0 +1,511 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Apache Geode in 15 Minutes or Less |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_getting_started docs_getting_started_15_minute_quickstart_gfsh">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Apache Geode in 15 Minutes or Less
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_FE3F28ED18E145F787431EC87B676A76"></a></p>
+
+<p>Need a quick introduction to Apache Geode? Take this brief tour to try out basic features and functionality.</p>
+
+<h2 id="step-1:-install-apache-geode"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_ECE5170BAD9B454E875F13BEB5762DDD" class="no-quick-link"></a>Step 1: Install Apache Geode</h2>
+
+<p>See <a href="installation/install_standalone.html#concept_0129F6A1D0EB42C4A3D24861AF2C5425">How to Install</a> for instructions.</p>
+
+<h2 id="step-2:-use-gfsh-to-start-a-locator"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_582F8CBBD99D42F1A55C07591E2E9E9E" class="no-quick-link"></a>Step 2: Use gfsh to start a locator</h2>
+
+<p>In a terminal window, use the <code>gfsh</code> command line interface to start up a locator. Apache Geode <em>gfsh</em> (pronounced &ldquo;jee-fish&rdquo;) provides a single, intuitive command-line interface from which you can launch, manage, and monitor Apache Geode processes, data, and applications. See <a href="../tools_modules/gfsh/chapter_overview.html">gfsh</a>.</p>
+
+<p>The <em>locator</em> is a Geode process that tells new, connecting members where running members are located and provides load balancing for server use. A locator, by default, starts up a JMX Manager, which is used for monitoring and managing a Geode cluster. The cluster configuration service uses locators to persist and distribute cluster configurations to cluster members. See <a href="../configuring/running/running_the_locator.html">Running Geode Locator Processes</a> and <a href="../configuring/cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<ol>
+<li> Create a scratch working directory (for example, <code>my_geode</code>) and change directories into it. <code>gfsh</code> saves locator and server working directories and log files in this location.</li>
+<li><p>Start gfsh by typing <code>gfsh</code> at the command line (or <code>gfsh.bat</code> if you are using Windows).</p>
+<pre class="highlight plaintext"><code>    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    1.6
+
+Monitor and Manage Geode
+gfsh&gt;
+</code></pre></li>
+<li><p>At the <code>gfsh</code> prompt, type the <code>start locator</code> command and specify a name for the locator:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=locator1
+Starting a Geode Locator in /home/username/my_geode/locator1...
+.................................
+Locator in /home/username/my_geode/locator1 on ubuntu.local[10334] as locator1 is currently online.
+Process ID: 3529
+Uptime: 18 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /home/username/my_geode/locator1/locator1.log
+JVM Arguments: -Dgemfire.enable-cluster-configuration=true -Dgemfire.load-cluster-configuration-from-dir=false
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /home/username/Apache_Geode_Linux/lib/geode-core-1.0.0.jar:
+/home/username/Apache_Geode_Linux/lib/geode-dependencies.jar
+
+Successfully connected to: JMX Manager [host=10.118.33.169, port=1099]
+
+Cluster configuration service is up and running.
+</code></pre></li>
+</ol>
+
+<p>If you run <code>start locator</code> from gfsh without specifying the member name, gfsh will automatically pick a random member name. This is useful for automation.</p>
+
+<h2 id="step-3:-start-pulse"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_02C79BFFB5334E78A5856AE1EB1F1F84" class="no-quick-link"></a>Step 3: Start Pulse</h2>
+
+<p>Start up the browser-based Pulse monitoring tool. Pulse is a Web Application that provides a graphical dashboard for monitoring vital, real-time health and performance of Geode clusters, members, and regions. See <a href="../tools_modules/pulse/pulse-overview.html">Geode Pulse</a>.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start pulse
+</code></pre>
+
+<p>This command launches Pulse and automatically connects you to the JMX Manager running in the Locator. At the Pulse login screen, type in the default username <code>admin</code> and password <code>admin</code>.</p>
+
+<p>The Pulse application now displays the locator you just started (locator1):</p>
+
+<p><img src="../images/pulse_locator.png" id="topic_FE3F28ED18E145F787431EC87B676A76__image_ign_ff5_t4" class="image" /></p>
+
+<h2 id="step-4:-start-a-server"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_C617BC1C70EB41B8BCA3691D6E3C891A" class="no-quick-link"></a>Step 4: Start a server</h2>
+
+<p>A Geode server is a process that runs as a long-lived, configurable member of a cluster (also called a <em>distributed system</em>). The Geode server is used primarily for hosting long-lived data regions and for running standard Geode processes such as the server in a client/server configuration. See <a href="../configuring/running/running_the_cacheserver.html">Running Geode Server Processes</a>.</p>
+
+<p>Start the cache server:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --server-port=40411
+</code></pre>
+
+<p>This commands starts a cache server named &ldquo;server1&rdquo; on the specified port of 40411.</p>
+
+<p>If you run <code>start server</code> from gfsh without specifying the member name, gfsh will automatically pick a random member name. This is useful for automation.</p>
+
+<p>Observe the changes (new member and server) in Pulse. Try expanding the distributed system icon to see the locator and cache server graphically.</p>
+
+<h2 id="step-5:-create-a-replicated,-persistent-region"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_3EA12E44B8394C6A9302DF4D14888AF4" class="no-quick-link"></a>Step 5: Create a replicated, persistent region</h2>
+
+<p>In this step you create a region with the <code>gfsh</code> command line utility. Regions are the core building blocks of the Geode cluster and provide the means for organizing your data. The region you create for this exercise employs replication to replicate data across members of the cluster and utilizes persistence to save the data to disk. See <a href="../basic_config/data_regions/chapter_overview.html#data_regions">Data Regions</a>.</p>
+
+<ol>
+<li><p>Create a replicated, persistent region:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=regionA --type=REPLICATE_PERSISTENT
+Member  | Status
+------- | --------------------------------------
+server1 | Region "/regionA" created on "server1"
+</code></pre>
+
+<p>Note that the region is hosted on server1.</p></li>
+<li><p>Use the <code>gfsh</code> command line to view a list of the regions in the cluster.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;list regions
+List of regions
+---------------
+regionA
+</code></pre></li>
+<li><p>List the members of your cluster. The locator and cache server you started appear in the list:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;list members
+  Name       | Id
+------------ | ---------------------------------------
+Coordinator: | 192.0.2.0(locator1:3529:locator)&lt;ec&gt;&lt;v0&gt;:59926
+locator1     | 192.0.2.0(locator1:3529:locator)&lt;ec&gt;&lt;v0&gt;:59926
+server1      | 192.0.2.0(server1:3883)&lt;v1&gt;:65390
+</code></pre></li>
+<li><p>To view specifics about a region, type the following:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=regionA
+..........................................................
+Name            : regionA
+Data Policy     : persistent replicate
+Hosting Members : server1
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre></li>
+<li><p>In Pulse, click the green cluster icon to see all the new members and new regions that you just added to your cluster.</p></li>
+</ol>
+
+<p><strong>Note:</strong> Keep this <code>gfsh</code> prompt open for the next steps.</p>
+
+<h2 id="step-6:-manipulate-data-in-the-region-and-demonstrate-persistence">Step 6: Manipulate data in the region and demonstrate persistence</h2>
+
+<p>Apache Geode manages data as key/value pairs. In most applications, a Java program adds, deletes and modifies stored data. You can also use gfsh commands to add and retrieve data. See <a href="../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_C7DB8A800D6244AE8FF3ADDCF139DCE4">Data Commands</a>.</p>
+
+<ol>
+<li><p>Run the following <code>put</code> commands to add some data to the region:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;put --region=regionA --key="1" --value="one"
+Result      : true
+Key Class   : java.lang.String
+Key         : 1
+Value Class : java.lang.String
+Old Value   : &lt;NULL&gt;
+
+gfsh&gt;put --region=regionA --key="2" --value="two"
+Result      : true
+Key Class   : java.lang.String
+Key         : 2
+Value Class : java.lang.String
+Old Value   : &lt;NULL&gt;
+</code></pre></li>
+<li><p>Run the following command to retrieve data from the region:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;query --query="select * from /regionA"
+
+Result     : true
+startCount : 0
+endCount   : 20
+Rows       : 2
+
+Result
+------
+two
+one
+</code></pre>
+
+<p>Note that the result displays the values for the two data entries you created with the <code>put</code> commands.</p>
+
+<p>See <a href="../basic_config/data_entries_custom_classes/chapter_overview.html">Data Entries</a>.</p></li>
+<li><p>Stop the cache server using the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --name=server1
+Stopping Cache Server running in /home/username/my_geode/server1 on ubuntu.local[40411] as server1...
+Process ID: 3883
+Log File: /home/username/my_geode/server1/server1.log
+....
+</code></pre></li>
+<li><p>Restart the cache server using the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --server-port=40411
+</code></pre></li>
+<li><p>Run the following command to retrieve data from the region again &ndash; notice that the data is still available:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;query --query="select * from /regionA"
+
+Result     : true
+startCount : 0
+endCount   : 20
+Rows       : 2
+
+Result
+------
+two
+one
+</code></pre>
+
+<p>Because regionA uses persistence, it writes a copy of the data to disk. When a server hosting regionA starts, the data is populated into the cache. Note that the result displays the values for the two data entries you created with the <code>put</code> commands prior to stopping the server.</p>
+
+<p>See <a href="../basic_config/data_entries_custom_classes/chapter_overview.html">Data Entries</a>.</p>
+
+<p>See <a href="../basic_config/data_regions/chapter_overview.html#data_regions">Data Regions</a>.</p></li>
+</ol>
+
+<h2 id="step-7:-examine-the-effects-of-replication">Step 7: Examine the effects of replication</h2>
+
+<p>In this step, you start a second cache server. Because regionA is replicated, the data will be available on any server hosting the region.</p>
+
+<p>See <a href="../basic_config/data_regions/chapter_overview.html#data_regions">Data Regions</a>.</p>
+
+<ol>
+<li><p>Start a second cache server:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server2 --server-port=40412
+</code></pre></li>
+<li><p>Run the <code>describe region</code> command to view information about regionA:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=regionA
+..........................................................
+Name            : regionA
+Data Policy     : persistent replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 2
+</code></pre>
+
+<p>Note that you do not need to create regionA again for server2. The output of the command shows that regionA is hosted on both server1 and server2. When gfsh starts a server, it requests the configuration from the cluster configuration service which then distributes the shared configuration to any new servers joining the cluster.</p></li>
+<li><p>Add a third data entry:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;put --region=regionA --key="3" --value="three"
+Result      : true
+Key Class   : java.lang.String
+Key         : 3
+Value Class : java.lang.String
+Old Value   : &lt;NULL&gt;
+</code></pre></li>
+<li><p>Open the Pulse application (in a Web browser) and observe the cluster topology. You should see a locator with two attached servers. Click the <span class="ph uicontrol">Data</span> tab to view information about regionA.</p></li>
+<li><p>Stop the first cache server with the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --name=server1
+Stopping Cache Server running in /home/username/my_geode/server1 on ubuntu.local[40411] as server1...
+Process ID: 4064
+Log File: /home/username/my_geode/server1/server1.log
+....
+</code></pre></li>
+<li><p>Retrieve data from the remaining cache server.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;query --query="select * from /regionA"
+
+Result     : true
+startCount : 0
+endCount   : 20
+Rows       : 3
+
+Result
+------
+two
+one
+three
+</code></pre>
+
+<p>Note that the data contains 3 entries, including the entry you just added.</p></li>
+<li><p>Add a fourth data entry:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;put --region=regionA --key="4" --value="four"
+Result      : true
+Key Class   : java.lang.String
+Key         : 3
+Value Class : java.lang.String
+Old Value   : &lt;NULL&gt;
+</code></pre>
+
+<p>Note that only server2 is running. Because the data is replicated and persisted, all of the data is still available. But the new data entry is currently only available on server 2.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=regionA
+..........................................................
+Name            : regionA
+Data Policy     : persistent replicate
+Hosting Members : server2
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 4
+</code></pre></li>
+<li><p>Stop the remaining cache server:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --name=server2
+Stopping Cache Server running in /home/username/my_geode/server2 on ubuntu.local[40412] as server2...
+Process ID: 4185
+Log File: /home/username/my_geode/server2/server2.log
+.....
+</code></pre></li>
+</ol>
+
+<h2 id="step-8:-restart-the-cache-servers-in-parallel">Step 8: Restart the cache servers in parallel</h2>
+
+<p>In this step you restart the cache servers in parallel. Because the data is persisted, the data is available when the servers restart. Because the data is replicated, you must start the servers in parallel so that they can synchronize their data before starting.</p>
+
+<ol>
+<li><p>Start server1. Because regionA is replicated and persistent, it needs data from the other server to start and waits for the server to start:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --server-port=40411
+Starting a Geode Server in /home/username/my_geode/server1...
+............................................................................
+............................................................................
+</code></pre>
+
+<p>Note that if you look in the <span class="ph filepath">server1.log</span> file for the restarted server, you will see a log message similar to the following:</p>
+<pre class="highlight plaintext"><code>[info 2015/01/14 09:08:13.610 PST server1 &lt;main&gt; tid=0x1] Region /regionA has pot
+entially stale data. It is waiting for another member to recover the latest data.
+  My persistent id:
+
+    DiskStore ID: 8e2d99a9-4725-47e6-800d-28a26e1d59b1
+    Name: server1
+    Location: /192.0.2.0:/home/username/my_geode/server1/.
+
+  Members with potentially new data:
+  [
+    DiskStore ID: 2e91b003-8954-43f9-8ba9-3c5b0cdd4dfa
+    Name: server2
+    Location: /192.0.2.0:/home/username/my_geode/server2/.
+  ]
+  Use the "gfsh show missing-disk-stores" command to see all disk stores that
+are being waited on by other members.
+</code></pre></li>
+<li><p>In a second terminal window, change directories to the scratch working directory (for example, <code>my_geode</code>) and start gfsh:</p>
+<pre class="highlight plaintext"><code>[username@localhost ~/my_geode]$ gfsh
+    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    1.6
+
+Monitor and Manage Geode
+</code></pre></li>
+<li><p>Run the following command to connect to the cluster:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;connect --locator=localhost[10334]
+Connecting to Locator at [host=localhost, port=10334] ..
+Connecting to Manager at [host=ubuntu.local, port=1099] ..
+Successfully connected to: [host=ubuntu.local, port=1099]
+</code></pre></li>
+<li><p>Start server2:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server2 --server-port=40412
+</code></pre>
+
+<p>When server2 starts, note that <strong>server1 completes its start up</strong> in the first gfsh window:</p>
+<pre class="highlight plaintext"><code>Server in /home/username/my_geode/server1 on ubuntu.local[40411] as server1 is currently online.
+Process ID: 3402
+Uptime: 1 minute 46 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /home/username/my_geode/server1/server1.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10334] -Dgemfire.use-cluster-configuration=true
+-XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true
+-Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /home/username/Apache_Geode_Linux/lib/geode-core-1.0.0.jar:
+/home/username/Apache_Geode_Linux/lib/geode-dependencies.jar
+</code></pre></li>
+<li><p>Verify that the locator and two servers are running:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;list members
+  Name       | Id
+------------ | ---------------------------------------
+Coordinator: | ubuntu(locator1:2813:locator)&lt;ec&gt;&lt;v0&gt;:46644
+locator1     | ubuntu(locator1:2813:locator)&lt;ec&gt;&lt;v0&gt;:46644
+server2      | ubuntu(server2:3992)&lt;v8&gt;:21507
+server1      | ubuntu(server1:3402)&lt;v7&gt;:36532
+</code></pre></li>
+<li><p>Run a query to verify that all the data you entered with the <code>put</code> commands is available:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;query --query="select * from /regionA"
+
+Result     : true
+startCount : 0
+endCount   : 20
+Rows       : 5
+
+Result
+------
+one
+two
+four
+Three
+
+NEXT_STEP_NAME : END
+</code></pre></li>
+<li><p>Stop server2 with the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --dir=server2
+Stopping Cache Server running in /home/username/my_geode/server2 on 192.0.2.0[40412] as server2...
+Process ID: 3992
+Log File: /home/username/my_geode/server2/server2.log
+....
+</code></pre></li>
+<li><p>Run a query to verify that all the data you entered with the <code>put</code> commands is still available:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;query --query="select * from /regionA"
+
+Result     : true
+startCount : 0
+endCount   : 20
+Rows       : 5
+
+Result
+------
+one
+two
+four
+Three
+
+NEXT_STEP_NAME : END
+</code></pre></li>
+</ol>
+
+<h2 id="step-9:-shut-down-the-system-including-your-locators"><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_E417BEEC172B4E96A92A61DC7601E572" class="no-quick-link"></a>Step 9: Shut down the system including your locators</h2>
+
+<p>To shut down your cluster, do the following:</p>
+
+<ol>
+<li><p>In the current <code>gfsh</code> session, stop the cluster:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --include-locators=true
+</code></pre>
+
+<p>See <a href="../tools_modules/gfsh/command-pages/shutdown.html">shutdown</a>.</p></li>
+<li><p>When prompted, type &lsquo;Y&rsquo; to confirm the shutdown of the cluster.</p>
+<pre class="highlight plaintext"><code>As a lot of data in memory will be lost, including possibly events in queues,
+do you really want to shutdown the entire distributed system? (Y/n): Y
+Shutdown is triggered
+
+gfsh&gt;
+No longer connected to ubuntu.local[1099].
+gfsh&gt;
+</code></pre></li>
+<li><p>Type <code>exit</code> to quit the gfsh shell.</p></li>
+</ol>
+
+<h2 id="step-10:-what-to-do-next..."><a id="topic_FE3F28ED18E145F787431EC87B676A76__section_C8694C6BB07E4430A73DDD72ABB473F1" class="no-quick-link"></a>Step 10: What to do next&hellip;</h2>
+
+<p>Here are some suggestions on what to explore next with Apache Geode:</p>
+
+<ul>
+<li>  Continue reading the next section to learn more about the components and concepts that were just introduced.</li>
+<li>  To get more practice using <code>gfsh</code>, see <a href="../tools_modules/gfsh/tour_of_gfsh.html#concept_0B7DE9DEC1524ED0897C144EE1B83A34">Tutorial—Performing Common Tasks with gfsh</a>.</li>
+<li>  To learn about the cluster configuration service, see <a href="../configuring/cluster_config/persisting_configurations.html#task_bt3_z1v_dl">Tutorial—Creating and Using a Cluster Configuration</a>.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

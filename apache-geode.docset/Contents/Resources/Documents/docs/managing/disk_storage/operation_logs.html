@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Disk Store Operation Logs |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_operation_logs">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Disk Store Operation Logs
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>At creation, each operation log is initialized at the disk store&rsquo;s <code>max-oplog-size</code>, with the size divided between the <code>crf</code> and <code>drf</code> files. When the oplog is closed, Apache Geode shrinks the files to the space used in each file.</p>
+
+<p><a id="operation_logs__section_C0B1391492394A908577C29772902A42"></a>
+After the oplog is closed, Geode also attempts to create a <code>krf</code> file, which contains the key names as well as the offset for the value within the <code>crf</code> file. Although this file is not required for startup, if it is available, it will improve startup performance by allowing Geode to load the entry values in the background after the entry keys are loaded.</p>
+
+<p>When an operation log is full, Geode automatically closes it and creates a new log with the next sequence number. This is called <em>oplog rolling</em>. You can also request an oplog rolling through the API call <code>DiskStore.forceRoll</code>. You may want to do this immediately before compacting your disk stores, so the latest oplog is available for compaction.</p>
+
+<p><strong>Note:</strong>
+Log compaction can change the names of the disk store files. File number sequencing is usually altered, with some existing logs removed or replaced by newer logs with higher numbering. Geode always starts a new log at a number higher than any existing number.</p>
+
+<p>This example listing shows the logs in a system with only one disk directory specified for the store. The first log (<code>BACKUPCacheOverflow_1.crf</code> and <code>BACKUPCacheOverflow_1.drf</code>) has been closed and the system is writing to the second log.</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -tlra 
+total 55180
+drwxrwxr-x   7 person users        512 Mar 22 13:56 ..
+-rw-rw-r--   1 person users          0 Mar 22 13:57 BACKUPCacheOverflow_2.drf
+-rw-rw-r--   1 person users     426549 Mar 22 13:57 BACKUPCacheOverflow_2.crf
+-rw-rw-r--   1 person users          0 Mar 22 13:57 BACKUPCacheOverflow_1.drf
+-rw-rw-r--   1 person users     936558 Mar 22 13:57 BACKUPCacheOverflow_1.crf
+-rw-rw-r--   1 person users       1924 Mar 22 13:57 BACKUPCacheOverflow.if
+drwxrwxr-x   2 person users       2560 Mar 22 13:57 .
+</code></pre>
+
+<p>The system rotates through all available disk directories to write its logs. The next log is always started in a directory that has not reached its configured capacity, if one exists.</p>
+
+<h2 id="when-disk-store-oplogs-reach-the-configured-disk-capacity"><a id="operation_logs__section_8431984F4E6644D79292850CCA60E6E3" class="no-quick-link"></a>When Disk Store Oplogs Reach the Configured Disk Capacity</h2>
+
+<p>If no directory exists that is within its capacity limits, how Geode handles this depends on whether automatic compaction is enabled.</p>
+
+<ul>
+<li><p>If auto-compaction is enabled, Geode creates a new oplog in one of the directories, going over the limit, and logs a warning that reports:</p>
+<pre class="highlight plaintext"><code>Even though the configured directory size limit has been exceeded a 
+new oplog will be created. The current limit is of XXX. The current 
+space used in the directory is YYY.
+</code></pre>
+
+<p><strong>Note:</strong>
+When auto-compaction is enabled, <code>dir-size</code> does not limit how much disk space is used. Geode will perform auto-compaction, which should free space, but the system may go over the configured disk limits.</p></li>
+<li><p>If auto-compaction is disabled, Geode does not create a new oplog, operations in the regions attached to the disk store block, and Geode logs this error:</p>
+<pre class="highlight plaintext"><code>Disk is full and rolling is disabled. No space can be created
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      compact |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_compact">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    compact
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_2522766FD5DD45D991A523F84BD54920"></a></p>
+
+<p>Compact online and offline disk-stores.</p>
+
+<ul>
+<li><p><strong><a href="compact.html#topic_F113C95C076F424E9AA8AC4F1F6324CC">compact disk-store</a></strong></p>
+
+<p>Compact a disk store on all members with that disk store.</p></li>
+<li><p><strong><a href="compact.html#topic_9CCFCB2FA2154E16BD775439C8ABC8FB">compact offline-disk-store</a></strong></p>
+
+<p>Compact an offline disk store.</p></li>
+</ul>
+
+<h2 id="compact-disk-store"><a id="topic_F113C95C076F424E9AA8AC4F1F6324CC" class="no-quick-link"></a>compact disk-store</h2>
+
+<p>Compact a disk store on all members with that disk store.</p>
+
+<p>This command uses the compaction threshold that each member has configured for its disk stores. The disk store must have the <code>allow-force-compaction</code> property set to <code>true</code>.</p>
+
+<p>See <a href="../../../managing/disk_storage/compacting_disk_stores.html#compacting_disk_stores">Running Compaction on Disk Store Log Files</a> for more information.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>compact disk-store --name=value [--groups=value(,value)*]
+</code></pre>
+
+<p><a id="topic_F113C95C076F424E9AA8AC4F1F6324CC__table_7039256EA2014AE5BFAB63697FF35AB6"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name</span></td>
+<td><em>Required.</em> Name of the disk store to be compacted.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members that perform disk compaction. If no group is specified, then the disk store is compacted by all members.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Compact Disk-Store Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>compact disk-store --name=Disk1
+compact disk-store --name=Disk1 --group=MemberGroup1,MemberGroup2
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+<pre class="highlight plaintext"><code>"Disk store \"{0}\" does not exist.";
+ " for group(s) \"{0}\"";
+"No members found in the specified group(s) \"{0}\".";
+"Compaction was attempted but nothing to compact.";
+"Error occurred while doing compaction. Reason: \"{0}\"";
+</code></pre>
+
+<h2 id="compact-offline-disk-store"><a id="topic_9CCFCB2FA2154E16BD775439C8ABC8FB" class="no-quick-link"></a>compact offline-disk-store</h2>
+
+<p>Compact an offline disk store.</p>
+
+<p>If the disk store is large, you may need to allocate additional memory to the process by using the <code>--J=-XmxNNNm</code> parameter.</p>
+
+<p>See <a href="../../../managing/disk_storage/compacting_disk_stores.html#compacting_disk_stores">Running Compaction on Disk Store Log Files</a> for more information.</p>
+
+<p><strong>Note:</strong>
+Do not perform offline compaction on the baseline directory of an incremental backup.</p>
+
+<p><strong>Availability:</strong> Online or offline.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>compact offline-disk-store --name=value --disk-dirs=value(,value)* 
+[--max-oplog-size=value] [--J=value(,value)*]
+</code></pre>
+
+<p><a id="topic_9CCFCB2FA2154E16BD775439C8ABC8FB__table_BDB9B26709D841F08BCD75087AF596D8"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name</span></td>
+<td><em>Required.</em> Name of the offline disk store to be compacted.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--disk-dirs</span></td>
+<td><em>Required.</em> One or more directories where data for the disk store was previously written. Separate directories with commas.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--max-oplog-size</span></td>
+<td>Maximum size (in megabytes) of the oplogs created by compaction.</td>
+<td>-1</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--J</span></td>
+<td>Arguments passed to the Java Virtual Machine performing the compact operation on the disk store. For example: <code>-J=-Xmx1024m</code>.</td>
+<td> </td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 2. Compact Offline-Disk-Store Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>compact offline-disk-store --name=Disk2 --disk-dirs=/Disks/Disk2
+compact offline-disk-store --name=Disk2 --disk-dirs=/Disks/Disk2 --max-oplog-size=512 -J=-Xmx1024m
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

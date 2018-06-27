@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Executing gfsh Commands through the Management API |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_gfsh_and_management_api">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Executing gfsh Commands through the Management API
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can also use management APIs to execute gfsh commands programmatically.</p>
+
+<p><strong>Note:</strong>
+If you start the JMX Manager programmatically and wish to enable command processing, you must also add the absolute path of <code>gfsh-dependencies.jar</code> (located in <code>$GEMFIRE/lib</code> of your Geode installation) to the CLASSPATH of your application. Do not copy this library to your CLASSPATH because this library refers to other dependencies in <code>$GEMFIRE/lib</code> by a relative path. The following code samples demonstrate how to process and execute <code>gfsh</code> commands using the Java API.</p>
+
+<p>First, retrieve a CommandService instance.</p>
+
+<p><strong>Note:</strong>
+The CommandService API is currently only available on JMX Manager nodes.</p>
+<pre class="highlight plaintext"><code>// Get existing CommandService instance or create new if it doesn't exist
+commandService = CommandService.createLocalCommandService(cache);
+
+// OR simply get CommandService instance if it exists, don't create new one
+CommandService commandService = CommandService.getUsableLocalCommandService();
+</code></pre>
+
+<p>Next, process the command and its output:</p>
+<pre class="highlight plaintext"><code>// Process the user specified command String
+Result regionListResult = commandService.processCommand("list regions");
+
+// Iterate through Command Result in String form line by line
+while (regionListResult.hasNextLine()) {
+   System.out.println(regionListResult.nextLine());
+}
+
+</code></pre>
+
+<p>Alternatively, instead of processing the command, you can create a CommandStatement Object from the command string which can be re-used.</p>
+<pre class="highlight plaintext"><code>// Create a command statement that can be reused multiple times
+CommandStatement showDeadLocksCmdStmt = commandService.createCommandStatement
+    ("show dead-locks --file=deadlock-info.txt");
+Result showDeadlocksResult = showDeadLocksCmdStmt.process();
+
+// If there is a file as a part of Command Result, it can be saved 
+// to a specified directory
+if (showDeadlocksResult.hasIncomingFiles()) {
+    showDeadlocksResult.saveIncomingFiles(System.getProperty("user.dir") + 
+                  "/commandresults");
+}
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

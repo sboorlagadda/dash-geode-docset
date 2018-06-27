@@ -1,0 +1,316 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      stop |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_stop">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    stop
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_45125131A45F4713BBC63E7225AAD91B"></a></p>
+
+<p>Stop gateway receivers, gateway senders, locators and servers.</p>
+
+<ul>
+<li><p><strong><a href="#topic_CD1D526FD6F84A7B80B25C741129ED30">stop gateway-receiver</a></strong></p>
+
+<p>Stop the gateway receiver on a member or members.</p></li>
+<li><p><strong><a href="#topic_0BBDD4B3B8A44A65A610F766C9E85519">stop gateway-sender</a></strong></p>
+
+<p>Stop a gateway sender with a given id on a specified member or members of a specified member group.</p></li>
+<li><p><strong><a href="#topic_EF61C54B35BA4AB7B14E58CF911F283E">stop locator</a></strong></p>
+
+<p>Stop a locator.</p></li>
+<li><p><strong><a href="#topic_723EE395A63A40D6819618AFC2902115">stop server</a></strong></p>
+
+<p>Stop a Geode cache server.</p></li>
+</ul>
+
+<h2 id="stop-gateway-receiver"><a id="topic_CD1D526FD6F84A7B80B25C741129ED30" class="no-quick-link"></a>stop gateway-receiver</h2>
+
+<p>Stop the gateway receiver on a member or members.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>stop gateway-receiver [--groups=value(,value)*] [--members=value(,value)*]
+</code></pre>
+
+<p><a id="topic_CD1D526FD6F84A7B80B25C741129ED30__table_knl_r5g_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members on which to stop the Gateway Receiver. Use a comma-separated list for multiple member groups.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;members </span></td>
+<td>Name/Id of the member(s) on which to stop the Gateway Receiver.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Stop Gateway-Receiver Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>stop gateway-receiver --members=receiver1-LN 
+stop gateway-receiver --groups=LN-Group1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop gateway-receiver
+      Member                | Result | Message
+--------------------------- | -------| -----------------------------------------------------------------------
+pc13(2266)&lt;v6&gt;:56852        | OK     | GatewayReceiver is stopped on member pc13(2266)&lt;v6&gt;:56852
+pc13(Manager:2242)&lt;v5&gt;:57631| Error  | GatewayReceiver is not available on member pc13(Manager:2242)&lt;v5&gt;:57631
+pc13(2275)&lt;v7&gt;:47480        | OK     | GatewayReceiver is stopped on member pc13(2275)&lt;v7&gt;:47480
+pc13(2293)&lt;v8&gt;:55472        | OK     | GatewayReceiver is stopped on member pc13(2293)&lt;v8&gt;:55472
+
+gfsh&gt;stop gateway-receiver --members=pc13(2266)&lt;v14&gt;:36579
+GatewayReceiver is stopped on member pc13(2266)&lt;v14&gt;:36579
+
+gfsh&gt;stop gateway-receiver --groups=RG1
+         Member      | Result | Message
+-------------------- | -------| ----------------------------------------------------------
+pc13(2275)&lt;v23&gt;:27484| OK     | GatewayReceiver is stopped on member pc13(2275)&lt;v23&gt;:27484
+pc13(2293)&lt;v24&gt;:55810| OK     | GatewayReceiver is stopped on member pc13(2293)&lt;v24&gt;:55810
+pc13(2266)&lt;v22&gt;:4522 | OK     | GatewayReceiver is stopped on member pc13(2266)&lt;v22&gt;:4522
+</code></pre>
+
+<h2 id="stop-gateway-sender"><a id="topic_0BBDD4B3B8A44A65A610F766C9E85519" class="no-quick-link"></a>stop gateway-sender</h2>
+
+<p>Stop a gateway sender with a given id on a specified member or members of a specified member group.</p>
+
+<p><strong>CAUTION:</strong>
+Use caution with the <code>stop gateway-sender</code> command (or equivalent <code>GatewaySender.stop()</code> API) on parallel gateway senders. Instead of stopping an individual parallel gateway sender on a member, we recommend shutting down the entire member to ensure that proper failover of partition region events to other gateway sender members. Using this command on an individual parallel gateway sender can occur in event loss. See <a href="../../../topologies_and_comm/topology_concepts/multisite_overview.html#topic_9AA37B43642D4DE19072CA3367C849BA__section_aqm_2js_bq">Stopping Gateway Senders</a> for more details.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>stop gateway-sender --id=value [--groups=value(,value)*] [--members=value(,value)*]
+</code></pre>
+
+<p><a id="topic_0BBDD4B3B8A44A65A610F766C9E85519__table_ggf_55g_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--id </span></td>
+<td><em>Required.</em> ID of the Gateway Sender.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members on which to stop the Gateway Sender.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--members</span></td>
+<td>Name/Id of the member(s) on which to stop the Gateway Sender.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 2. Stop Gateway-Sender Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>stop gateway-sender --id=ln --members=server1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop gateway-sender --id=ln
+Member                       | Result | Message
+---------------------------- | ------ | ------------------------------------------------------------------------
+pc13(5184)&lt;v7&gt;:41914         | OK     | GatewaySender ln is stopped on member pc13(5184)&lt;v7&gt;:41914
+pc13(5192)&lt;v8&gt;:25704         | OK     | GatewaySender ln is stopped on member pc13(5192)&lt;v8&gt;:25704
+pc13(5174)&lt;v6&gt;:53996         | OK     | GatewaySender ln is stopped on member pc13(5174)&lt;v6&gt;:53996
+pc13(Manager:5148)&lt;v5&gt;:64040 | Error  | GatewaySender ln is not available on member pc13(Manager:5148)&lt;v5&gt;:64040
+
+gfsh&gt;stop gateway-sender --id=ln --members=pc13(5174)&lt;v14&gt;:17819
+GatewaySender ln is stopped on member pc13(5174)&lt;v14&gt;:17819
+
+gfsh&gt;stop gateway-sender --id=ln --groups=SenderGroup1
+
+Member                | Result | Message
+--------------------- | ------ | -----------------------------------------------------------
+pc13(5174)&lt;v18&gt;:63332 | OK     | GatewaySender ln is stopped on member pc13(5174)&lt;v18&gt;:63332
+pc13(5184)&lt;v19&gt;:20055 | OK     | GatewaySender ln is stopped on member pc13(5184)&lt;v19&gt;:20055
+pc13(5192)&lt;v20&gt;:14622 | OK     | GatewaySender ln is stopped on member pc13(5192)&lt;v20&gt;:14622
+</code></pre>
+
+<h2 id="stop-locator"><a id="topic_EF61C54B35BA4AB7B14E58CF911F283E" class="no-quick-link"></a>stop locator</h2>
+
+<p>Stop a locator.</p>
+
+<p><strong>Note:</strong> One of the command line options <code>--name</code> or <code>--dir</code> 
+must be specified to identify the locator to be stopped.</p>
+
+<p><strong>Availability:</strong> Online or offline. If you want to stop a locator while you are offline, use the <code>--dir</code> option.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>stop locator --name=value | --dir=value
+</code></pre>
+
+<p><a id="topic_EF61C54B35BA4AB7B14E58CF911F283E__table_ojb_x5g_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;name</span></td>
+<td>The Geode member name of the locator to stop. You must be connected to the JMX Manager to use this option. Can be used to stop remote locators. See <a href="../../../configuring/cluster_config/gfsh_remote.html">Using gfsh to Manage a Remote Cluster Over HTTP or HTTPS</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory in which the locator was started.</td>
+<td>current directory</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 3. Stop Locator Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>stop locator --name=locator3
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --name=locator3
+Stopping Locator running in /Users/test/locator3 on 192.0.2.0[10334] as locator3...
+Process ID: 71531
+Log File: /Users/test/locator3/locator3.log
+...
+No longer connected to 192.0.2.0[1099].
+</code></pre>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --dir=loc2
+Stopping Locator running in /Users/test/loc2 on 192.0.2.0[10334] as loc2...
+Process ID: 71714
+Log File: /Users/test/loc2/loc2.log
+...
+No longer connected to 192.0.2.0[1099].
+</code></pre>
+
+<h2 id="stop-server"><a id="topic_723EE395A63A40D6819618AFC2902115" class="no-quick-link"></a>stop server</h2>
+
+<p>Stop a Geode cache server.</p>
+
+<p><strong>Availability:</strong> Online or offline. If you want to stop a cache server while you are offline, use the <code>--dir</code> option.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>stop server [--name=value] [--dir=value]
+</code></pre>
+
+<p><a id="topic_723EE395A63A40D6819618AFC2902115__table_f12_2vg_2w"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;name </span></td>
+<td>Name/Id of the Geode Cache Server to stop. You must be connected to the JMX Manager to use this option. Can be used to stop remote servers. See <a href="../../../configuring/cluster_config/gfsh_remote.html">Using gfsh to Manage a Remote Cluster Over HTTP or HTTPS</a>.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir </span></td>
+<td>Directory in which the Geode Cache Server was started.</td>
+<td>current directory</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 4. Stop Server Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>stop server --name=server1
+stop server --dir=server1
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

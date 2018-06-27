@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Starting gfsh |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_starting_gfsh">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Starting gfsh
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Before you start gfsh, confirm that you have set JAVA_HOME and that your PATH variable includes the gfsh executable.</p>
+
+<p><strong>Note:</strong>
+On Windows, you must have the JAVA_HOME environment variable set properly to use start, stop and status commands for both locators and servers.</p>
+
+<p>To launch the gfsh command-line interface, execute the following command at the prompt on any machine that is currently installed with Apache Geode:</p>
+
+<p><strong>Start gfsh on Windows:</strong></p>
+<pre class="highlight plaintext"><code>&lt;product_directory&gt;\bin\gfsh.bat 
+</code></pre>
+
+<p>where &lt;<em>product_directory</em>&gt; corresponds to the location where you installed Apache Geode.</p>
+
+<p><strong>Start gfsh on Unix:</strong></p>
+<pre class="highlight plaintext"><code>&lt;product_directory&gt;/bin/gfsh
+</code></pre>
+
+<p>where &lt;<em>product_directory</em>&gt; corresponds to the location where you installed Apache Geode. Upon execution, the <code>gfsh</code> script appends the required Apache Geode and JDK Jar libraries to your existing CLASSPATH.</p>
+
+<p>If you have successfully started <code>gfsh</code>, the <code>gfsh</code> splash screen and prompt appears.</p>
+<pre class="highlight plaintext"><code>c:\Geode\Latest&gt;gfsh.bat
+    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/
+
+Monitor and Manage Geode
+gfsh&gt;
+</code></pre>
+
+<p>You can also run some gfsh commands directly within your terminal without entering a <code>gfsh</code> prompt. For example, on Unix/Linux you could enter:</p>
+<pre class="highlight plaintext"><code>$ gfsh start server --name=server1
+</code></pre>
+
+<p>or on Windows:</p>
+<pre class="highlight plaintext"><code>prompt&gt; gfsh start server --name=server1
+</code></pre>
+
+<p>See <a href="command_scripting.html#concept_9B2F7550F16C4717831AD40A56922259">Creating and Running gfsh Command Scripts</a> for more information.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

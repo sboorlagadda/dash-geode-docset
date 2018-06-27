@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Browsing Geode MBeans through JConsole |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_mbeans_jconsole">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Browsing Geode MBeans through JConsole
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can browse all the Geode MBeans in your distributed system by using JConsole.</p>
+
+<p>To view Geode MBeans through JConsole, perform the following steps:</p>
+
+<ol>
+<li> Start a <code>gfsh</code> prompt.</li>
+<li><p>Connect to a running distributed system by either connecting to a locator with an embedded JMX Manager or connect directly to a JMX Manager. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;connect --locator=locator1[10334]
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;connect --jmx-manager=locator1[1099]
+</code></pre></li>
+<li><p>Start JConsole:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start jconsole
+</code></pre>
+
+<p>If successful, the message <code>Running JDK JConsole</code> appears. The JConsole application launches and connects directly to the JMX Manager using RMI.</p></li>
+<li><p>On the JConsole screen, click on the MBeans tab. Expand <strong>GemFire</strong>. Then expand each MBean to browse individual MBean attributes, operations and notifications.</p>
+
+<p>The following is an example screenshot of the MBean hierarchy in a Geode distributed system:</p>
+
+<p><img src="../../images/jconsole_mbeans.png" id="concept_492532E145834248997BD23BCAC7AD45__image_7A45BE69B67A44A7A8AD40343A2B0AEB" class="image" /></p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

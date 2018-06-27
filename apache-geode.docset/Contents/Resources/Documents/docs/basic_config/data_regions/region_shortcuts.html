@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Region Shortcuts and Custom Named Region Attributes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_data_regions docs_basic_config_data_regions_region_shortcuts">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Region Shortcuts and Custom Named Region Attributes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode provides region shortcut settings, with preset region configurations for the most common region types. For the easiest configuration, start with a shortcut setting and customize as needed. You can also store your own custom configurations in the cache for use by multiple regions.</p>
+
+<p><a id="region_shortcuts__section_D9E58754D2B0435FA2986DBBF3063D4C"></a>
+You configure automated management of data regions and their entries through region shortcuts and region attributes. These region configuration settings determine such things as where the data resides, how the region is managed in memory, reliability behavior, and the automatic loading, distribution, and expiration of data entries.</p>
+
+<p><strong>Note:</strong>
+Whenever possible, use region shortcuts to configure your region, and further customize behavior using region attributes. The shortcut settings are preset with the most common region configurations.</p>
+
+<p>Geode provides a number of predefined, shortcut region attributes settings for your use. You can also define your own custom region attributes and store them with an identifier for later retrieval. Both types of stored attributes are referred to as named region attributes. You can create and store your attribute settings in the <code>cache.xml</code> file and through the API.</p>
+
+<p>Retrieve region shortcuts and custom named attributes by providing the ID to the region creation, in the <code>refid</code> attribute setting. This example uses the shortcut REPLICATE attributes to create a region:</p>
+<pre class="highlight plaintext"><code>&lt;region name="testREP" refid="REPLICATE"/&gt;
+</code></pre>
+
+<p>You can create your own named attributes as needed, by providing an <code>id</code> in your region attributes declaration. The following region declaration:</p>
+
+<ol>
+<li> Retrieves all of the attribute settings provided by the persistent partitioned region shortcut</li>
+<li> Modifies the shortcut attribute settings by specifying a disk store name to use for persistence</li>
+<li> Assigns the new attribute settings to the new region named <code>testPR</code></li>
+<li><p>Stores the attribute settings in a new custom attributes named <code>testPRPersist</code>:</p>
+<pre class="highlight plaintext"><code>&lt;disk-store name="testDiskStore" &gt;
+    &lt;disk-dirs&gt;
+        &lt;disk-dir&gt;PRPersist1&lt;/disk-dir&gt;
+        &lt;disk-dir&gt;PRPersist2&lt;/disk-dir&gt;
+    &lt;/disk-dirs&gt;
+&lt;/disk-store&gt;
+&lt;region name="testPR" &gt;
+    &lt;region-attributes id="testPRPersist"
+        refid="PARTITION_PERSISTENT" disk-store-name="testDiskStore"/&gt;
+&lt;/region&gt;
+</code></pre></li>
+</ol>
+
+<h2 id="shortcut-attribute-options"><a id="region_shortcuts__section_20548383511141B19EBC053E36877B1A" class="no-quick-link"></a>Shortcut Attribute Options</h2>
+
+<p>You can select the most common region attributes settings from Geode’s predefined named region attributes in these classes:</p>
+
+<ul>
+<li>  <strong><code>org.apache.geode.cache.RegionShortcut</code></strong>. For peers and servers.</li>
+<li>  <strong><code>org.apache.geode.cache.client.ClientRegionShortcut</code></strong>. For clients.</li>
+</ul>
+
+<p>Shortcut attributes are a convenience only. They are just named attributes that Geode has already stored for you. You can override their settings by storing new attributes with the same id as the predefined attributes.</p>
+
+<p>For a full list of all available region shortcuts, see <a href="../../reference/topics/region_shortcuts_table.html#reference_ufj_5kz_4k">Region Shortcuts Quick Reference</a>.</p>
+
+<p>The <code>org.apache.geode.cache.RegionShortcut</code> Javadocs give complete listings of the options.</p>
+
+<h2 id="regionshortcuts-for-peers-and-servers"><a id="region_shortcuts__section_D0975C76572E41F79C1A6EE7CF371251" class="no-quick-link"></a>RegionShortcuts for Peers and Servers</h2>
+
+<p>These are the primary options available in the region shortcut settings. The names listed appear in the shortcut identifier alone or in combination, like &ldquo;<code>PARTITION</code>&rdquo; in <code>PARTITION</code>, <code>PARTITION_PROXY</code>, and <code>PARTITION_REDUNDANT</code>.</p>
+
+<p><strong>Cache Data Storage Mode</strong></p>
+
+<ul>
+<li>  <strong><code>PARTITION</code></strong> . Creates a partitioned region. This is a data store for the region. You can also specify these options with <code>PARTITION</code>:
+
+<ul>
+<li>  <strong><code>PROXY</code></strong>. Data is not stored in the local cache and the member is a data accessor to the region. This requires other members to create non-proxy copies of the region, so the data is stored somewhere.</li>
+<li>  <strong><code>REDUNDANT</code></strong>. The region stores a secondary copy of all data, for high availability.</li>
+</ul></li>
+<li>  <strong><code>REPLICATE</code></strong>. Creates a replicated region. This is a data store for the region. You can also specify these options with <code>REPLICATE</code>:
+
+<ul>
+<li>  <strong><code>PROXY</code></strong>. Data is not stored in the local cache and the member is a data accessor to the region. This requires other members to create non-proxy copies of the region, so the data is stored somewhere.</li>
+</ul></li>
+<li>  <strong><code>LOCAL</code></strong>. Creates a region private to the defining member.</li>
+</ul>
+
+<p><strong>Data Eviction</strong></p>
+
+<ul>
+<li>  <strong><code>HEAP_LRU</code></strong>. Causes least recently used data to be evicted from memory when the Geode resource manager determines that the cache has reached configured storage limits.</li>
+</ul>
+
+<p><strong>Disk Storage</strong></p>
+
+<p>You can specify these alone or in combination:</p>
+
+<ul>
+<li>  <strong><code>PERSISTENT</code></strong>. Backs up all data to disk, in addition to storing it in memory.</li>
+<li>  <strong><code>OVERFLOW</code></strong>. Moves data out of memory and on to disk, when memory use becomes too high.</li>
+</ul>
+
+<h2 id="clientregionshortcuts-for-clients"><a id="region_shortcuts__section_BD136ACEB8274B17ACFB9A5954D116E4" class="no-quick-link"></a>ClientRegionShortcuts for Clients</h2>
+
+<p>These are the primary options available in the client region shortcut settings. The names listed appear in the shortcut identifier alone or in combination, like &ldquo;<code>PROXY</code>&rdquo; in <code>PROXY</code> and <code>CACHING_PROXY</code>.</p>
+
+<p><strong>Communication with Servers and Data Storage</strong></p>
+
+<ul>
+<li>  <strong><code>PROXY</code></strong>. Does not store data in the client cache, but connects the region to the servers for data requests and updates, interest registrations, and so on. The client is a data accessor to the region.</li>
+<li>  <strong><code>CACHING_PROXY</code></strong>. Stores data in the client cache and connects the region to the servers for data requests and updates, interest registrations, and so on.</li>
+<li>  <strong><code>LOCAL</code></strong>. Stores data in the client cache and does not connect the region to the servers. This is a client-side-only region. Note that this is not the same as setting the region&rsquo;s <code>scope</code> attribute to <code>LOCAL</code>.</li>
+</ul>
+
+<p><strong>Data Eviction</strong></p>
+
+<ul>
+<li>  <strong><code>HEAP_LRU</code></strong>. Causes least recently used data to be evicted from memory when the Geode resource manager determines that the cache has reached configured storage limits.</li>
+</ul>
+
+<p><strong>Disk Storage</strong></p>
+
+<p>With the LOCAL and CACHING data storage shortcut options, you can also specify these disk storage options, alone or in combination:</p>
+
+<ul>
+<li>  <strong><code>PERSISTENT</code></strong>. Backs up all data to disk, in addition to storing it in memory.</li>
+<li>  <strong><code>OVERFLOW</code></strong>. Moves data out of memory and on to disk, when memory use becomes too high.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

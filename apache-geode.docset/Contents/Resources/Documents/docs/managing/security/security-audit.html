@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      External Interfaces, Ports, and Services |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_security docs_managing_security_security-audit">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    External Interfaces, Ports, and Services
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_686158E9AFBD47518BE1B4BEB232C190"></a></p>
+
+<p>Geode processes use either UDP or TCP/IP ports to communicate with other processes or clients.</p>
+
+<p>For example:</p>
+
+<ul>
+<li>  Members can use multicast to communicate with peer members. You specify multicast addresses and multicast ports in your <code>gemfire.properties</code> file or as parameters on the command-line when starting the members using <code>gfsh</code>.</li>
+<li>  Clients connect to a locator to discover cache servers.</li>
+<li>  JMX clients (such as <code>gfsh</code> and JConsole) can connect to JMX Managers and other manageable members on the pre-defined RMI port 1099. You can configure a different port if necessary.</li>
+<li>  Each gateway receiver usually has a port range where it listens for incoming communication.</li>
+</ul>
+
+<p>See <a href="../../configuring/running/firewalls_ports.html#concept_5ED182BDBFFA4FAB89E3B81366EBC58E">Firewalls and Ports</a> for the complete list of ports used by Geode, their default values, and how to configure them if you do not want to use the default value.</p>
+
+<p>Geode does not have any external interfaces or services that need to be enabled or opened.</p>
+
+<h2 id="resources-that-must-be-protected"><a id="topic_263072624B8D4CDBAD18B82E07AA44B6" class="no-quick-link"></a>Resources That Must Be Protected</h2>
+
+<p>These configuration files should be readable and writeable <em>only</em> by the dedicated user who runs servers:</p>
+
+<ul>
+<li>  <code>gemfire.properties</code></li>
+<li>  <code>cache.xml</code></li>
+<li>  <code>gfsecurity.properties</code>
+A default <code>gfsecurity.properties</code> is not provided in the <code>defaultConfigs</code> directory. If you choose to use this properties file, you must create it manually. A clear text user name and associated clear text password may be in this file for authentication purposes. The file system&rsquo;s access rights are relied upon to protect this sensitive information.</li>
+</ul>
+
+<p>The default location of the <code>gemfire.properties</code> and <code>cache.xml</code> configuration files is the <code>defaultConfigs</code> child directory of the main installation directory.</p>
+
+<h2 id="log-file-locations"><a id="topic_5B6DF783A14241399DC25C6EE8D0048A" class="no-quick-link"></a>Log File Locations</h2>
+
+<p>By default, the log files are located in the working directory used when you started the corresponding processes.</p>
+
+<p>For Geode members (locators and cache servers), you can also specify a custom working directory location when you start each process. See <a href="../logging/logging.html#concept_30DB86B12B454E168B80BB5A71268865">Logging</a> for more details.</p>
+
+<p>The log files are as follows:</p>
+
+<ul>
+<li>  <code>locator-name.log</code>: Contains logging information for the locator process.</li>
+<li>  <code>server-name.log</code>: Contains logging information for a cache server process.</li>
+<li><p><code>gfsh-%u_%g.log</code>: Contains logging information of an individual <code>gfsh</code> environment and session.</p>
+
+<p><strong>Note:</strong> By default, <code>gfsh</code> session logging is disabled. To enable <code>gfsh</code> logging, you must set the Java system property <code>-Dgfsh.                                 log-level=desired_log_level</code>. See <a href="../../tools_modules/gfsh/configuring_gfsh.html#concept_3B9C6CE2F64841E98C33D9F6441DF487">Configuring the gfsh Environment</a> for more information.</p></li>
+</ul>
+
+<p>These log files should be readable and writable <em>only</em> by the dedicated user who runs the servers.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

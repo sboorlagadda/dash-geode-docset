@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Advanced Users—Configuring Log4j 2 for Geode |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_logging docs_managing_logging_configuring_log4j2">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Advanced Users—Configuring Log4j 2 for Geode
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Basic Geode logging configuration is configured via the gemfire.properties file. This topic is intended for advanced users who need increased control over logging due to integration with third-party libraries.</p>
+
+<p>The default <code>log4j2.xml</code> that Geode uses is stored in geode.jar as <code>log4j2-default.xml</code>. The contents of the configuration can be viewed in the product distribution in the following location: <code>$GEMFIRE/defaultConfigs/log4j2.xml</code>.</p>
+
+<p>To specify your own <code>log4j2.xml</code> configuration file (or anything else supported by Log4j 2 such as .json or .yaml), use the following flag when starting up your JVM or Geode member:</p>
+<pre class="highlight plaintext"><code>-Dlog4j.configurationFile=&lt;location-of-your-file&gt;
+</code></pre>
+
+<p>If the Java system property <code>log4j.configurationFile</code> is specified, then Geode will not use the <code>log4j2-default.xml</code> included in geode.jar. However, Geode will still create and register a AlertAppender and LogWriterAppender if the <code>alert-level</code> and <code>log-file</code> Geode properties are configured. You can then use the Geode LogWriter to log to Geode&rsquo;s log or to generate an Alert and receive log statements from customer&rsquo;s application and all third party libraries. Alternatively, you can use any front-end logging API that is configured to log to Log4j 2.</p>
+
+<h2 id="using-different-front-end-logging-apis-to-log-to-log4j2">Using Different Front-End Logging APIs to Log to Log4j2</h2>
+
+<p>You can also configure Log4j 2 to work with various popular and commonly used logging APIs. To obtain and configure the most popular front-end logging APIs to log to Log4j 2, see the instructions on the Apache Log4j 2 web site at <a href="http://logging.apache.org/log4j/2.x/">http://logging.apache.org/log4j/2.x/</a>.</p>
+
+<p>For example, if you are using:</p>
+
+<ul>
+<li>  <strong>Commons Logging</strong>, download &ldquo;Commons Logging Bridge&rdquo; (<code>log4j-jcl-2.7.jar</code>)</li>
+<li>  <strong>SLF4J</strong>, download &ldquo;SLFJ4 Binding&rdquo; (<code>log4j-slf4j-impl-2.7.jar</code>)</li>
+<li>  <strong>java.util.logging</strong>, download the &ldquo;JUL adapter&rdquo; (<code>log4j-jul-2.7.jar</code>)</li>
+</ul>
+
+<p>See <a href="http://logging.apache.org/log4j/2.x/faq.html">http://logging.apache.org/log4j/2.x/faq.html</a> for more examples.</p>
+
+<p>All three of the above JAR files are in the full distribution of Log4J 2.1 which can be downloaded at <a href="http://logging.apache.org/log4j/2.x/download.html">http://logging.apache.org/log4j/2.x/download.html</a>. Download the appropriate bridge, adapter, or binding JARs to ensure that Geode logging is integrated with every logging API used in various third-party libraries or in your own applications.</p>
+
+<p><strong>Note:</strong>
+Apache Geode has been tested with Log4j 2.1. As newer versions of Log4j 2 come out, you can find 2.1 under Previous Releases on that page.</p>
+
+<h2 id="customizing-your-own-log4j2.xml-file">Customizing Your Own log4j2.xml File</h2>
+
+<p>Advanced users may want to move away entirely from setting <code>log-*</code> gemfire properties and instead specify their own <code>log4j2.xml</code> using <code>-Dlog4j.configurationFile</code>.</p>
+
+<p>Custom Log4j 2 configuration in Geode comes with some caveats and notes:</p>
+
+<ul>
+<li>  Do not use <code>&quot;monitorInterval=&quot;</code> in your log4j2.xml file because doing so can have significant performance impact. This setting instructs Log4j 2 to monitor the log4j2.xml config file at runtime and automatically reload and reconfigure if the file changes.</li>
+<li>  Geode&rsquo;s default <code>log4j2.xml</code> specifies status=&ldquo;FATAL&rdquo; because Log4j 2&rsquo;s StatusLogger generates warnings to standard out at ERROR level anytime Geode stops its AlertAppender or LogWriterAppender. Geode uses a lot of concurrent threads that are executing code with log statements; these threads may be logging while the Geode appenders are being stopped.</li>
+<li>  Geode&rsquo;s default log4j2.xml specifies <code>shutdownHook=&quot;disable&quot;</code> because Geode has a shutdown hook which disconnects the DistributedSystem and closes the Cache, which is executing the code that performs logging. If the Log4J2 shutdown hook stops logging before Geode completes its shutdown, Log4j 2 will attempt to start back up. This restart in turn attempts to register another Log4j 2 shutdown hook which fails resulting in a FATAL level message logged by Log4j 2.</li>
+<li><p>The GEODE_VERBOSE marker (Log4J2 Marker are discussed on <a href="http://logging.apache.org/log4j/2.x/manual/markers.html">http://logging.apache.org/log4j/2.x/manual/markers.html</a>) can be used to enable additional verbose log statements at TRACE level. Many log statements are enabled simply by enabling DEBUG or TRACE. However, even more log statements can be further enabled by using MarkerFilter to accept GEODE_VERBOSE. The default Geode <code>log4j2.xml</code> disables GEODE_VERBOSE with this line:</p>
+<pre class="highlight plaintext"><code>&lt;MarkerFilter marker="GEODE_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL"/&gt;
+</code></pre>
+
+<p>You can enable the GEODE_VERBOSE log statements by changing <code>onMatch=&quot;DENY&quot;</code> to <code>onMatch=&quot;ACCEPT&quot;</code>. Typically, it&rsquo;s more useful to simply enable DEBUG or TRACE on certain classes or packages instead of for the entire Geode product. However, this setting can be used for internal debugging purposes if all other debugging methods fail.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

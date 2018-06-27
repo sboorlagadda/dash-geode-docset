@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring and Running a Cluster |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_chapter_overview">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring and Running a Cluster
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Use the <code>gfsh</code> command-line utility to configure your Apache Geode cluster (also called a &ldquo;distributed system&rdquo;). The cluster configuration service persists the cluster configurations and distributes the configurations to members of the cluster. There are also several additional ways to configure a cluster.</p>
+
+<p>Use <code>gfsh</code> to configure regions, disk stores, members, and other Geode objects. 
+You can also use <code>gfsh</code> to start and stop locators, servers, and Geode monitoring tools. As you execute these commands, the cluster configuration service persists the configuration. When new members join the cluster, the service distributes the configuration to the new members.</p>
+
+<p><code>gfsh</code> is the recommended means of configuring and managing your Apache Geode cluster, however you can still configure many aspects of a cluster using the older methods of the cache.xml and gemfire.properties files. See <a href="../reference/topics/chapter_overview_cache_xml.html#cache_xml">cache.xml</a> and the <a href="../reference/book_intro.html#reference">Reference</a> for configuration parameters. You can also configure some aspects of a cluster using a Java API. See <a href="../managing/book_intro.html#managing_gemfire_intro">Managing Apache Geode</a>.</p>
+
+<ul>
+<li><p><strong><a href="cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a></strong></p>
+
+<p>The Apache Geode cluster configuration service persists cluster configurations created by <code>gfsh</code> commands to the locators in a cluster and distributes the configurations to members of the cluster.</p></li>
+<li><p><strong><a href="cluster_config/persisting_configurations.html">Tutorial—Creating and Using a Cluster Configuration</a></strong></p>
+
+<p>A short walk-through that uses a single computer to demonstrate how to use <code>gfsh</code> to create a cluster configuration for a Geode cluster.</p></li>
+<li><p><strong><a href="cluster_config/deploying_application_jars.html">Deploying Application JARs to Apache Geode Members</a></strong></p>
+
+<p>You can dynamically deploy your application JAR files to specific members or to all members in your distributed system. Geode automatically keeps track of JAR file versions; autoloads the deployed JAR files to the CLASSPATH; and auto-registers any functions that the JAR contains.</p></li>
+<li><p><strong><a href="cluster_config/using_member_groups.html">Using Member Groups</a></strong></p>
+
+<p>Apache Geode allows you to organize your distributed system members into logical member groups.</p></li>
+<li><p><strong><a href="cluster_config/export-import.html">Exporting and Importing Cluster Configurations</a></strong></p>
+
+<p>The cluster configuration service exports and imports configurations created using <code>gfsh</code> for an entire Apache Geode cluster.</p></li>
+<li><p><strong><a href="cluster_config/gfsh_config_troubleshooting.html">Cluster Configuration Files and Troubleshooting</a></strong></p>
+
+<p>When you use the cluster configuration service in Geode, you can examine the generated configuration files in the <code>cluster_config</code> directory on the locator. <code>gfsh</code> saves configuration files at the cluster-level and at the individual group-level.</p></li>
+<li><p><strong><a href="cluster_config/gfsh_load_from_shared_dir.html">Loading Existing Configuration Files into Cluster Configuration</a></strong></p>
+
+<p>To load an existing cache.xml or gemfire.properties configuration file into a new cluster, use the <code>--load-cluster-configuration-from-dir</code> parameter when starting up the locator.</p></li>
+<li><p><strong><a href="cluster_config/gfsh_remote.html">Using gfsh to Manage a Remote Cluster Over HTTP or HTTPS</a></strong></p>
+
+<p>You can connect <code>gfsh</code> via HTTP or HTTPS to a remote cluster and manage the cluster using <code>gfsh</code> commands.</p></li>
+<li><p><strong><a href="running/deploying_config_files.html">Deploying Configuration Files without the Cluster Configuration Service</a></strong></p>
+
+<p>You can deploy your Apache Geode configuration files in your system directory structure or in jar files. You determine how you want to deploy your configuration files and set them up accordingly.</p></li>
+<li><p><strong><a href="running/starting_up_shutting_down.html">Starting Up and Shutting Down Your System</a></strong></p>
+
+<p>Determine the proper startup and shutdown procedures, and write your startup and shutdown scripts.</p></li>
+<li><p><strong><a href="running/running_the_locator.html">Running Geode Locator Processes</a></strong></p>
+
+<p>The locator is a Geode process that tells new, connecting members where running members are located and provides load balancing for server use.</p></li>
+<li><p><strong><a href="running/running_the_cacheserver.html">Running Geode Server Processes</a></strong></p>
+
+<p>A Geode server is a process that runs as a long-lived, configurable member of a client/server system.</p></li>
+<li><p><strong><a href="running/managing_output_files.html">Managing System Output Files</a></strong></p>
+
+<p>Geode output files are optional and can become quite large. Work with your system administrator to determine where to place them to avoid interfering with other system activities.</p></li>
+<li><p><strong><a href="running/firewall_ports_config.html">Firewall Considerations</a></strong></p>
+
+<p>You can configure and limit port usage for situations that involve firewalls, for example, between client-server or server-server connections.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

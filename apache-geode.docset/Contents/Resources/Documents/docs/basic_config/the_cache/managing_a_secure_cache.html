@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Managing a Cache in a Secure System |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_the_cache docs_basic_config_the_cache_managing_a_secure_cache">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Managing a Cache in a Secure System
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To create a cache in a secured system,
+authentication at connection time will require credentials.
+Authorization permits operations as configured.</p>
+
+<p><a id="managing_a_secure_cache__section_11BF0F3F64504B74B39CD4C1CF58E6FC"></a>
+These steps demonstrate a programmatic cache creation.</p>
+
+<ol>
+<li><p>To create the cache:</p>
+
+<ol>
+<li><p>Add necessary security properties to the <code>gemfire.properties</code> or <code>gfsecurity.properties</code> file, to configure for your particular security implementation. Examples:</p>
+<pre class="highlight plaintext"><code>security-client-auth-init=mySecurity.UserPasswordAuthInit.create
+</code></pre>
+<pre class="highlight plaintext"><code>security-peer-auth-init=myAuthPkg.myAuthInitImpl.create
+</code></pre></li>
+<li><p>When you create your cache, pass any properties required by your security implementation to the cache factory create call by using one of these methods:</p>
+
+<ul>
+<li><p><code>ClientCacheFactory</code> or <code>CacheFactory</code> <code>set</code> methods. Example:</p>
+<pre class="highlight plaintext"><code>ClientCache clientCache = new ClientCacheFactory()
+    .set("security-username", username)
+    .set("security-password", password)
+    .create();
+</code></pre></li>
+<li><p>Properties object passed to the <code>ClientCacheFactory</code> or <code>CacheFactory</code> <code>create</code> method. These are usually properties of a sensitive nature that you do not want to put inside the <code>gfsecurity.properties</code> file. Example:</p>
+<pre class="highlight plaintext"><code>Properties properties = new Properties();
+properties.setProperty("security-username", username);
+properties.setProperty("security-password", password);
+Cache cache = new CacheFactory(properties).create();
+</code></pre>
+
+<p><strong>Note:</strong>
+Properties passed to a cache creation method override any settings in either the <code>gemfire.properties</code> file or <code>gfsecurity.properties</code>.</p></li>
+</ul></li>
+</ol></li>
+<li><p>Close your cache when you are done, using the <code>close</code> method of the <code>ClientCache</code> instance or the inherited <code>close</code> method of the <code>Cache</code> instance. Example:</p>
+<pre class="highlight plaintext"><code>cache.close();
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

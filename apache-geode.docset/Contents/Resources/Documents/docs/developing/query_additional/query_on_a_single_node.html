@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Querying a Partitioned Region on a Single Node |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_query_on_a_single_node">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Querying a Partitioned Region on a Single Node
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To direct a query to specific partitioned region node, you can execute the query within a function. Use the following steps:</p>
+
+<ol>
+<li><p>Implement a function which executes a query using RegionFunctionContext.</p>
+<pre class="highlight plaintext"><code>/**
+ * This function executes a query using its RegionFunctionContext
+ * which provides a filter on data which should be queried.
+ *
+ */
+public class MyFunction extends FunctionAdapter {
+
+    private final String id;
+
+    @Override
+    public void execute(FunctionContext context) {
+
+      Cache cache = CacheFactory.getAnyInstance();
+      QueryService queryService = cache.getQueryService();
+
+      String qstr = (String) context.getArguments();
+
+      try {
+        Query query = queryService.newQuery(qstr);
+
+        //If function is executed on region, context is RegionFunctionContext
+        RegionFunctionContext rContext = (RegionFunctionContext)context;
+
+        SelectResults results = (SelectResults) query.execute(rContext)
+
+        //Send the results to function caller node.
+        context.getResultSender().sendResult((ArrayList) (results).asList());
+        context.getResultSender().lastResult(null);
+
+      } catch (Exception e) {
+        throw new FunctionException(e);
+      }
+    }
+
+    @Override
+    public boolean hasResult() {
+      return true;
+    }
+
+    @Override
+    public boolean isHA() {
+      return false;
+    }
+
+    public MyFunction(String id) {
+      super();
+      this.id = id;
+    }
+
+    @Override
+    public String getId() {
+      return this.id;
+    }
+  }
+</code></pre></li>
+<li><p>Decide on the data you want to query. Based on this decision, you can use <code>PartitionResolver</code> to configure the organization of buckets to be queried in the Partitioned Region.</p>
+
+<p>For example, let&rsquo;s say that you have defined the PortfolioKey class:</p>
+<pre class="highlight plaintext"><code>public class PortfolioKey implements DataSerializable {
+  private int id;
+  private long startValidTime;
+  private long endValidTime
+  private long writtenTime
+
+  public int getId() {
+    return this.id;
+  }
+...
+}
+</code></pre>
+
+<p>You could use the <code>MyPartitionResolver</code> to store all keys with the same ID in the same bucket. This <code>PartitionResolver</code> has to be configured at the time of Partition Region creation either declaratively using xml OR using APIs. See <a href="../partitioned_regions/managing_partitioned_regions.html#configure_partitioned_regions">Configuring Partitioned Regions</a> for more information.</p>
+<pre class="highlight plaintext"><code>/** This resolver returns the value of the ID field in the key. With this resolver, 
+ * all Portfolios using the same ID are colocated in the same bucket.
+ */
+public class MyPartitionResolver implements PartitionResolver, Declarable {
+
+   public Serializable getRoutingObject(EntryOperation operation) {
+   return operation.getKey().getId();
+}
+</code></pre></li>
+<li><p>Execute the function on a client or any other node by setting the filter in the function call.</p>
+<pre class="highlight plaintext"><code>/**
+ * Execute MyFunction for query on specified keys.
+ *
+ */
+public class TestFunctionQuery {
+
+  public static void main(String[] args) {
+
+    ResultCollector rcollector = null;
+    PortfolioKey portfolioKey1 = ...;
+
+    //Filter data based on portfolioKey1 which is the key used in 
+    //region.put(portfolioKey1, portfolio1);
+    Set filter = Collections.singleton(portfolioKey1);
+
+    //Query to get all positions for portfolio ID = 1
+    String qStr = "SELECT positions FROM /myPartitionRegion WHERE ID = 1";
+
+    try {
+      Function func = new MyFunction("testFunction");
+
+      Region region = CacheFactory.getAnyInstance().getRegion("myPartitionRegion");
+
+      //Function will be routed to one node containing the bucket
+      //for ID=1 and query will execute on that bucket.
+      rcollector = FunctionService
+          .onRegion(region)
+          .setArguments(qStr)
+          .withFilter(filter)
+          .execute(func);
+
+      Object result = rcollector.getResult();
+
+      //Results from one or multiple nodes.
+      ArrayList resultList = (ArrayList)result;
+
+      List queryResults = new ArrayList();
+
+      if (resultList.size()!=0) {
+        for (Object obj: resultList) {
+          if (obj != null) {
+            queryResults.addAll((ArrayList)obj);
+          }
+        }
+      }
+      printResults(queryResults);
+
+    } catch (FunctionException ex) {
+        getLogger().info(ex);
+    }
+  }
+}
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

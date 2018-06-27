@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Multicast Speed Limits |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_multicast_communication_configuring_speed_limits">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Multicast Speed Limits
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>After you determine the maximum transmission rate, configure and tune your production system.</p>
+
+<p><a id="multicast__section_8E225FC6829946C287552BC7996F2765"></a>
+For best performance, the producer and the consumers should run on different machines and each process should have at least one CPU dedicated to it. The following is a list of configuration changes that can improve multicast performance. Check with your system administrator about changing any of the limits discussed here.</p>
+
+<ul>
+<li>  Increase the default datagram size for systems running Microsoft Windows from 1024 bytes to a value that matches your network’s maximum transmission unit (MTU), which is typically 1500 bytes. The higher setting should improve the system’s network performance.</li>
+<li><p>Distribution statistics for stack time probes are disabled by default to increase multicast performance. To reduce multicast speed, you can enable time statistics by setting the gemfire.<code>enable-time-statistics</code> property to true.</p>
+
+<p>This enables time statistics for a Java application:</p>
+<pre class="highlight plaintext"><code>-Dgemfire.enable-time-statistics=true
+</code></pre>
+
+<p>The time statistics properties are passed to the cache server on the <code>gfsh</code> the command line:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server_name --enable-time-statistics=true
+</code></pre></li>
+<li><p>Monitor the members that receive data for signs of data loss. A few data loss messages can happen normally during region creation. Multicast retransmit requests and unicast retransmits can also be monitored to detect data loss. Even when you see data loss, the cause of the problem may have nothing to do with the network. However, if it happens constantly then you should try testing the flow control rate again</p></li>
+<li><p>If necessary, reconfigure all the <code>gemfire.properties</code> files and repeat with lower flow control maximum credits until you find the maximum useful rate for your installation.</p></li>
+<li><p>Slow system performance might be helped by reducing how far your multicast messaging goes in your network.</p></li>
+<li><p>Reduce multicast latency by disabling batching. By default, Geode uses batching for operations when the region’s scope is distributed-no-ack. Set the <code>disableBatching</code> property to true on the application or when starting a cache server process through the <code>gfsh</code> command line:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server_name --J=-Dp2p.disableBatching=true
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

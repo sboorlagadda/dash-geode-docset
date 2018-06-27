@@ -1,0 +1,513 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Diagnosing System Problems |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_troubleshooting docs_managing_troubleshooting_diagnosing_system_probs">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Diagnosing System Problems
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section provides possible causes and suggested responses for system problems.</p>
+
+<ul>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_7BC1FF8CE0FC492CB49235FC4BC4060B">Locator does not start</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_D51F5FA86ABA43C699B593D890BC3E28">Application or cache server process does not start</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_53D97CED679443F28E20E8B08C699056">Application or cache server does not join the distributed system</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_D607C96A6CBE42FD880F1463A20A8BEF">Member process seems to hang</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E3B4A6DB81AB4C659C6093D2D61EFD71">Member process does not read settings from the gemfire.properties file</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_B0698527A4DF4D84877B1AF66291ABFD">Cache creation fails - must match schema definition root</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_B2DAD06E80A4475D96FF2ACCF30FE198">Cache is not configured properly</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_6B4E2AD4ECBB4C08B8F1DB5E07AFE7F6">Unexpected results for keySetOnServer and containsKeyOnServer</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_9276E09D9FAC408E899F73B7068E80C6">Data operation returns PartitionOfflineException</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_A3BB709B754949C6981C431F1F8023D6">Entries are not being evicted or expired as expected</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_346C62F16B19491E83B59B0A51D9E2B6">Cannot find the log file</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_3CFAA7BA258B43A795AEAB09F9DD9AAB">OutOfMemoryError</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_B49BD03F4CA241C7BED4A2C4D5936A7A">PartitionedRegionDistributionException</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_7DE15A6C99974821B6CA418BC2AF98F1">PartitionedRegionStorageException</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_AFA1D06BC3AA44A4AB0593FD1EF0B0B7">Application crashes without producing an exception</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_06C68EA0DACC46C58AA88E98C19AD2D8">Timeout alert</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_66D11C8E84F941B58800EDB52194B087">Member produces SocketTimeoutException</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_8C7CB2EA0A274DAF90083FECE0BF3B1F">Member logs ForcedDisconnectException, Cache and DistributedSystem forcibly closed</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_778D150443044847B1C73B9E02BE247B">Members cannot see each other</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E31AFADE4A3A45C7A6EABB67697CFF33">One part of the distributed system cannot see another part</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_04CEF27475924E5D9860BEE6D64C49E2">Data distribution has stopped, although member processes are running</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_7A6113ED20044B8C868483AABC45216E">Distributed-ack operations take a very long time to complete</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E5DB25F2CC454510A9E58790C09C8CE3">Slow system performance</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_F93DD765FF2A43439D3FF7936F8883DE">Can’t get Windows performance data</a></li>
+<li>  <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E70C332303A242BEAE9D2C0A2EE70E0A">Java applications on 64-bit platforms hang or use 100% CPU</a></li>
+</ul>
+
+<h2 id="locator-does-not-start"><a id="diagnosing_system_probs__section_7BC1FF8CE0FC492CB49235FC4BC4060B" class="no-quick-link"></a>Locator does not start</h2>
+
+<p>Invocation of a locator with gfsh fails with an error like this:</p>
+<pre class="highlight plaintext"><code>Starting a GemFire Locator in C:\devel\gfcache\locator\locator
+The Locator process terminated unexpectedly with exit status 1. Please refer to the log
+        file in C:\devel\gfcache\locator\locator for full details.
+Exception in thread "main" java.lang.RuntimeException: An IO error occurred while
+        starting a Locator in C:\devel\gfcache\locator\locator on 192.0.2.0[10999]: Network is
+        unreachable; port (10999) is not available on 192.0.2.0.
+at
+org.apache.geode.distributed.LocatorLauncher.start(LocatorLauncher.java:622)
+at
+org.apache.geode.distributed.LocatorLauncher.run(LocatorLauncher.java:513)
+at
+org.apache.geode.distributed.LocatorLauncher.main(LocatorLauncher.java:188)
+Caused by: java.net.BindException: Network is unreachable; port (10999) is not available on
+        192.0.2.0.
+at
+org.apache.geode.distributed.AbstractLauncher.assertPortAvailable(AbstractLauncher.java:136)
+at
+org.apache.geode.distributed.LocatorLauncher.start(LocatorLauncher.java:596)
+...
+</code></pre>
+
+<p>This indicates a mismatch somewhere in the address, port pairs used for locator startup and configuration. The address you use for locator startup must match the address you list for the locator in the <code>gemfire.properties</code> locators specification. Every member of the locator’s distributed system, including the locator itself, must have the complete locators specification in the <code>gemfire.properties</code>.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check that your locators specification includes the address you are using to start your locator.</li>
+<li>  If you use a bind address, you must use numeric addresses for the locator specification. The bind address will not resolve to the machine’s default address.</li>
+<li>  If you are using a 64-bit Linux system, check whether your system is experiencing the leap second bug. See <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E70C332303A242BEAE9D2C0A2EE70E0A">Java applications on 64-bit platforms hang or use 100% CPU</a> for more information.</li>
+</ul>
+
+<h2 id="application-or-cache-server-process-does-not-start"><a id="diagnosing_system_probs__section_D51F5FA86ABA43C699B593D890BC3E28" class="no-quick-link"></a>Application or cache server process does not start</h2>
+
+<p>If the process tries to start and then silently disappears, on Windows this indicates a memory problem.</p>
+
+<p>Response:</p>
+
+<ul>
+<li><p>On a Windows host, decrease the maximum JVM heap size. This property is specified on the <code>gfsh</code> command line:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server_name --max-heap=1024m
+</code></pre>
+
+<p>For details, see <a href="../monitor_tune/system_member_performance_jvm_mem_settings.html#sys_mem_perf">JVM Memory Settings and System Performance</a>.</p></li>
+<li><p>If this doesn’t work, try rebooting.</p></li>
+</ul>
+
+<h2 id="application-or-cache-server-does-not-join-the-distributed-system"><a id="diagnosing_system_probs__section_53D97CED679443F28E20E8B08C699056" class="no-quick-link"></a>Application or cache server does not join the distributed system</h2>
+
+<p>Response: Check these possible causes.</p>
+
+<ul>
+<li>  Network problem—the most common cause. First, try to ping the other hosts.</li>
+<li>  Firewall problems. If members of your distributed Geode system are located outside the LAN, check whether the firewall is blocking communication. Geode is a network-centric distributed system, so if you have a firewall running on your machine, it could cause connection problems. For example, your connections may fail if your firewall places restrictions on inbound or outbound permissions for Java-based sockets. You may need to modify your firewall configuration to permit traffic to Java applications running on your machine. The specific configuration depends on the firewall you are using.</li>
+<li>  Wrong multicast port when using multicast for membership. Check the <code>gemfire.properties</code> file of this application or cache server to see that the mcast-port is configured correctly. If you are running multiple distributed systems at your site, each distributed system must use a unique multicast port.</li>
+<li>  Can not connect to locator (when using TCP for discovery).
+
+<ul>
+<li>  Check that the locators attribute in this process’s <code>gemfire.properties</code> has the correct IP address for the locator.</li>
+<li>  Check that the locator process is running. If not, see instructions for related problem, <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_04CEF27475924E5D9860BEE6D64C49E2">Data distribution has stopped, although member processes are running</a>.</li>
+<li>  Bind address set incorrectly on a multi-homed host. When you specify the bind address, use the IP address rather than the host name. Sometimes multiple network adapters are configured with the same hostname. See <a href="../../topologies_and_comm/topology_concepts/chapter_overview.html#concept_7628F498DB534A2D8A99748F5DA5DC94">Topology and Communication General Concepts</a> for more information about using bind addresses.</li>
+</ul></li>
+<li>  Wrong version of Geode . A version mismatch can cause the process to hang or crash. Check the software version with the gemfire version command.</li>
+</ul>
+
+<h2 id="member-process-seems-to-hang"><a id="diagnosing_system_probs__section_D607C96A6CBE42FD880F1463A20A8BEF" class="no-quick-link"></a>Member process seems to hang</h2>
+
+<p>Response:</p>
+
+<ul>
+<li>  <strong>During initialization</strong>—For persistent regions, the member may be waiting for another member with more recent data to start and load from its disk stores. See <a href="../disk_storage/chapter_overview.html">Disk Storage</a>. Wait for the initialization to finish or time out. The process could be busy—some caches have millions of entries, and they can take a long time to load. Look for this especially with cache servers, because their regions are typically replicas and therefore store all the entries in the region. Applications, on the other hand, typically store just a subset of the entries. For partitioned regions, if the initialization eventually times out and produces an exception, the system architect needs to repartition the data.</li>
+<li>  <strong>For a running process</strong>—Investigate whether another member is initializing. Under some optional distributed system configurations, a process can be required to wait for a response from other processes before it proceeds.</li>
+</ul>
+
+<h2 id="member-process-does-not-read-settings-from-the-gemfire.properties-file"><a id="diagnosing_system_probs__section_E3B4A6DB81AB4C659C6093D2D61EFD71" class="no-quick-link"></a>Member process does not read settings from the gemfire.properties file</h2>
+
+<p>Either the process can’t find the configuration file or, if it is an application, it may be doing programmatic configuration.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check that the <code>gemfire.properties</code> file is in the right directory.</li>
+<li>  Make sure the process is not picking up settings from another <code>gemfire.properties</code> file earlier in the search path. Geode looks for a <code>gemfire.properties</code> file in the current working directory, the home directory, and the CLASSPATH, in that order.</li>
+<li>  For an application, check the documentation to see whether it does programmatic configuration. If so, the properties that are set programmatically cannot be reset in a <code>gemfire.properties</code> file. See your application’s customer support group for configuration changes.</li>
+</ul>
+
+<h2 id="cache-creation-fails---must-match-schema-definition-root"><a id="diagnosing_system_probs__section_B0698527A4DF4D84877B1AF66291ABFD" class="no-quick-link"></a>Cache creation fails - must match schema definition root</h2>
+
+<p>System member startup fails with an error like one of these:</p>
+<pre class="highlight plaintext"><code>Exception in thread "main" org.apache.geode.cache.CacheXmlException:
+While reading Cache XML file:/C:/gemfire/client_cache.xml.
+Error while parsing XML, caused by org.xml.sax.SAXParseException:
+Document root element "client-cache", must match DOCTYPE root "cache".
+</code></pre>
+<pre class="highlight plaintext"><code>Exception in thread "main" org.apache.geode.cache.CacheXmlException:
+While reading Cache XML file:/C:/gemfire/cache.xml.
+Error while parsing XML, caused by org.xml.sax.SAXParseException:
+Document root element "cache", must match DOCTYPE root "client-cache".
+</code></pre>
+
+<p>Geode declarative cache creation uses one of two root element pairs: <code>cache</code> or <code>client-cache</code>. The name must be the same in both places.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Modify your <code>cache.xml</code> file so it has the proper XML namespace and schema definition.</li>
+</ul>
+
+<p><strong>For peers and servers:</strong></p>
+<pre class="highlight plaintext"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;cache
+    xmlns="http://geode.apache.org/schema/cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"
+    version="1.0”&gt;
+...
+&lt;/cache&gt;
+</code></pre>
+
+<p><strong>For clients:</strong></p>
+<pre class="highlight plaintext"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;client-cache
+    xmlns="http://geode.apache.org/schema/cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"
+    version="1.0"&gt;
+...
+&lt;/client-cache&gt;
+</code></pre>
+
+<h2 id="cache-is-not-configured-properly"><a id="diagnosing_system_probs__section_B2DAD06E80A4475D96FF2ACCF30FE198" class="no-quick-link"></a>Cache is not configured properly</h2>
+
+<p>An empty cache can be a normal condition. Some applications start with an empty cache and populate it programmatically, but others are designed to bulk load data during initialization.</p>
+
+<p>Response:</p>
+
+<p>If your application should start with a full cache but it comes up empty, check these possible causes:</p>
+
+<ul>
+<li>  <strong>No regions</strong>—If the cache has no regions, the process isn’t reading the cache configuration file. Check that the name and location of the cache configuration file match those configured in the cache-xml-file attribute in <code>gemfire.properties</code>. If they match, the process may not be reading <code>gemfire.properties</code>. See <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E3B4A6DB81AB4C659C6093D2D61EFD71">Member process does not read settings from the gemfire.properties file</a>.</li>
+<li>  <strong>Regions without data</strong>—If the cache starts with regions, but no data, this process may not have joined the correct distributed system. Check the log file for messages that indicate other members. If you don’t see any, the process may be running alone in its own distributed system. In a process that is clearly part of the correct distributed system, regions without data may indicate an implementation design error.</li>
+</ul>
+
+<h2 id="unexpected-results-for-keysetonserver-and-containskeyonserver"><a id="diagnosing_system_probs__section_6B4E2AD4ECBB4C08B8F1DB5E07AFE7F6" class="no-quick-link"></a>Unexpected results for keySetOnServer and containsKeyOnServer</h2>
+
+<p>Client calls to keySetOnServer and containsKeyOnServer can return incomplete or inconsistent results if your server regions are not configured as partitioned or replicated regions.</p>
+
+<p>A non-partitioned, non-replicate server region may not hold all data for the distributed region, so these methods would operate on a partial view of the data set.</p>
+
+<p>In addition, the client methods use the least loaded server for each method call, so may use different servers for two calls. If the servers do not have a consistent view in their local data set, responses to client requests will vary.</p>
+
+<p>The consistent view is only guaranteed by configuring the server regions with partitioned or replicate data-policy settings. Non-server members of the server system can use any allowable configuration as they are not available to take client requests.</p>
+
+<p>The following server region configurations give inconsistent results. These configurations allow different data on different servers. There is no additional messaging on the servers, so no union of keys across servers or checking other servers for the key in question.</p>
+
+<ul>
+<li>  Normal</li>
+<li>  Mix (replicated, normal, empty) for a single distributed region. Inconsistent results depending on which server the client sends the request to</li>
+</ul>
+
+<p>These configurations provide consistent results:</p>
+
+<ul>
+<li>  Partitioned server region</li>
+<li>  Replicated server region</li>
+<li>  Empty server region: keySetOnServer returns the empty set and containsKeyOnServer returns false</li>
+</ul>
+
+<p>Response: Use a partitioned or replicate data-policy for your server regions. This is the only way to provide a consistent view to clients of your server data set. See <a href="../../developing/region_options/chapter_overview.html">Region Data Storage and Distribution Options</a>.</p>
+
+<h2 id="data-operation-returns-partitionofflineexception"><a id="diagnosing_system_probs__section_9276E09D9FAC408E899F73B7068E80C6" class="no-quick-link"></a>Data operation returns PartitionOfflineException</h2>
+
+<p>In partitioned regions that are persisted to disk, if you have any members offline, the partitioned region will still be available but may have some buckets represented only in offline disk stores. In this case, methods that access the bucket entries return a PartitionOfflineException, similar to this:</p>
+<pre class="highlight plaintext"><code>org.apache.geode.cache.persistence.PartitionOfflineException:
+Region /__PR/_B__root_partitioned__region_7 has persistent data that is no
+longer online stored at these locations:
+[/192.0.2.1:/export/straw3/users/jpearson/bugfix_Apr10/testCL/hostB/backupDirectory 
+created at timestamp 1270834766733 version 0]
+</code></pre>
+
+<p>Response: Bring the missing member online, if possible. This restores the buckets to memory and you can work with them again. If the missing member cannot be brought back online, or the disk stores for the member are corrupt, you may need to revoke the member, which will allow the system to create the buckets in new members and resume operations with the entries. See <a href="../disk_storage/handling_missing_disk_stores.html#handling_missing_disk_stores">Handling Missing Disk Stores</a>.</p>
+
+<h2 id="entries-are-not-being-evicted-or-expired-as-expected"><a id="diagnosing_system_probs__section_A3BB709B754949C6981C431F1F8023D6" class="no-quick-link"></a>Entries are not being evicted or expired as expected</h2>
+
+<p>Check these possible causes.</p>
+
+<ul>
+<li>  Transactions—Entries that are old enough for eviction may remain in the cache if they are involved in a transaction. Further, transactions never time out, so if a transaction hangs, the entries involved in the transaction will remain stuck in the cache. If you have a process with a hung transaction, you may need to end the process to remove the transaction. In your application programming, do not leave transactions open ended. Program all transactions to end with a commit or a rollback. See <a href="../../developing/transactions/working_with_transactions.html#concept_vyt_txz_vk">Using Eviction and Expiration Operations</a>.</li>
+<li>  Partitioned regions—For performance reasons, eviction and expiration behave differently in partitioned regions and can cause entries to be removed before you expect. See <a href="../../developing/eviction/chapter_overview.html">Eviction</a> and <a href="../../developing/expiration/chapter_overview.html">Expiration</a>.</li>
+</ul>
+
+<h2 id="cannot-find-the-log-file"><a id="diagnosing_system_probs__section_346C62F16B19491E83B59B0A51D9E2B6" class="no-quick-link"></a>Cannot find the log file</h2>
+
+<p>Operating without a log file can be a normal condition, so the process does not log a warning.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check whether the log-file attribute is configured in <code>gemfire.properties</code>. If not, logging defaults to standard output, and on Windows it may not be visible at all.</li>
+<li>  If log-file is configured correctly, the process may not be reading <code>gemfire.properties</code>. See <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_E3B4A6DB81AB4C659C6093D2D61EFD71">Member process does not read settings from the gemfire.properties file</a>.</li>
+</ul>
+
+<h2 id="outofmemoryerror"><a id="diagnosing_system_probs__section_3CFAA7BA258B43A795AEAB09F9DD9AAB" class="no-quick-link"></a>OutOfMemoryError</h2>
+
+<p>An application gets an OutOfMemoryError if it needs more object memory than the process is able to give. The messages include java.lang.OutOfMemoryError.</p>
+
+<p>Response:</p>
+
+<p>The process may be hitting its virtual address space limits. The virtual address space has to be large enough to accommodate the heap, code, data, and dynamic link libraries (DLLs).</p>
+
+<ul>
+<li>  If your application is out of memory frequently, you may want to profile it to determine the cause.</li>
+<li>  If you suspect your heap size is set too low, you can increase direct memory by resetting the maximum heap size, using -Xmx. For details, see <a href="../monitor_tune/system_member_performance_jvm_mem_settings.html#sys_mem_perf">JVM Memory Settings and System Performance</a>.</li>
+<li><p>You may need to lower the thread stack size. The default thread stack size is quite large: 512kb on Sparc and 256kb on Intel for 1.3 and 1.4 32-bit JVMs, 1mb with the 64-bit Sparc 1.4 JVM; and 128k for 1.2 JVMs. If you have thousands of threads then you might be wasting a significant amount of stack space. If this is your problem, the error may be this:</p>
+<pre class="highlight plaintext"><code>OutOfMemoryError: unable to create new native thread
+</code></pre>
+
+<p>The minimum setting in 1.3 and 1.4 is 64kb, and in 1.2 is 32kb. You can change the stack size using the -Xss flag, like this: -Xss64k</p></li>
+<li><p>You can also control memory use by setting entry limits for the regions.</p></li>
+</ul>
+
+<h2 id="partitionedregiondistributionexception"><a id="diagnosing_system_probs__section_B49BD03F4CA241C7BED4A2C4D5936A7A" class="no-quick-link"></a>PartitionedRegionDistributionException</h2>
+
+<p>The org.apache.geode.cache.PartitionedRegionDistributionException appears when Geode fails after many attempts to complete a distributed operation. This exception indicates that no data store member can be found to perform a destroy, invalidate, or get operation.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check the network for traffic congestion or a broken connection to a member.</li>
+<li>  Look at the overall installation for problems, such as operations at the application level set to a higher priority than the Geode processes.</li>
+<li>  If you keep seeing PartitionedRegionDistributionException, you should evaluate whether you need to start more members.</li>
+</ul>
+
+<h2 id="partitionedregionstorageexception"><a id="diagnosing_system_probs__section_7DE15A6C99974821B6CA418BC2AF98F1" class="no-quick-link"></a>PartitionedRegionStorageException</h2>
+
+<p>The org.apache.geode.cache.PartitionedRegionStorageException appears when Geode can’t create a new entry. This exception arises from a lack of storage space for put and create operations or for get operations with a loader. PartitionedRegionStorageException often indicates data loss or impending data loss.</p>
+
+<p>The text string indicates the cause of the exception, as in these examples:</p>
+<pre class="highlight plaintext"><code>Unable to allocate sufficient stores for a bucket in the partitioned region....
+</code></pre>
+<pre class="highlight plaintext"><code>Ran out of retries attempting to allocate a bucket in the partitioned region....
+</code></pre>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check the network for traffic congestion or a broken connection to a member.</li>
+<li>  Look at the overall installation for problems, such as operations at the application level set to a higher priority than the Geode processes.</li>
+<li>  If you keep seeing PartitionedRegionStorageException, you should evaluate whether you need to start more members.</li>
+</ul>
+
+<h2 id="application-crashes-without-producing-an-exception"><a id="diagnosing_system_probs__section_AFA1D06BC3AA44A4AB0593FD1EF0B0B7" class="no-quick-link"></a>Application crashes without producing an exception</h2>
+
+<p>If an application crashes without any exception, this may be caused by an object memory problem. The process is probably hitting its virtual address space limits. For details, see <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_3CFAA7BA258B43A795AEAB09F9DD9AAB">OutOfMemoryError</a>.</p>
+
+<p>Response: Control memory use by setting entry limits for the regions.</p>
+
+<h2 id="timeout-alert"><a id="diagnosing_system_probs__section_06C68EA0DACC46C58AA88E98C19AD2D8" class="no-quick-link"></a>Timeout alert</h2>
+
+<p>If a distributed message does not get a response within a specified time, it sends an alert to signal that something might be wrong with the system member that hasn’t responded. The alert is logged in the sender’s log as a warning.</p>
+
+<p>A timeout alert can be considered normal.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  If you’re seeing a lot of timeouts and you haven’t seen them before, check whether your network is flooded.</li>
+<li>  If you see these alerts constantly during normal operation, consider raising the ack-wait-threshold above the default 15 seconds.</li>
+</ul>
+
+<h2 id="member-produces-sockettimeoutexception"><a id="diagnosing_system_probs__section_66D11C8E84F941B58800EDB52194B087" class="no-quick-link"></a>Member produces SocketTimeoutException</h2>
+
+<p>A client and server produces a SocketTimeoutException when it stops waiting for a response from the other side of the connection and closes the socket. This exception typically happens on the handshake or when establishing a callback connection.</p>
+
+<p>Response:</p>
+
+<p>Increase the default socket timeout setting for the member. This timeout is set separately for the client Pool. For a client/server configuration, adjust the &ldquo;read-timeout&rdquo; value as described in <a href="../../reference/topics/client-cache.html#cc-pool">&lt;pool&gt;</a> or use the <code>org.apache.geode.cache.client.PoolFactory.setReadTimeout</code> method.</p>
+
+<h2 id="member-logs-forceddisconnectexception,-cache-and-distributedsystem-forcibly-closed"><a id="diagnosing_system_probs__section_8C7CB2EA0A274DAF90083FECE0BF3B1F" class="no-quick-link"></a>Member logs ForcedDisconnectException, Cache and DistributedSystem forcibly closed</h2>
+
+<p>A distributed system member’s Cache and DistributedSystem are forcibly closed by the system membership coordinator if it becomes sick or too slow to respond to heartbeat requests. When this happens, listeners receive RegionDestroyed notification with an opcode of FORCED_DISCONNECT. The Geode log file for the member shows a ForcedDisconnectException with the message</p>
+<pre class="highlight plaintext"><code>This member has been forced out of the distributed system because it did not respond
+within member-timeout milliseconds
+</code></pre>
+
+<p>Response:</p>
+
+<p>To minimize the chances of this happening, you can increase the DistributedSystem property member-timeout. Take care, however, as this setting also controls the length of time required to notice a network failure. It should not be set too high.</p>
+
+<h2 id="members-cannot-see-each-other"><a id="diagnosing_system_probs__section_778D150443044847B1C73B9E02BE247B" class="no-quick-link"></a>Members cannot see each other</h2>
+
+<p>Suspect a network problem or a problem in the configuration of transport for memory and discovery.</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Check your network monitoring tools to see whether the network is down or flooded.</li>
+<li>  If you are using multi-homed hosts, make sure a bind address is set and consistent for all system members. For details about using bind addresses, see <a href="../../topologies_and_comm/topology_concepts/chapter_overview.html#concept_7628F498DB534A2D8A99748F5DA5DC94">Topology and Communication General Concepts</a>.</li>
+<li>  Check that all the applications and cache servers are using the same locator address.</li>
+</ul>
+
+<h2 id="one-part-of-the-distributed-system-cannot-see-another-part"><a id="diagnosing_system_probs__section_E31AFADE4A3A45C7A6EABB67697CFF33" class="no-quick-link"></a>One part of the distributed system cannot see another part</h2>
+
+<p>This situation can leave your caches in an inconsistent state. In networking circles, this kind of network outage is called the &ldquo;split brain problem.&rdquo;</p>
+
+<p>Response:</p>
+
+<ul>
+<li>  Restart all the processes to ensure data consistency.</li>
+<li>  Going forward, set up network monitoring tools to detect these kinds of outages quickly.</li>
+<li>  Enable network partition detection.</li>
+</ul>
+
+<p>Also see
+<a href="recovering_from_network_outages.html#rec_network_crash">Understanding and Recovering from Network Outages</a>.</p>
+
+<h2 id="data-distribution-has-stopped,-although-member-processes-are-running"><a id="diagnosing_system_probs__section_04CEF27475924E5D9860BEE6D64C49E2" class="no-quick-link"></a>Data distribution has stopped, although member processes are running</h2>
+
+<p>Suspect a problem with the network, the locator, or the multicast configuration, depending on the transport your distributed system is using.</p>
+
+<p>Response:</p>
+
+<ul>
+<li><p>Check the health of your system members. Search the logs for this string:</p>
+<pre class="highlight plaintext"><code>Uncaught exception
+</code></pre>
+
+<p>An uncaught exception means a severe error, often an OutOfMemoryError. See <a href="diagnosing_system_probs.html#diagnosing_system_probs__section_3CFAA7BA258B43A795AEAB09F9DD9AAB">OutOfMemoryError</a>.</p></li>
+<li><p>Check your network monitoring tools to see whether the network is down or flooded.</p></li>
+<li><p>If you are using multicast, check whether the existing configuration is no long appropriate for the current network traffic.</p></li>
+<li><p>Check whether the locators have stopped. For a list of the locators in use, check the locators property in one of the application <code>gemfire.properties</code> files.</p>
+
+<ul>
+<li>  Restart the locator processes on the same hosts, if possible. The distributed system begins normal operation, and data distribution restarts automatically.</li>
+<li>  If a locator must be moved to another host or a different IP address, complete these steps:
+
+<ol>
+<li> Shut down all the members of the distributed system in the usual order.</li>
+<li> Restart the locator process in its new location.</li>
+<li> Edit all the gemfire.properties files to change this locator’s IP address in the locators attribute.</li>
+<li> Restart the applications and cache servers in the usual order.</li>
+</ol></li>
+</ul></li>
+<li><p>Create a watchdog daemon or service on each locator host to restart the locator process when it stops</p></li>
+</ul>
+
+<h2 id="distributed-ack-operations-take-a-very-long-time-to-complete"><a id="diagnosing_system_probs__section_7A6113ED20044B8C868483AABC45216E" class="no-quick-link"></a>Distributed-ack operations take a very long time to complete</h2>
+
+<p>This problem can occur in systems with a great number of distributed-no-ack operations. That is, the presence of many no-ack operations can cause ack operation to take a long time to complete.</p>
+
+<p>Response:</p>
+
+<p>For information on alleviating this problem, see <a href="../monitor_tune/slow_messages.html#slow_mess">Slow distributed-ack Messages</a>.</p>
+
+<h2 id="slow-system-performance"><a id="diagnosing_system_probs__section_E5DB25F2CC454510A9E58790C09C8CE3" class="no-quick-link"></a>Slow system performance</h2>
+
+<p>Slow system performance is sometimes caused by a buffer size that is too small for the objects being distributed.</p>
+
+<p>Response:</p>
+
+<p>If you are experiencing slow performance and are sending large objects (multiple megabytes), try increasing the socket buffer size settings in your system. For more information, see <a href="../monitor_tune/socket_communication.html">Socket Communication</a>.</p>
+
+<h2 id="can’t-get-windows-performance-data"><a id="diagnosing_system_probs__section_F93DD765FF2A43439D3FF7936F8883DE" class="no-quick-link"></a>Can’t get Windows performance data</h2>
+
+<p>Attempting to run performance measurements for Geode on Windows can produce this error message:</p>
+<pre class="highlight plaintext"><code>Can't get Windows performance data. RegQueryValueEx returned 5
+</code></pre>
+
+<p>This error can occur because incorrect information is returned when a Win32 application calls the ANSI version of RegQueryValueEx Win32 API with HKEY_PERFORMANCE_DATA. This error is described in Microsoft KB article ID 226371 at <a href="http://support.microsoft.com/kb/226371/en-us">http://support.microsoft.com/kb/226371/en-us</a>.</p>
+
+<p>Response:</p>
+
+<p>To successfully acquire Windows performance data, you need to verify that you have the proper registry key access permissions in the system registry. In particular, make sure that Perflib in the following registry path is readable (KEY_READ access) by the Geode process:</p>
+<pre class="highlight plaintext"><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib
+</code></pre>
+
+<p>An example of reasonable security on the performance data would be to grant administrators KEY_ALL_ACCESS access and interactive users KEY_READ access. This particular configuration would prevent non-administrator remote users from querying performance data.</p>
+
+<p>See <a href="http://support.microsoft.com/kb/310426">http://support.microsoft.com/kb/310426</a> and <a href="http://support.microsoft.com/kb/146906">http://support.microsoft.com/kb/146906</a> for instructions about how to ensure that Geode processes have access to the registry keys associated with performance.</p>
+
+<h2 id="java-applications-on-64-bit-platforms-hang-or-use-100%-cpu"><a id="diagnosing_system_probs__section_E70C332303A242BEAE9D2C0A2EE70E0A" class="no-quick-link"></a>Java applications on 64-bit platforms hang or use 100% CPU</h2>
+
+<p>If your Java applications suddenly start to use 100% CPU, you may be experiencing the leap second bug. This bug is found in the Linux kernel and can severely affect Java programs. In particular, you may notice that method invocations using <code>Thread.sleep(n)</code> where <code>n</code> is a small number will actually sleep for much longer period of time than defined by the method. To verify that you are experiencing this bug, check the host&rsquo;s <code>dmesg</code> output for the following message:</p>
+<pre class="highlight plaintext"><code>[10703552.860274] Clock: inserting leap second 23:59:60 UTC
+</code></pre>
+
+<p>To fix this problem, issue the following commands on your affected Linux machines:</p>
+<pre class="highlight plaintext"><code>prompt&gt; /etc/init.d/ntp stop
+prompt&gt; date -s "$(date)"
+</code></pre>
+
+<p>See the following web site for more information:</p>
+
+<p><a href="http://blog.wpkg.org/2012/07/01/java-leap-second-bug-30-june-1-july-2012-fix/">http://blog.wpkg.org/2012/07/01/java-leap-second-bug-30-june-1-july-2012-fix/</a></p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

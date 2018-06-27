@@ -1,0 +1,405 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      System Failure and Recovery |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_troubleshooting docs_managing_troubleshooting_system_failure_and_recovery">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    System Failure and Recovery
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section describes alerts for and appropriate responses to various kinds of system failures. It also helps you plan a strategy for data recovery.</p>
+
+<p>If a system member withdraws from the distributed system involuntarily because the member, host, or network fails, the other members automatically adapt to the loss and continue to operate. The distributed system does not experience any disturbance such as timeouts.</p>
+
+<h2 id="planning-for-data-recovery"><a id="sys_failure__section_846B00118184487FB8F1E0CD1DC3A81B" class="no-quick-link"></a>Planning for Data Recovery</h2>
+
+<p>In planning a strategy for data recovery, consider these factors:</p>
+
+<ul>
+<li>  Whether the region is configured for data redundancy—partitioned regions only.</li>
+<li>  The region’s role-loss policy configuration, which controls how the region behaves after a crash or system failure—distributed regions only.</li>
+<li>  Whether the region is configured for persistence to disk.</li>
+<li>  The extent of the failure, whether multiple members or a network outage is involved.</li>
+<li>  Your application’s specific needs, such as the difficulty of replacing the data and the risk of running with inconsistent data for your application.</li>
+<li>  When an alert is generated due to network partition or slow response, indicating that certain processes may, or will, fail.</li>
+</ul>
+
+<p>The rest of this section provides recovery instructions for various kinds system failures.</p>
+
+<h2 id="network-partitioning,-slow-response,-and-member-removal-alerts"><a id="sys_failure__section_2C390F0783724048A6E12F7F369EB8DC" class="no-quick-link"></a>Network Partitioning, Slow Response, and Member Removal Alerts</h2>
+
+<p>When a network partition detection or slow responses occur, these alerts are generated:</p>
+
+<ul>
+<li>  Network Partitioning is Detected</li>
+<li>  Member is Taking Too Long to Respond</li>
+<li>  No Locators Can Be Found</li>
+<li>  Warning Notifications Before Removal</li>
+<li>  Member is Forced Out</li>
+</ul>
+
+<p>For information on configuring system members to help avoid a network partition configuration condition in the presence of a network failure or when members lose the ability to communicate to each other, refer to <a href="recovering_from_network_outages.html#rec_network_crash">Understanding and Recovering from Network Outages</a>.</p>
+
+<h2 id="network-partitioning-detected"><a id="sys_failure__section_D52D902E665F4F038DA4B8298E3F8681" class="no-quick-link"></a>Network Partitioning Detected</h2>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership coordinator id has declared that a network partition has occurred.
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is issued when network partitioning occurs, followed by this alert on the individual member:</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Exiting due to possible network partition event due to loss of {0} cache processes: {1}
+</code></pre>
+
+<p>Response:</p>
+
+<p>Check the network connectivity and health of the listed cache processes.</p>
+
+<h2 id="member-taking-too-long-to-respond"><a id="sys_failure__section_2C5E8A37733D4B31A12F22B9155796FD" class="no-quick-link"></a>Member Taking Too Long to Respond</h2>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>15 sec have elapsed while waiting for replies: &lt;ReplyProcessor21 6 waiting for 1 replies 
+from [ent(27130):60333/36743]&gt; on ent(27134):60330/45855 whose current membership 
+list is: [[ent(27134):60330/45855, ent(27130):60333/36743]]
+</code></pre>
+
+<p>Description:</p>
+
+<p>Member ent(27130):60333/36743 is in danger of being forced out of the distributed system because of a suspect-verification failure. This alert is issued at the warning level, after the ack-wait-threshold is reached.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the process to see if it is healthy. The process ID of the slow responder is 27130 on the machine named ent. The ports of the slow responder are 60333/36743. Look for the string, Starting distribution manager ent:60333/36743, and examine the process owning the log file containing this string.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>30 sec have elapsed while waiting for replies: &lt;ReplyProcessor21 6 waiting for 1 replies 
+from [ent(27130):60333/36743]&gt; on ent(27134):60330/45855 whose current membership 
+list is: [[ent(27134):60330/45855, ent(27130):60333/36743]]
+</code></pre>
+
+<p>Description:</p>
+
+<p>Member ent(27134) is in danger of being forced out of the distributed system because of a suspect-verification failure. This alert is issued at the severe level, after the ack-wait-threshold is reached and after ack-severe-alert-threshold seconds have elapsed.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the process to see if it is healthy. The process ID of the slow responder is 27134 on the machine named ent. The ports of the slow responder are 60333/36743. Look for the string, Starting distribution manager ent:60333/36743, and examine the process owning the log file containing this string.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>15 sec have elapsed while waiting for replies: &lt;DLockRequestProcessor 33636 waiting 
+for 1 replies from [ent(4592):33593/35174]&gt; on ent(4592):33593/35174 whose current 
+membership list is: [[ent(4598):33610/37013, ent(4611):33599/60008, 
+ent(4592):33593/35174, ent(4600):33612/33183, ent(4593):33601/53393, ent(4605):33605/41831]]
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is issued by partitioned regions and regions with global scope at the warning level, when the lock grantor has not responded to a lock request within the ack-wait-threshold and the ack-severe-alert-threshold.</p>
+
+<p>Response:</p>
+
+<p>None.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>30 sec have elapsed while waiting for replies: &lt;DLockRequestProcessor 23604 waiting 
+for 1 replies from [ent(4592):33593/35174]&gt; on ent(4598):33610/37013 whose current 
+membership list is: [[ent(4598):33610/37013, ent(4611):33599/60008, 
+ent(4592):33593/35174, ent(4600):33612/33183, ent(4593):33601/53393, ent(4605):33605/41831]]
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is issued by partitioned regions and regions with global scope at the severe level, when the lock grantor has not responded to a lock request within the ack-wait-threshold and the ack-severe-alert-threshold.</p>
+
+<p>Response:</p>
+
+<p>None.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>30 sec have elapsed waiting for global region entry lock held by ent(4600):33612/33183
+</code></pre>
+
+<p>Description</p>
+
+<p>This alert is issued by regions with global scope at the severe level, when the lock holder has held the desired lock for ack-wait-threshold + ack-severe-alert-threshold seconds and may be unresponsive.</p>
+
+<p>Response:</p>
+
+<p>None.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>30 sec have elapsed waiting for partitioned region lock held by ent(4600):33612/33183
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is issued by partitioned regions at the severe level, when the lock holder has held the desired lock for ack-wait-threshold + ack-severe-alert-threshold seconds and may be unresponsive.</p>
+
+<p>Response:</p>
+
+<p>None.</p>
+
+<h2 id="no-locators-can-be-found"><a id="sys_failure__section_AF4F913C244044E7A541D89EC6BCB961" class="no-quick-link"></a>No Locators Can Be Found</h2>
+
+<p><strong>Note:</strong>
+It is likely that all processes using the locators will exit with the same message.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership service failure: Channel closed: org.apache.geode.ForcedDisconnectException: 
+There are no processes eligible to be group membership coordinator 
+(last coordinator left view)
+</code></pre>
+
+<p>Description:</p>
+
+<p>Network partition detection is enabled, and there are locator problems.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the locator processes and logs, and restart the locators.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership service failure: Channel closed: org.apache.geode.ForcedDisconnectException: 
+There are no processes eligible to be group membership coordinator 
+(all eligible coordinators are suspect)
+</code></pre>
+
+<p>Description:</p>
+
+<p>Network partition detection is enabled, and there are locator problems.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the locator processes and logs, and restart the locators.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership service failure: Channel closed: org.apache.geode.ForcedDisconnectException: 
+Unable to contact any locators and network partition detection is enabled
+</code></pre>
+
+<p>Description:</p>
+
+<p>Network partition detection is enabled, and there are locator problems.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the locator processes and logs, and restart the locators.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership service failure: Channel closed: org.apache.geode.ForcedDisconnectException: 
+Disconnected as a slow-receiver
+</code></pre>
+
+<p>Description:</p>
+
+<p>The member was not able to process messages fast enough and was forcibly disconnected by another process.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine and restart the disconnected process.</p>
+
+<h2 id="warning-notifications-before-removal"><a id="sys_failure__section_77BDB0886A944F87BDA4C5408D9C2FC4" class="no-quick-link"></a>Warning Notifications Before Removal</h2>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership: requesting removal of ent(10344):21344/24922 Disconnected as a slow-receiver
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is generated only if the slow-receiver functionality is being used.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the locator processes and logs.</p>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Network partition detection is enabled and both membership coordinator and lead member 
+are on the same machine
+</code></pre>
+
+<p>Description:</p>
+
+<p>This alert is issued if both the membership coordinator and the lead member are on the same machine.</p>
+
+<p>Response:</p>
+
+<p>The operator can turn this off by setting the system property gemfire.disable-same-machine-warnings to true. However, it is best to run locator processes, which act as membership coordinators when network partition detection is enabled, on separate machines from cache processes.</p>
+
+<h2 id="member-is-forced-out"><a id="sys_failure__section_E777C6EC8DEC4FE692AC5863C4420238" class="no-quick-link"></a>Member Is Forced Out</h2>
+
+<p>Alert:</p>
+<pre class="highlight plaintext"><code>Membership service failure: Channel closed: org.apache.geode.ForcedDisconnectException: 
+This member has been forced out of the Distributed System. Please consult GemFire logs to 
+find the reason.
+</code></pre>
+
+<p>Description:</p>
+
+<p>The process discovered that it was not in the distributed system and cannot determine why it was
+removed. The membership coordinator removed the member after it failed to respond to an internal 
+are-you-alive message.</p>
+
+<p>Response:</p>
+
+<p>The operator should examine the locator processes and logs.</p>
+
+<h2 id="-restart-fails-due-to-out-of-memory-error"><a id="restart-failure-persistent-lru" class="no-quick-link"></a> Restart Fails Due To Out-of-Memory Error</h2>
+
+<p>This section describes a restart failure that can occur when the stopped system is one that was configured with persistent regions. Specifically:</p>
+
+<ul>
+<li>Some of the regions of the recovering system, when running, were configured as PERSISTENT regions, which means that they save their data to disk.</li>
+<li>At least one of the persistent regions was configured to evict least recently used (LRU) data by overflowing values to disk.</li>
+</ul>
+
+<h3 id="how-data-is-recovered-from-persistent-regions">How Data is Recovered From Persistent Regions</h3>
+
+<p>Data recovery, upon restart, always recovers keys. You can configure whether and how the system
+recovers the values associated with those keys to populate the system cache.</p>
+
+<p><strong>Value Recovery</strong></p>
+
+<ul>
+<li><p>Recovering all values immediately during startup slows the startup time but results in consistent
+read performance after the startup on a &ldquo;hot&rdquo; cache.</p></li>
+<li><p>Recovering no values means quicker startup but a &ldquo;cold&rdquo; cache, so the first retrieval of each value will read from disk.</p></li>
+<li><p>Retrieving values asynchronously in a background thread allows a relatively quick startup on a &ldquo;warm&rdquo; cache
+that will eventually recover every value.</p></li>
+</ul>
+
+<p><strong>Retrieve or Ignore LRU values</strong></p>
+
+<p>When a system with persistent LRU regions shuts down, the system does not record which of the values
+were recently used. On subsequent startup, if values are recovered into an LRU region they may be
+the least recently used instead of the most recently used. Also, if LRU values are recovered on a
+heap or an off-heap LRU region, it is possible that the LRU memory limit will be exceeded, resulting
+in an <code>OutOfMemoryException</code> during recovery. For these reasons, LRU value recovery can be treated
+differently than non-LRU values.</p>
+
+<h2 id="default-recovery-behavior-for-persistent-regions">Default Recovery Behavior for Persistent Regions</h2>
+
+<p>The default behavior is for the system to recover all keys, then asynchronously recover all data
+values, leaving LRU values unrecovered. This default strategy is best for
+most applications, because it strikes a balance between recovery speed and cache completeness.</p>
+
+<h3 id="configuring-recovery-of-persistent-regions">Configuring Recovery of Persistent Regions</h3>
+
+<p>Three Java system parameters allow the developer to control the recovery behavior for persistent regions:</p>
+
+<ul>
+<li><code>gemfire.disk.recoverValues</code></li>
+</ul>
+
+<p>Default = <code>true</code>, recover values. If <code>false</code>, recover only keys, do not recover values.</p>
+
+<p><em>How used:</em> When <code>true</code>, recovery of the values &ldquo;warms up&rdquo; the cache so data retrievals will find
+  their values in the cache, without causing time consuming disk accesses. When <code>false</code>, shortens
+  recovery time so the system becomes available for use sooner, but the first retrieval on each key
+  will require a disk read.</p>
+
+<ul>
+<li><code>gemfire.disk.recoverLruValues</code></li>
+</ul>
+
+<p>Default = <code>false</code>, do not recover LRU values. If <code>true</code>, recover LRU values. If
+  <code>gemfire.disk.recoverValues</code> is <code>false</code>, then <code>gemfire.disk.recoverLruValues</code> is ignored, since
+  no values are recovered.</p>
+
+<p><em>How used:</em> When <code>false</code>, shortens recovery time by ignoring LRU values. When <code>true</code>, restores
+  more data values to the cache. Recovery of the LRU values increases heap memory usage and
+  could cause an out-of-memory error, preventing the system from restarting.</p>
+
+<ul>
+<li><code>gemfire.disk.recoverValuesSync</code></li>
+</ul>
+
+<p>Default = <code>false</code>, recover values by an asynchronous background process. If <code>true</code>, values are
+  recovered synchronously, and recovery is not complete until all values have been retrieved.  If
+  <code>gemfire.disk.recoverValues</code> is <code>false</code>, then <code>gemfire.disk.recoverValuesSync</code> is ignored since
+  no values are recovered.</p>
+
+<p><em>How used:</em> When <code>false</code>, allows the system to become available sooner, but some time must elapse
+  before all values have been read from disk into cache memory. Some key retrievals will require disk access, and some will not.
+  When <code>true</code>, prolongs restart time, but ensures that when available for use, the cache is fully
+  populated and data retrieval times will be optimal.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

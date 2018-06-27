@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Querying with OQL |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_querying_basics docs_developing_querying_basics_query_basics">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Querying with OQL
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section provides a high-level introduction to Geode querying such as building a query string and describes query language features.</p>
+
+<p><a id="querying_with_oql__section_828A9660B5014DCAA883A58A45E6B51A"></a>
+Geode provides a SQL-like querying language that allows you to access data stored in Geode regions. Since Geode regions are key-value stores where values can range from simple byte arrays to complex nested objects, Geode uses a query syntax based on OQL (Object Query Language) to query region data. OQL and SQL have many syntactical similarities, however they have significant differences. For example, while OQL does not offer all of the capabilities of SQL like aggregates, OQL does allow you to execute queries on complex object graphs, query object attributes and invoke object methods.</p>
+
+<p>The syntax of a typical Geode OQL query is:</p>
+<pre class="highlight plaintext"><code>[IMPORT package]
+SELECT [DISTINCT] projectionList
+FROM collection1, [collection2, …]
+[WHERE clause]
+[ORDER BY order_criteria [desc]]
+</code></pre>
+
+<p>Therefore, a simple Geode OQL query resembles the following:</p>
+<pre class="highlight plaintext"><code>SELECT DISTINCT * FROM /exampleRegion WHERE status = ‘active’
+</code></pre>
+
+<p>An important characteristic of Geode querying to note is that by default, Geode queries on the values of a region and not on keys. To obtain keys from a region, you must use the keySet path expression on the queried region. For example, <code>/exampleRegion.keySet</code>.</p>
+
+<p>For those new to the Geode querying, see also the <a href="../../getting_started/querying_quick_reference.html#reference_D5CE64F5FD6F4A808AEFB748C867189E">Geode Querying FAQ and Examples</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Building a Query String |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_querying_basics docs_developing_querying_basics_what_is_a_query_string">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Building a Query String
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="what_is_a_query_string__section_1866AE6026DE4D66A2CD2363C1BC0406"></a>
+A query string is a fully formed OQL statement that can be passed to a query engine and executed against a data set. To build a query string, you combine supported keywords, expressions, and operators to create an expression that returns the information you require.</p>
+
+<p>A query string follows the rules specified by the query language and grammar. It can include:</p>
+
+<ul>
+<li>  <strong>Namescopes</strong>. For example, the IMPORT statement. See <a href="../query_select/the_import_statement.html#concept_2E9F15B2FE9041238B54736103396BF7">IMPORT Statement</a>.</li>
+<li>  <strong>Path expressions</strong>. For example, in the query <code>SELECT * FROM                                 /exampleRegion</code>,<code>/exampleRegion</code> is a path expression. See <a href="../query_select/the_from_clause.html#the_from_clause">FROM Clause</a>.</li>
+<li>  <strong>Attribute names</strong>. For example, in the query <code>SELECT DISTINCT * FROM /exampleRegion p WHERE                             p.position1.secId = &#39;1&#39;</code>, we access the <code>secId</code> attribute of the Position object. See <a href="../query_select/the_where_clause.html#the_where_clause">WHERE Clause</a>.</li>
+<li>  <strong>Method invocations</strong>. For example, in the query <code>SELECT DISTINCT * FROM /exampleRegion p WHERE                             p.name.startsWith(&#39;Bo&#39;)</code>, we invoke the <code>startsWith</code> method on the Name object. See <a href="../query_select/the_where_clause.html#the_where_clause">WHERE Clause</a>.</li>
+<li>  <strong>Operators</strong>. For example, comparison operators (=,&lt;,&gt;,&lt;&gt;), unary operators (NOT), logical operators (AND, OR) and so on. See <a href="../query_additional/operators.html#operators">Operators</a> for a complete list.</li>
+<li>  <strong>Literals</strong>. For example, boolean, date, time and so on. See <a href="../query_additional/literals.html#literals">Supported Literals</a> for a complete list.</li>
+<li>  <strong>Query bind parameters</strong>. For example, in the query <code>SELECT DISTINCT * FROM $1 p WHERE p.status =                             $2</code>, $1 and $2 are parameters that can be passed to the query during runtime. See <a href="../query_additional/using_query_bind_parameters.html#concept_173E775FE46B47DF9D7D1E40680D34DF">Using Query Bind Parameters</a> for more details.</li>
+<li>  <strong>Preset query functions</strong>. For example, ELEMENT(expr) and IS_DEFINED(expr). See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E">SELECT Statement</a> for other available functions.</li>
+<li>  <strong>SELECT statements</strong>. For example, in the example queries above <code>SELECT *</code> or <code>SELECT DISTINCT *</code>. See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E">SELECT Statement</a> for other available functions.</li>
+<li>  <strong>Comments</strong>. OQL permits extra characters to accompany the query string without changing the string&rsquo;s definition. Form a multi-line comment by enclosing the comment body within <code>/*</code> and <code>*/</code> delimiters; OQL does not permit nested comments. A single line comment body is all the characters to the right of <code>--</code> (two hyphens) up to the end of the line.</li>
+</ul>
+
+<p>The components listed above can all be part of the query string, but none of the components are required. At a minimum, a query string contains an expression that can be evaluated against specified data.</p>
+
+<p>The following sections provide guidelines for the query language building blocks that are used when writing typical Geode queries.</p>
+
+<ul>
+<li><p><strong><a href="../query_select/the_import_statement.html">IMPORT Statement</a></strong></p></li>
+<li><p><strong><a href="../query_select/the_from_clause.html">FROM Clause</a></strong></p></li>
+<li><p><strong><a href="../query_select/the_where_clause.html">WHERE Clause</a></strong></p></li>
+<li><p><strong><a href="../query_select/the_select_statement.html">SELECT Statement</a></strong></p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

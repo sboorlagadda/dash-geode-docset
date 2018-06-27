@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Standard Custom Partitioning |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_partitioned_regions docs_developing_partitioned_regions_standard_custom_partitioning">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Standard Custom Partitioning
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default, Geode partitions each data entry
+into a bucket using a hashing policy on the key.
+Additionally, the physical location of the key-value pair
+is abstracted away from the application.
+You can change these policies for a partitioned region
+by providing a standard custom partition resolver that maps entries
+in a custom manner.</p>
+
+<p><a id="custom_partition_region_data__section_CF05CE974C9C4AF78430DA55601D2158"></a>
+<strong>Note:</strong>
+If you are both colocating region data and custom partitioning,
+all colocated regions must use the same custom partitioning mechanism.
+See <a href="colocating_partitioned_region_data.html#colocating_partitioned_region_data">Colocate Data from Different Partitioned Regions</a>.</p>
+
+<p>To custom-partition your region data, follow two steps:</p>
+
+<ul>
+<li>implement the interface</li>
+<li>configure the regions</li>
+</ul>
+
+<p><strong>Implementing Standard Custom Partitioning</strong></p>
+
+<ul>
+<li><p>Implement the <code>org.apache.geode.cache.PartitionResolver</code> interface
+in one of the following ways,
+listed here in the search order used by Geode:</p>
+
+<ul>
+<li>  <strong>Using a custom class</strong>. Implement the <code>PartitionResolver</code> within your class, and then specify your class as the partition
+resolver during region creation.</li>
+<li>  <strong>Using the key&rsquo;s class</strong>. Have the entry key&rsquo;s class implement the <code>PartitionResolver</code> interface.</li>
+<li>  <strong>Using the callback argument&rsquo;s class</strong>. Have the class that
+implements your callback argument implement the <code>PartitionResolver</code>
+interface. When using this implementation,
+any and all <code>Region</code> operations must be those that specify the callback
+argument.</li>
+</ul></li>
+<li><p>Implement the resolver&rsquo;s <code>getName</code>, <code>init</code>, and <code>close</code> methods.</p>
+
+<p>A simple implementation of <code>getName</code> is</p>
+<pre class="highlight plaintext"><code>return getClass().getName();
+</code></pre>
+
+<p>The <code>init</code> method does any initialization steps upon cache
+start that relate to the partition resolver&rsquo;s task. 
+This method is only invoked when using a custom class that is
+configured by <code>gfsh</code> or by XML (in a <code>cache.xml</code> file).</p>
+
+<p>The <code>close</code> method accomplishes any clean up that must be accomplished
+before a cache close completes. For example, <code>close</code> might close
+files or connections that the partition resolver opened. </p></li>
+<li><p>Implement the resolver&rsquo;s <code>getRoutingObject</code> method to return 
+the routing object for each entry.
+A hash of that returned routing object determines the bucket.
+Therefore, <code>getRoutingObject</code> should return an object that,
+when run through its <code>hashCode</code>, directs grouped objects to the
+desired bucket.</p>
+
+<p><strong>Note:</strong>
+Only the key, as returned by <code>getKey</code>, should be used by
+<code>getRoutingObject</code>.  Do not use the value associated with the key or any additional metadata in the implementation of <code>getRoutingObject</code>.
+Do not use <code>getOperation</code> or <code>getValue</code>.</p></li>
+</ul>
+
+<p><strong>Implementing the String Prefix Partition Resolver</strong></p>
+
+<p>Geode provides an implementation of a
+string-based partition resolver in
+<code>org.apache.geode.cache.util.StringPrefixPartitionResolver</code>.
+This resolver does not require any further implementation.
+It groups entries into buckets based on a portion of the key.
+All keys must be strings, and each key must include
+a &rsquo;|&rsquo; character, which delimits the string.
+The substring that precedes the &rsquo;|&rsquo; delimiter within the key
+will be returned by <code>getRoutingObject</code>.</p>
+
+<p><strong>Configuring the Partition Resolver Region Attribute</strong></p>
+
+<p>Configure the region so Geode finds your resolver
+for all region operations.</p>
+
+<ul>
+<li><p><strong>Custom class</strong>.
+Use one of these methods to specify the partition resolver region
+attribute:</p>
+
+<p><strong>gfsh:</strong></p>
+
+<p>Add the option <code>--partition-resolver</code> to the <code>gfsh create region</code> command, specifying the package and class name of the standard custom partition resolver.</p>
+
+<p><strong>gfsh for the String Prefix Partition Resolver:</strong></p>
+
+<p>Add the option <code>--partition-resolver=org.apache.geode.cache.util.StringPrefixPartitionResolver</code> to the <code>gfsh create region</code> command.</p>
+
+<p><strong>Java API:</strong></p>
+<pre class="highlight plaintext"><code>PartitionResolver resolver = new TradesPartitionResolver();
+PartitionAttributes attrs = 
+    new PartitionAttributesFactory()
+    .setPartitionResolver(resolver).create();
+
+Cache c = new CacheFactory().create();
+
+Region r = c.createRegionFactory()
+    .setPartitionAttributes(attrs)
+    .create("trades");
+</code></pre>
+
+<p><strong>Java API for the String Prefix Partition Resolver:</strong></p>
+<pre class="highlight plaintext"><code>PartitionAttributes attrs = 
+    new PartitionAttributesFactory()
+    .setPartitionResolver(new StringPrefixPartitionResolver()).create();
+
+Cache c = new CacheFactory().create();
+
+Region r = c.createRegionFactory()
+    .setPartitionAttributes(attrs)
+    .create("customers");
+</code></pre>
+
+<p><strong>XML:</strong></p>
+<pre class="highlight plaintext"><code>&lt;region name="trades"&gt;
+    &lt;region-attributes&gt;
+        &lt;partition-attributes&gt;
+            &lt;partition-resolver&gt; 
+                &lt;class-name&gt;myPackage.TradesPartitionResolver
+                &lt;/class-name&gt;
+            &lt;/partition-resolver&gt;
+        &lt;partition-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<p><strong>XML for the String Prefix Partition Resolver:</strong></p>
+<pre class="highlight plaintext"><code>&lt;region name="customers"&gt;
+    &lt;region-attributes&gt;
+        &lt;partition-attributes&gt;
+            &lt;partition-resolver&gt; 
+                &lt;class-name&gt;org.apache.geode.cache.util.StringPrefixPartitionResolver
+                &lt;/class-name&gt;
+            &lt;/partition-resolver&gt;
+        &lt;partition-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre></li>
+<li><p>If your colocated data is in a server system,
+add the <code>PartitionResolver</code> implementation class to the <code>CLASSPATH</code>
+of your Java clients. 
+For Java single-hop access to work,
+the resolver class needs to have a zero-argument constructor,
+and the resolver class must not have any state;
+the <code>init</code> method is included in this restriction.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

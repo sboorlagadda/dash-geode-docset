@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Performance Controls |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_performance_controls">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Performance Controls
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic provides tuning suggestions of particular interest to developers, primarily programming techniques and cache configuration.</p>
+
+<p>Before you begin, you should understand Apache Geode <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ul>
+<li><p><strong><a href="performance_controls_data_serialization.html">Data Serialization</a></strong></p>
+
+<p>In addition to standard Java serialization, Geode offers serialization options that give you higher performance and greater flexibility for data storage, transfers, and language types.</p></li>
+<li><p><strong><a href="performance_controls_setting_cache_timeouts.html">Setting Cache Timeouts</a></strong></p>
+
+<p>Cache timeout properties can modified through the gfsh <code>alter runtime</code> command (or declared in the <code>cache.xml</code> file) and can also be set through methods of the interface, <code>org.apache.geode.cache.Cache</code>.</p></li>
+<li><p><strong><a href="performance_controls_controlling_socket_use.html">Controlling Socket Use</a></strong></p>
+
+<p>For peer-to-peer communication, you can manage socket use at the system member level and at the thread level.</p></li>
+<li><p><strong><a href="performance_controls_managing_slow_receivers.html">Management of Slow Receivers</a></strong></p>
+
+<p>You have several options for handling slow members that receive data distribution. The slow receiver options control only to peer-to-peer communication between distributed regions using TCP/IP. This topic does not apply to client/server or multi-site communication, or to communication using the UDP unicast or IP multicast protocols.</p></li>
+<li><p><strong><a href="performance_controls_increasing_cache_hits.html">Increasing the Ratio of Cache Hits</a></strong></p>
+
+<p>The more frequently a get fails to find a valid value in the first cache and has to try a second cache, the more the overall performance is affected.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

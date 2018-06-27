@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Architecture and Components |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_management_system_overview">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Architecture and Components
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode&rsquo;s management and monitoring system consists of one JMX Manager node (there should only be one) and one or more managed nodes within a distributed system. All members in the distributed system are manageable through MBeans and Geode Management Service APIs.</p>
+
+<h2 id="architecture"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_ABE7007BE3C244FBA0418C4B5BE7E1F2" class="no-quick-link"></a>Architecture</h2>
+
+<p>The following diagram depicts the architecture of the management and monitoring system components.</p>
+
+<p><img src="../../images_svg/JMX_Architecture.svg" id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__image_1E9E8575E13D4087BC47B6A288097B7A" class="image" /></p>
+
+<p>In this architecture every Geode member is manageable. All Geode MBeans for the local Geode processes are automatically registered in the Platform MBeanServer (the default MBeanServer of each JVM that hosts platform MXBeans.)</p>
+
+<h2 id="managed-node"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_1CF2B237C16F4095A609E62F0C7146C1" class="no-quick-link"></a>Managed Node</h2>
+
+<p>Each member of a distributed system is a managed node. Any node that is not currently also acting as a JMX Manager node is referred to simply as a managed node. A managed node has the following resources so that it can answer JMX queries both locally and remotely:</p>
+
+<ul>
+<li>  Local MXBeans that represent the locally monitored components on the node. See <a href="list_of_mbeans.html#topic_4BCF867697C3456D96066BAD7F39FC8B">List of Geode JMX MBeans</a> for a list of possible MXBeans existing for the managed node.</li>
+<li>  Built-in platform MBeans.</li>
+</ul>
+
+<h2 id="jmx-manager-node"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_8604838507194C8B86F1420FBA46894C" class="no-quick-link"></a>JMX Manager Node</h2>
+
+<p>A JMX Manager node is a member that can manage other Geode members &ndash;that is, other managed nodes &ndash; as well as itself. A JMX Manager node can manage all other members in the distributed system.</p>
+
+<p>To convert a managed node to a JMX Manager node, you configure the Geode property <code>jmx-manager=true</code>, in the <code>gemfire.properties</code> file, and start the member as a JMX Manager node.</p>
+
+<p>You start the member as a JMX Manager node when you provide<code>--J=-Dgemfire.jmx-manager=true</code> as an argument to either the<code>start server</code> or <code>start locator</code> command. See <a href="jmx_manager_operations.html#topic_686158E9AFBD47518BE1B4BEB232C190">Starting a JMX Manager</a> for more information.</p>
+
+<p>The JMX Manager node has the following extra resources allocated so that it can answer JMX queries:</p>
+
+<ul>
+<li>  RMI connector that allows JMX clients to connect to and access all MXBeans in the distributed system.</li>
+<li>  Local MXBeans that represent the locally monitored components on this node, same as any other managed node.</li>
+<li>  Aggregate MXBeans:
+
+<ul>
+<li>  DistributedSystemMXBean</li>
+<li>  DistributedRegionMXBean</li>
+<li>  DistributedLockServiceMXBean</li>
+</ul></li>
+<li>  ManagerMXBean with Scope=ALL, which allows various distributed system-wide operations.</li>
+<li>  Proxy to MXBeans on managed nodes.</li>
+<li>  Built-in platform MXBeans.</li>
+</ul>
+
+<h2 id="jmx-integration"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_32D9F98189B14AA09BAC5E843EC18EDA" class="no-quick-link"></a>JMX Integration</h2>
+
+<p>Management and monitoring tools such as gfsh command-line interface and Pulse use JMX/RMI as the communication layer to connect to Geode nodes. All Geode processes by default allow JMX connections to the Platform MBeanServer from localhost. By default, both managed nodes and JMX manager nodes have RMI connectors enabled to allow JMX client connections.</p>
+
+<p>JConsole (and other similar JMX clients that support Sun&rsquo;s Attach API) can connect to any local JVM without requiring an RMI connector by using the Attach API. This allows connections from the same machine.</p>
+
+<p>JConsole (and other JMX clients) can connect to any JVM if that JVM is configured to start an RMI connector. This allows remote connections from other machines.</p>
+
+<p>JConsole can connect to any Geode member, but if it connects to a non-JMX-Manager member, JConsole only detects the local MBeans for the node, and not MBeans for the cluster.</p>
+
+<p>When a Geode locator or server becomes a JMX Manager for the cluster, it enables the RMI connector. JConsole can then connect only to that one JVM to view the MBeans for the entire cluster. It does not need to connect to all the other JVMs. Geode manages the inter-JVM communication required to provide a federated view of all MBeans in the distributed system.</p>
+
+<p><code>gfsh</code> can only connect to a JMX Manager or to a locator. If connected to a locator, the locator provides the necessary connection information for the existing JMX Manager. If the locator detects a JMX Manager is not already running in the cluster, the locator makes itself a JMX Manager. gfsh cannot connect to other non-Manager or non-locator members.</p>
+
+<p>For information on how to configure the RMI registry and RMI connector, see <a href="configuring_rmi_connector.html#concept_BC793A7ACF9A4BD9A29C2DCC6894767D">Configuring RMI Registry Ports and RMI Connectors</a>.</p>
+
+<h2 id="management-apis"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_A3F9E1594982480DA019CBA3E93CA895" class="no-quick-link"></a>Management APIs</h2>
+
+<p>Geode management APIs represent the Geode cluster to a JMX user. However, they do not provide functionality that is otherwise present in JMX. They only provide a gateway into various services exclusively offered by Geode monitoring and management.</p>
+
+<p>The entry point to Geode management is through the ManagementService interface. For example, to create an instance of the Management Service:</p>
+<pre class="highlight plaintext"><code>ManagementService service = ManagementService.getManagementService(cache);
+</code></pre>
+
+<p>The resulting ManagementService instance is specific to the provided cache and its distributed system. The implementation of getManagementService is a singleton for now but may eventually support multiple cache instances.</p>
+
+<p>You can use the Geode management APIs to accomplish the following tasks:</p>
+
+<ul>
+<li>  Monitor the health status of clients.</li>
+<li>  Obtain the status and results of individual disk backups.</li>
+<li>  View metrics related to disk usage and performance for a particular member.</li>
+<li>  Browse Geode properties set for a particular member.</li>
+<li>  View JVM metrics such as memory, heap, and thread usage.</li>
+<li>  View network metrics, such as bytes received and sent.</li>
+<li>  View partition region attributes such as total number of buckets, redundant copy, and maximum memory information.</li>
+<li>  View persistent member information such as disk store ID.</li>
+<li>  Browse region attributes.</li>
+</ul>
+
+<p>See the JavaDocs for the <code>org.apache.geode.management</code> package for more details.</p>
+
+<p>You can also execute gfsh commands using the ManagementService API. See <a href="gfsh_and_management_api.html#concept_451F0978285245E69C3E8DE795BD8635">Executing gfsh Commands through the Management API</a> and the JavaDocs for the <code>org.apache.geode.management.cli</code> package.</p>
+
+<h2 id="geode-management-and-monitoring-tools"><a id="concept_1BAE2CE1146B4347ABD61F50B9F9781F__section_E69A93A6309E4747B52850D81FE1674E" class="no-quick-link"></a>Geode Management and Monitoring Tools</h2>
+
+<p>This section lists the currently available tools for managing and monitoring Geode:</p>
+
+<ul>
+<li>  <strong>gfsh</strong>. Apache Geode command-line interface that provides a simple &amp; powerful command shell that supports the administration, debugging and deployment of Geode applications. It features context sensitive help, scripting and the ability to invoke any commands from within the application using a simple API. See <a href="../../tools_modules/gfsh/chapter_overview.html">gfsh</a>.</li>
+<li>  <strong>Geode Pulse</strong>. Easy-to-use, browser-based dashboard for monitoring Geode deployments. Geode Pulse provides an integrated view of all Geode members within a distributed system. See <a href="../../tools_modules/pulse/pulse-overview.html">Geode Pulse</a>.</li>
+<li>  <strong>Pulse Data Browser</strong>. This Geode Pulse utility provides a graphical interface for performing OQL ad-hoc queries in a Geode distributed system. See <a href="../../tools_modules/pulse/pulse-views.html#topic_F0ECE9E8179541CCA3D6C5F4FBA84404__sec_pulsedatabrowser">Data Browser</a>.</li>
+<li>  <strong>Other Java Monitoring Tools such as JConsole and jvisualvm.</strong> JConsole is a JMX-based management and monitoring tool provided in the Java 2 Platform that provides information on the performance and consumption of resources by Java applications. See <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/jconsole.html">http://docs.oracle.com/javase/6/docs/technotes/guides/management/jconsole.html</a>. <strong>Java VisualVM (jvisualvm)</strong> is a profiling tool for analyzing your Java Virtual Machine. Java VisualVM is useful to Java application developers to troubleshoot applications and to monitor and improve the applications&rsquo; performance. Java VisualVM can allow developers to generate and analyse heap dumps, track down memory leaks, perform and monitor garbage collection, and perform lightweight memory and CPU profiling. For more details on using jvisualvm, see <a href="http://docs.oracle.com/javase/6/docs/technotes/tools/share/jvisualvm.html">http://docs.oracle.com/javase/6/docs/technotes/tools/share/jvisualvm.html</a>.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

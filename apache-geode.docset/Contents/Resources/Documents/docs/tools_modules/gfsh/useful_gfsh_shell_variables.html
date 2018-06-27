@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Useful gfsh Shell Variables |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_useful_gfsh_shell_variables">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Useful gfsh Shell Variables
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can use the built-in <code>gfsh</code> shell variables in scripts.</p>
+
+<p>You can also use the <code>set variable</code> command to modify shell behavior or to define your own variables.</p>
+
+<p>To see a list of all gfsh shell variables and their current values, use the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;echo --string=$*
+</code></pre>
+
+<p>To obtain the current value of an existing variable, use the following command syntax (the variable must be enclosed in braces):</p>
+<pre class="highlight plaintext"><code>gfsh&gt;echo --string=${VARIABLE}
+</code></pre>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;echo --string=${SYS_CLASSPATH}
+</code></pre>
+
+<p><strong>System Variables</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>SYS_CLASSPATH</td>
+<td>CLASSPATH of the gfsh JVM (read only).</td>
+</tr>
+<tr>
+<td>SYS_GEMFIRE_DIR</td>
+<td>Product directory where Geode has been installed (read only).</td>
+</tr>
+<tr>
+<td>SYS_HOST_NAME</td>
+<td>Host from which gfsh is started (read only).</td>
+</tr>
+<tr>
+<td>SYS_JAVA_VERSION</td>
+<td>Java version used (read only).</td>
+</tr>
+<tr>
+<td>SYS_OS</td>
+<td>OS name (read only).</td>
+</tr>
+<tr>
+<td>SYS_OS_LINE_SEPARATOR</td>
+<td>Line separator (\ or ^) variable that you can use when writing gfsh scripts. (read only).</td>
+</tr>
+<tr>
+<td>SYS_USER</td>
+<td>User name (read only).</td>
+</tr>
+<tr>
+<td>SYS_USER_HOME</td>
+<td>User&rsquo;s home directory (read only).</td>
+</tr>
+</tbody></table>
+
+<p><strong>GFSH Environment Variables</strong></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>APP_FETCH_SIZE</td>
+<td>Fetch size to be used while querying. Values: 0 - 2147483647. Default value is 100.</td>
+</tr>
+<tr>
+<td>APP_LAST_EXIT_STATUS</td>
+<td>Last command exit status. Similar to $? (Unix) and %errorlevel% (Windows). Values: 0 (successful), 1 (error), 2(crash) (read only).</td>
+</tr>
+<tr>
+<td>APP_LOGGING_ENABLED</td>
+<td>Whether gfsh logging is enabled. Default: false (read only). You can enable gfsh logging by setting the <code>gfsh.log-level</code> Java system property to a <a href="http://docs.oracle.com/javase/8/docs/api/java/util/logging/Level.html">supported Java log level</a>.</td>
+</tr>
+<tr>
+<td>APP_LOG_FILE</td>
+<td>Path and name of current gfsh log file (read only).</td>
+</tr>
+<tr>
+<td>APP_NAME</td>
+<td>Name of the application&ndash; &ldquo;gfsh&rdquo; (read only).</td>
+</tr>
+<tr>
+<td>APP_PWD</td>
+<td>Current working directory where gfsh was launched (read only).</td>
+</tr>
+<tr>
+<td>APP_QUERY_RESULTS_DISPLAY_MODE</td>
+<td>Toggle the display mode for returning query results. Values: table or catalog. Default value is table.</td>
+</tr>
+<tr>
+<td>APP_QUIET_EXECUTION</td>
+<td>Whether the execution should be in quiet mode. Values (case insensitive): true, false. Default value is false.</td>
+</tr>
+<tr>
+<td>APP_RESULT_VIEWER</td>
+<td>Unix only. Set this variable to <code>external</code> to enable viewing of the output using the UNIX <code>less</code> command. Default value is basic (gfsh).</td>
+</tr>
+</tbody></table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

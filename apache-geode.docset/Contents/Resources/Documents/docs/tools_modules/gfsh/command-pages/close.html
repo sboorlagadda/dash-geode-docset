@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      close |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_close">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    close
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Close durable client CQs and durable clients.</p>
+
+<ul>
+<li><p><strong><a href="close.html#topic_4125AAAB9FE44CD787166E48B694C41D">close durable-client</a></strong></p>
+
+<p>Attempts to close a durable client. The client must be disconnected for this command to work.</p></li>
+<li><p><strong><a href="close.html#topic_1BC15B3132BA480DB227921A9B3ABDD1">close durable-cq</a></strong></p>
+
+<p>Closes the durable continuous query (CQ) registered by the durable client and drain events held for the durable CQ from the subscription queue.</p></li>
+</ul>
+
+<h2 id="close-durable-client"><a id="topic_4125AAAB9FE44CD787166E48B694C41D" class="no-quick-link"></a>close durable-client</h2>
+
+<p>Attempts to close a durable client. The client must be disconnected for this command to work.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>close durable-client --durable-client-id=value [--members=value(,value)*]
+[--groups=value(,value)*]
+</code></pre>
+
+<p><a id="topic_4125AAAB9FE44CD787166E48B694C41D__table_618C978BA2B442A9A979243B50856885"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>--durable-client-id</td>
+<td><em>Required.</em> The ID of the durable client.</td>
+</tr>
+<tr>
+<td>--members</td>
+<td>Name or ID of the member(s) for which the durable client is to be closed.</td>
+</tr>
+<tr>
+<td>--groups</td>
+<td>Group(s) of members for which the durable client is to be closed.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Close Durable-Client Parameters</span></p>
+
+<p><strong>Example Commands</strong>:</p>
+<pre class="highlight plaintext"><code>close durable-client --durable-client-id=client1
+</code></pre>
+
+<p><strong>Sample Output</strong>:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;close durable-client --durable-client-id=client1
+Closed the durable client : "client1". on following members.
+1.server4
+2.server3
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;close durable-cq --durable-cq-name=cq1 --durable-client-id=client1
+
+Could not close the durable-cq : "cq1" for the durable-client-id : "client1" due to following reasons.
+
+CacheClientProxy: Could not drain cq cq1 because client proxy id client1 is connected.
+Occurred on members
+1.server4
+2.server3
+
+No client found with client-id : client1
+Occurred on members
+1.server1
+</code></pre>
+
+<h2 id="close-durable-cq"><a id="topic_1BC15B3132BA480DB227921A9B3ABDD1" class="no-quick-link"></a>close durable-cq</h2>
+
+<p>Closes the durable continuous query (CQ) registered by the durable client and drain events held for the durable CQ from the subscription queue.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>close durable-cq --durable-client-id=value --durable-cq-name=value 
+[--members=value(,value)*] [--groups=value(,value)*]
+</code></pre>
+
+<p><a id="topic_1BC15B3132BA480DB227921A9B3ABDD1__table_CEFFFECABBDF4DC4A37E8861422EEB5C"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>--durable-client-id</td>
+<td>Required. The ID of the durable client.</td>
+</tr>
+<tr>
+<td>--durable-cq-name</td>
+<td>Required. Name of the CQ to be closed.</td>
+</tr>
+<tr>
+<td>--members</td>
+<td>Name or ID of the member(s) for which the durable client is registered and the durable CQ to be closed.</td>
+</tr>
+<tr>
+<td>--groups</td>
+<td>Group(s) of members for which the durable client is registered and the durable CQ to be closed.</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 2. Close Durable-CQ Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>close durable-cq --durable-client-id=client1 --durable-cq-name=cq1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;close durable-cq --durable-cq-name=cq1 --durable-client-id=client1
+Closed the durable cq : "cq1" for the durable client : "client1". on following members.
+1.server4
+2.server3
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;close durable-client --durable-client-id=client1
+Unable to close the durable client : "client1" due to following reasons.
+
+Cannot close a running durable client : client1
+Occurred on members
+1.server4
+2.server3
+
+No client found with client-id : client1
+Occurred on members
+1.server1
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

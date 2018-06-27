@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Modifying the Default Disk Store |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_using_the_default_disk_store">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Modifying the Default Disk Store
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can modify the behavior of the default disk store by specifying the attributes you want for the disk store named &ldquo;DEFAULT&rdquo;.</p>
+
+<p><a id="using_the_default_disk_store__section_7D6E1A05D28840AC8606EF0D88E9B373"></a>
+Whenever you use disk stores without specifying the disk store to use, Geode uses the disk store named &ldquo;DEFAULT&rdquo;.</p>
+
+<p>For example, these region and queue configurations specify persistence and/or overflow, but do not specify the disk-store-name. Because no disk store is specified, these use the disk store named &ldquo;DEFAULT&rdquo;.</p>
+
+<p>Examples of using the default disk store for region persistence and overflow:</p>
+
+<ul>
+<li><p>gfsh:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=regionName --type=PARTITION_PERSISTENT_OVERFLOW
+</code></pre></li>
+<li><p>cache.xml</p>
+<pre class="highlight plaintext"><code>&lt;region refid="PARTITION_PERSISTENT_OVERFLOW"/&gt;
+</code></pre></li>
+</ul>
+
+<p>Example of using the default disk store for server subscription queue overflow (cache.xml):</p>
+<pre class="highlight plaintext"><code>&lt;cache-server port="40404"&gt;
+    &lt;client-subscription eviction-policy="entry" capacity="10000"/&gt;
+&lt;/cache-server&gt;
+</code></pre>
+
+<h2 id="change-the-behavior-of-the-default-disk-store"><a id="using_the_default_disk_store__section_671AED6EAFEE485D837411DEBE0C6BC6" class="no-quick-link"></a>Change the Behavior of the Default Disk Store</h2>
+
+<p>Geode initializes the default disk store with the default disk store configuration settings. You can modify the behavior of the default disk store by specifying the attributes you want for the disk store named &ldquo;DEFAULT&rdquo;. The only thing you can’t change about the default disk store is the name.</p>
+
+<p>The following example changes the default disk store to allow manual compaction and to use multiple, non-default directories:</p>
+
+<p>cache.xml:</p>
+<pre class="highlight plaintext"><code>&lt;disk-store name="DEFAULT" allow-force-compaction="true"&gt;
+     &lt;disk-dirs&gt;
+        &lt;disk-dir&gt;/export/thor/customerData&lt;/disk-dir&gt;
+        &lt;disk-dir&gt;/export/odin/customerData&lt;/disk-dir&gt;
+        &lt;disk-dir&gt;/export/embla/customerData&lt;/disk-dir&gt;
+     &lt;/disk-dirs&gt;
+&lt;/disk-store&gt;
+</code></pre>
+
+<p><a id="using_the_default_disk_store__section_C61BA9AD9A6442DA934C2B20C75E0996"></a></p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

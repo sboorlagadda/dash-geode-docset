@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      &lt;client-cache&gt; Element Hierarchy |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_reference docs_reference_topics docs_reference_topics_client-cache-elements-list">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    &lt;client-cache&gt; Element Hierarchy
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section shows the hierarchy of <code>&lt;client-cache&gt;</code> element sub-elements that you use to configure Geode caches and clients.</p>
+
+<p>For details, see <a href="client-cache.html">&lt;client-cache&gt; Element Reference.</a></p>
+<pre class="highlight plaintext"><code>&lt;client-cache&gt;
+   &lt;cache-transaction-manager&gt;
+      &lt;transaction-listener&gt;
+      &lt;transaction-writer&gt;
+   &lt;pool&gt;
+      &lt;locator&gt;
+      &lt;server&gt;
+   &lt;disk-store&gt;
+      &lt;disk-dirs&gt;
+         &lt;disk-dir&gt;
+   &lt;pdx&gt;
+      &lt;pdx-serializer&gt;
+         &lt;class-name&gt;
+         &lt;parameter&gt;
+            &lt;string&gt;
+            &lt;declarable&gt;
+   &lt;region-attributes&gt;
+      &lt;key-constraint&gt;
+      &lt;value-constraint&gt;
+      &lt;region-time-to-live&gt;
+         &lt;expiration-attributes&gt;
+            &lt;custom-expiry&gt;
+               &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+      &lt;region-idle-time&gt;
+         &lt;expiration-attributes&gt;
+            &lt;custom-expiry&gt;
+               &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+      &lt;entry-time-to-live&gt;
+         &lt;expiration-attributes&gt;
+            &lt;custom-expiry&gt;
+               &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+      &lt;entry-idle-time&gt;
+         &lt;expiration-attributes&gt;
+            &lt;custom-expiry&gt;
+               &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+      &lt;cache-loader&gt;
+         &lt;class-name&gt;
+            &lt;parameter&gt;
+               &lt;string&gt;
+               &lt;declarable&gt;
+      &lt;cache-writer&gt;
+         &lt;class-name&gt;
+            &lt;parameter&gt;
+               &lt;string&gt;
+               &lt;declarable&gt;
+      &lt;cache-listener&gt;
+         &lt;class-name&gt;
+            &lt;parameter&gt;
+               &lt;string&gt;
+               &lt;declarable&gt;
+      &lt;eviction-attributes&gt;
+         &lt;lru-entry-count&gt;
+         &lt;lru-heap-percentage&gt;
+            &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+         &lt;lru-memory-size&gt;
+            &lt;class-name&gt;
+               &lt;parameter&gt;
+                  &lt;string&gt;
+                  &lt;declarable&gt;
+   &lt;jndi-bindings&gt;
+      &lt;jndi-binding&gt;
+         &lt;config-property&gt;
+            &lt;config-property-name&gt;
+            &lt;config-property-type&gt;
+            &lt;config-property-value&gt;
+   &lt;region&gt;
+      &lt;region-attributes&gt;
+      &lt;index&gt;
+         &lt;entry&gt;
+         &lt;key&gt;
+            &lt;string&gt;
+            &lt;declarable&gt;
+         &lt;value&gt;
+            &lt;string&gt;
+            &lt;declarable&gt;
+      &lt;region&gt;
+   &lt;function-service&gt;
+      &lt;function&gt;
+         &lt;class-name&gt;
+         &lt;parameter&gt;
+            &lt;string&gt;
+            &lt;declarable&gt;
+   &lt;resource-manager&gt;
+   &lt;serialization-registration&gt;
+      &lt;serializer&gt;
+         &lt;class-name&gt;
+      &lt;instantiator&gt;
+         &lt;class-name&gt;
+   &lt;initializer&gt;
+      &lt;class-name&gt;
+      &lt;parameter&gt;
+         &lt;string&gt;
+         &lt;declarable&gt;
+&lt;/client-cache&gt;
+
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Running Geode Server Processes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_running_the_cacheserver">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Running Geode Server Processes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>A Geode server is a process that runs as a long-lived, configurable member of a client/server system.</p>
+
+<p><a id="running_the_cacheserver__section_6C2B495518C04064A181E7917CA81FC1"></a>
+The Geode server is used primarily for hosting long-lived data regions and for running standard Geode processes such as the server in a client/server configuration. You can start and stop servers using the following methods:</p>
+
+<ul>
+<li>  The <code>gfsh</code> command-line tool.</li>
+<li>  Programmatically, through the <code>org.apache.geode.distributed.ServerLauncher</code> API. The <code>ServerLauncher</code> API can only be used for Geode Servers that were started with <code>gfsh</code> or with the <code>ServerLauncher</code> class itself.</li>
+</ul>
+
+<h2 id="default-server-configuration-and-log-files"><a id="running_the_cacheserver__section_E15FB1B039CE4F6CB2E4B5618D7ECAA1" class="no-quick-link"></a>Default Server Configuration and Log Files</h2>
+
+<p>The <code>gfsh</code> utility uses a working directory for its configuration files and log files. These are the defaults and configuration options:</p>
+
+<ul>
+<li>  When you start a standalone server using <code>gfsh</code>, <code>gfsh</code> will automatically load the required JAR file <code>lib/geode-dependencies.jar</code> into the CLASSPATH of the JVM process. If you start a standalone server using the ServerLauncher API, you must specify this JAR file inside your command to launch the process. For more information on CLASSPATH settings in Geode, see <a href="../../getting_started/setup_classpath.html">Setting Up the CLASSPATH</a>.</li>
+<li>  Servers are configured like any other Geode process, with <code>gemfire.properties</code> and shared cluster configuration files. It is not programmable except through application plug-ins. Typically, you provide the <code>gemfire.properties</code> file and the <code>gfsecurity.properties</code> file. You can also specify a <code>cache.xml</code> file in the cache server’s working directory.</li>
+<li><p>By default, a new server started with <code>gfsh</code> receives its initial cache configuration from the cluster configuration service, assuming the locator is running the cluster configuration service. If you specify a group when starting the server, the server also receives configurations that apply to a group. The shared configuration consists of <code>cache.xml</code> files, <code>gemfire.properties</code> files, and deployed jar files. You can disable use of the cluster configuration service by specifying <code>--use-cluster-configuration=false</code> when starting the server using <code>gfsh</code>. See <a href="../cluster_config/gfsh_persist.html#concept_r22_hyw_bl">Overview of the Cluster Configuration Service</a>.</p></li>
+<li><p>If you are using the Spring Framework, you can specify a Spring ApplicationContext XML file when starting up your server in <code>gfsh</code> by using the <code>--spring-xml-location</code> command-line option. This option allows you to bootstrap your Geode server process with your Spring application&rsquo;s configuration. See <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/resources.html#resources-app-ctx">Spring documentation</a> for more information on this file.</p></li>
+<li><p>For logging output, log file output defaults to <code>&lt;server-name&gt;.log</code> in the cache server&rsquo;s working directory. If you restart a server with the same server name, the existing log file is automatically renamed, for example, <code>server1-01-01.log</code> and <code>server1-02-01.log</code>. You can modify the level of logging details in this file by specifying a level in the <code>--log-level</code> argument when starting up the server.</p></li>
+<li><p>By default, the server will start in a subdirectory, named after the server&rsquo;s specified name, under the directory where <code>gfsh</code> is executed. This subdirectory is considered the current working directory. You can also specify a different working directory when starting the cache server in <code>gfsh</code>.</p></li>
+<li><p>By default, a server process that has been shutdown and disconnected due to a network partition event or member unresponsiveness will restart itself and automatically try to reconnect to the existing distributed system. See <a href="../../managing/member-reconnect.html#concept_22EE6DDE677F4E8CAF5786E17B4183A9">Handling Forced Cache Disconnection Using Autoreconnect</a> for more details.</p></li>
+<li><p>You can pass JVM parameters to the server&rsquo;s JVM by using the <code>--J=-Dproperty.name=value</code> upon server startup. These parameters can be Java properties or Geode properties such as <code>gemfire.jmx-manager</code>. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --J=-Dgemfire.jmx-manager=true \
+--J=-Dgemfire.jmx-manager-start=true --J=-Dgemfire.http-port=8080
+</code></pre></li>
+<li><p>We recommend that you do not use the <code>-XX:+UseCompressedStrings</code> and <code>-XX:+UseStringCache</code> JVM configuration properties when starting up servers. These JVM options can cause issues with data corruption and compatibility.</p></li>
+</ul>
+
+<h2 id="start-the-server-with-gfsh"><a id="running_the_cacheserver__section_07001480D33745139C3707EDF8166D86" class="no-quick-link"></a>Start the Server with gfsh</h2>
+
+<p>See the <a href="../../tools_modules/gfsh/command-pages/start.html#topic_3764EE2DB18B4AE4A625E0354471738A"><code>gfsh start server</code></a> command reference page for syntax information.</p>
+
+<p>These example <code>gfsh start server</code> start commands specify a <code>cache.xml</code> file for cache configuration, and use different incoming client connection ports:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 \
+--cache-xml-file=../ServerConfigs/cache.xml --server-port=40404
+
+gfsh&gt;start server --name=server2 \
+--cache-xml-file=../ServerConfigs/cache.xml --server-port=40405
+</code></pre>
+
+<p>The location of the <code>cache.xml</code> file and the setting for the client
+connection port could instead be defined within a 
+<code>gemfire.properties</code> file.
+Then, start the server specifying the <code>gemfire.properties</code> file,
+as in the example command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 \
+--properties-file=/home/username/cluster/gemfire.properties
+</code></pre>
+
+<p>To start a server with an embedded JMX Manager:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server2 \
+--J=-Dgemfire.jmx-manager=true --J=-Dgemfire.jmx-manager-start=true
+</code></pre>
+
+<p>When both <code>--max-heap</code> and <code>--initial-heap</code> are specified during
+server startup,
+additional GC parameters are specified on your behalf.
+If you do not want additional default GC properties set,
+then use the <code>-Xms</code> &amp; <code>-Xmx</code> JVM options to set just these parameters.
+See <a href="../../managing/heap_use/heap_management.html#configuring_resource_manager">Controlling Heap Use with the Resource Manager</a> for more information.
+To start a server, providing JVM configuration settings:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server3 \
+--J=-Xms80m,-Xmx80m --J=-XX:+UseConcMarkSweepGC,-XX:CMSInitiatingOccupancyFraction=65
+</code></pre>
+
+<h2 id="start-the-server-programmatically">Start the Server Programmatically</h2>
+
+<p>Use the <code>org.apache.geode.distributed.ServerLauncher</code> API to start the cache
+server process inside your code.
+Use the <code>ServerLauncher.Builder</code> class to construct an instance of
+the <code>ServerLauncher</code>,
+and then use the <code>start()</code> method to start the server service.
+The other methods in the <code>ServerLauncher</code> class provide status information about the server and allow you to stop the server.</p>
+<pre class="highlight plaintext"><code>import org.apache.geode.distributed.ServerLauncher;
+
+ public class MyEmbeddedServer {
+
+    public static void main(String[] args){
+        ServerLauncher serverLauncher  = new ServerLauncher.Builder()
+          .setMemberName("server1")
+          .setServerPort(40405)
+          .set("jmx-manager", "true")
+          .set("jmx-manager-start", "true")
+          .build();
+
+        serverLauncher.start();  
+
+        System.out.println("Cache server successfully started");
+    }
+}
+</code></pre>
+
+<h2 id="check-server-status"><a id="running_the_cacheserver__section_F58F229D5C7048E9915E0EC470F9A923" class="no-quick-link"></a>Check Server Status</h2>
+
+<p>Once connected to the distributed system in <code>gfsh</code>,
+check the status of a running cache server by providing the server name:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;status server --name=server1
+</code></pre>
+
+<p>If you are not connected to a distributed system, you can check the status of a local cache server by providing the process ID or the server&rsquo;s current working directory. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;status server --pid=2484
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>% gfsh status server --dir=server1
+</code></pre>
+
+<p>If successful, the output provides information as in this sample:</p>
+<pre class="highlight plaintext"><code>% gfsh status server --dir=server4
+Server in /home/username/server4 on 192.0.2.0[40404] as server4 is currently online.
+Process ID: 49008
+Uptime: 2 minutes 4 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_144
+Log File: /home/username/server4/server4.log
+JVM Arguments: 
+...
+</code></pre>
+
+<h2 id="stop-server"><a id="running_the_cacheserver__section_0E4DDED6AB784B0CAFBAD538B227F487" class="no-quick-link"></a>Stop Server</h2>
+
+<p>When connected to the distributed system in <code>gfsh</code>, stop a running cache server by providing the server name:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --name=server1
+</code></pre>
+
+<p>If not connected, you can stop a local cache server by specify the server&rsquo;s current working directory or the process ID. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --pid=2484
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --dir=server1
+</code></pre>
+
+<p>You can also use the <code>gfsh shutdown</code> command to shut down all cache servers in an orderly fashion. Doing a <code>shutdown</code> is the correct approach for systems with persistent regions. See <a href="starting_up_shutting_down.html">Starting Up and Shutting Down Your System</a> for more details.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

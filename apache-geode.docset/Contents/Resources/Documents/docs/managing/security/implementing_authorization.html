@@ -1,0 +1,831 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Implementing Authorization |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_security docs_managing_security_implementing_authorization">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Implementing Authorization
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="how-authorization-works">How Authorization Works</h2>
+
+<p>When a component requests an operation,
+the <code>SecurityManager.authorize</code> method is invoked.
+It is passed the principal of the operation&rsquo;s requester
+and a <code>ResourcePermission</code>, which describes the operation requested.</p>
+
+<p>The implementation of the <code>SecurityManager.authorize</code> method
+makes a decision as to whether or not the principal will be granted permission
+to carry out the operation.
+It returns a boolean in which a return value of <code>true</code> permits
+the operation,
+and a return value of <code>false</code> prevents the operation.</p>
+
+<p>A well-designed <code>authorize</code> method will have or will have a way of obtaining
+a mapping of principals to the operations (in the form of resource permissions)
+that they are permitted to do.</p>
+
+<h2 id="resource-permissions">Resource Permissions</h2>
+
+<p>All operations are described by an instance of the <code>ResourcePermission</code> class.
+A permission contains the <code>Resource</code> data member,
+which classifies whether the operation as working on</p>
+
+<ul>
+<li>cache data; value is <code>DATA</code></li>
+<li>the distributed system; value is <code>CLUSTER</code></li>
+</ul>
+
+<p>A permission also contains the <code>Operation</code> data member, 
+which classifies whether the operation as</p>
+
+<ul>
+<li>reading; value is <code>READ</code></li>
+<li>changing information; value is <code>WRITE</code></li>
+<li>making administrative changes; value is <code>MANAGE</code></li>
+</ul>
+
+<p>The operations are not hierarchical;
+<code>MANAGE</code> does not imply <code>WRITE</code>, and <code>WRITE</code> does not imply <code>READ</code>.</p>
+
+<p>Some <code>DATA</code> operations further specify a region name in the permission.
+This permits restricting operations on that region to only those
+authorized principals.
+And within a region, some operations may specify a key.
+This permits restricting operations on that key within that region to 
+only those authorized principals.</p>
+
+<p>Some <code>CLUSTER</code> operations further specify a finer-grained
+target for the operation.
+Specify the target with a string value of:</p>
+
+<ul>
+<li><code>DISK</code> to target operations that write to a disk store</li>
+<li><code>GATEWAY</code> to target operations that manage gateway senders and receivers</li>
+<li><code>QUERY</code> to target operations that manage both indexes and continuous
+queries</li>
+<li><code>DEPLOY</code> to target operations that deploy code to servers</li>
+<li><code>LUCENE</code> to target Lucene index operations</li>
+</ul>
+
+<p>This table classifies the permissions assigned for operations common to
+a Client-Server interaction.</p>
+
+<table><thead>
+<tr>
+<th>Client Operation</th>
+<th>Assigned <code>ResourcePermission</code></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>get function attribute</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>create region</td>
+<td>DATA:MANAGE</td>
+</tr>
+<tr>
+<td>destroy region</td>
+<td>DATA:MANAGE</td>
+</tr>
+<tr>
+<td>Region.Keyset</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>Region.query</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>Region.getAll</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>Region.getAll with a list of keys</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.getEntry</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>Region.containsKeyOnServer(key)</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.get(key)</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.registerInterest(key)</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.registerInterest(regex)</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>Region.unregisterInterest(key)</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.unregisterInterest(regex)</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>execute function</td>
+<td>Defaults to DATA:WRITE. Override <code>Function.getRequiredPermissions</code> to change the permission.</td>
+</tr>
+<tr>
+<td>clear region</td>
+<td>DATA:WRITE:RegionName</td>
+</tr>
+<tr>
+<td>Region.putAll</td>
+<td>DATA:WRITE:RegionName</td>
+</tr>
+<tr>
+<td>Region.clear</td>
+<td>DATA:WRITE:RegionName</td>
+</tr>
+<tr>
+<td>Region.removeAll</td>
+<td>DATA:WRITE:RegionName</td>
+</tr>
+<tr>
+<td>Region.destroy(key)</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.invalidate(key)</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.destroy(key)</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.put(key)</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>Region.replace</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>queryService.newCq</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>CqQuery.stop</td>
+<td>DATA:READ</td>
+</tr>
+</tbody></table>
+
+<p>This table classifies the permissions assigned for <code>gfsh</code> operations.</p>
+
+<table><thead>
+<tr>
+<th><code>gfsh</code> Command</th>
+<th>Assigned <code>ResourcePermission</code></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>alter disk-store</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>alter region</td>
+<td>DATA:MANAGE:RegionName</td>
+</tr>
+<tr>
+<td>alter runtime</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>backup disk-store</td>
+<td>DATA:READ and CLUSTER:WRITE:DISK</td>
+</tr>
+<tr>
+<td>change loglevel</td>
+<td>CLUSTER:WRITE</td>
+</tr>
+<tr>
+<td>clear defined indexes</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>close durable-client</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>close durable-cq</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>compact disk-store</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>configure pdx</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>create async-event-queue</td>
+<td>CLUSTER:MANAGE:DEPLOY, plus CLUSTER:WRITE:DISK if the associated region is persistent</td>
+</tr>
+<tr>
+<td>create defined indexes</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>create disk-store</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>create gateway-receiver</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>create gateway-sender</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>create index</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>create lucene index</td>
+<td>CLUSTER:MANAGE:LUCENE</td>
+</tr>
+<tr>
+<td>create region</td>
+<td>DATA:MANAGE, plus CLUSTER:WRITE:DISK if the associated region is persistent</td>
+</tr>
+<tr>
+<td>define index</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>deploy</td>
+<td>CLUSTER:MANAGE:DEPLOY</td>
+</tr>
+<tr>
+<td>describe client</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>describe config</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>describe disk-store</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>describe lucene index</td>
+<td>CLUSTER:READ:LUCENE</td>
+</tr>
+<tr>
+<td>describe member</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>describe offline-disk-store</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>describe region</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>destroy disk-store</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>destroy function</td>
+<td>CLUSTER:MANAGE:DEPLOY</td>
+</tr>
+<tr>
+<td>destroy index</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>destroy lucene index</td>
+<td>CLUSTER:MANAGE:LUCENE</td>
+</tr>
+<tr>
+<td>destroy region</td>
+<td>DATA:MANAGE</td>
+</tr>
+<tr>
+<td>execute function</td>
+<td>Defaults to DATA:WRITE. Override <code>Function.getRequiredPermissions</code> to change the permission.</td>
+</tr>
+<tr>
+<td>export cluster-configuration</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>export config</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>export data</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>export logs</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>export offline-disk-store</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>export stack-traces</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>gc</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>get &#8209;key=key1 &#8209;region=region1</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>import data</td>
+<td>DATA:WRITE:RegionName</td>
+</tr>
+<tr>
+<td>import cluster-configuration</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>list async-event-queues</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list clients</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list deployed</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list disk-stores</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list durable-cqs</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list functions</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list gateways</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list indexes</td>
+<td>CLUSTER:READ:QUERY</td>
+</tr>
+<tr>
+<td>list lucene indexes</td>
+<td>CLUSTER:READ:LUCENE</td>
+</tr>
+<tr>
+<td>list members</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>list regions</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>load-balance gateway-sender</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>locate entry</td>
+<td>DATA:READ:RegionName:Key</td>
+</tr>
+<tr>
+<td>netstat</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>pause gateway-sender</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>put &ndash;key=key1 &ndash;region=region1</td>
+<td>DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>query</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>rebalance</td>
+<td>DATA:MANAGE</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>DATA:WRITE:RegionName or DATA:WRITE:RegionName:Key</td>
+</tr>
+<tr>
+<td>resume gateway-sender</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>revoke mising-disk-store</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>search lucene</td>
+<td>DATA:READ:RegionName</td>
+</tr>
+<tr>
+<td>show dead-locks</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>show log</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>show metrics</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>show missing-disk-stores</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>show subscription-queue-size</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>shutdown</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>start gateway-receiver</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>start gateway-sender</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>start server</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>status cluster-config-service</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>status gateway-receiver</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>status gateway-sender</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>status locator</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>status server</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>stop gateway-receiver</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>stop gateway-receiver</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>stop locator</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>stop server</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>undeploy</td>
+<td>CLUSTER:MANAGE:DEPLOY</td>
+</tr>
+</tbody></table>
+
+<p>The <code>gfsh connect</code> does not have a permission,
+as it is the operation that invokes authentication. 
+These <code>gfsh</code> commands do not have permission defined,
+as they do not interact with the distributed system:</p>
+
+<ul>
+<li> <code>gfsh describe connection</code>, which describes the <code>gfsh</code> end of the connection</li>
+<li> <code>gfsh debug</code>, which toggles the mode within <code>gfsh</code></li>
+<li> <code>gfsh exit</code></li>
+<li> <code>gfsh help</code></li>
+<li> <code>gfsh hint</code></li>
+<li> <code>gfsh history</code></li>
+<li> <code>gfsh run</code>, although individual commands within the script
+will go through authorization</li>
+<li> <code>gfsh set variable</code></li>
+<li> <code>gfsh sh</code></li>
+<li> <code>gfsh sleep</code></li>
+<li> <code>validate offline-disk-store</code></li>
+<li> <code>gfsh version</code></li>
+</ul>
+
+<p>This table classifies the permissions assigned for JMX operations.</p>
+
+<table><thead>
+<tr>
+<th>JMX Operation</th>
+<th>Assigned <code>ResourcePermission</code></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>DistributedSystemMXBean.shutdownAllMembers</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.start</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.stop</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.createManager</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.shutDownMember</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>Mbeans get attributes</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>MemberMXBean.showLog</td>
+<td>CLUSTER:READ</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.changerAlertLevel</td>
+<td>CLUSTER:WRITE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.setPulseURL</td>
+<td>CLUSTER:WRITE</td>
+</tr>
+<tr>
+<td>ManagerMXBean.setStatusMessage</td>
+<td>CLUSTER:WRITE</td>
+</tr>
+<tr>
+<td>CacheServerMXBean.closeAllContinuousQuery</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>CacheServerMXBean.closeContinuousQuery</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>CacheServerMXBean.executeContinuousQuery</td>
+<td>DATA:READ</td>
+</tr>
+<tr>
+<td>CqQuery.execute</td>
+<td>DATA:READ:RegionName and CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>CqQuery.executeWithInitialResults</td>
+<td>DATA:READ:RegionName and CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>DiskStoreMXBean.flush</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DiskStoreMXBean.forceCompaction</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DiskStoreMXBean.forceRoll</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DiskStoreMXBean.setDiskUsageCriticalPercentage</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DiskStoreMXBean.setDiskUsageWarningPercentage</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.revokeMissingDiskStores</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.setQueryCollectionsDepth</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.setQueryResultSetLimit</td>
+<td>CLUSTER:MANAGE:QUERY</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.backupAllMembers</td>
+<td>DATA:READ and CLUSTER:WRITE:DISK</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.queryData</td>
+<td>DATA:READ</td>
+</tr>
+<tr>
+<td>DistributedSystemMXBean.queryDataForCompressedResult</td>
+<td>DATA:READ</td>
+</tr>
+<tr>
+<td>GatewayReceiverMXBean.pause</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewayReceiverMXBean.rebalance</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewayReceiverMXBean.resume</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewayReceiverMXBean.start</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewayReceiverMXBean.stop</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewaySenderMXBean.pause</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewaySenderMXBean.rebalance</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewaySenderMXBean.resume</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewaySenderMXBean.start</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>GatewaySenderMXBean.stop</td>
+<td>CLUSTER:MANAGE:GATEWAY</td>
+</tr>
+<tr>
+<td>LockServiceMXBean.becomeLockGrantor</td>
+<td>CLUSTER:MANAGE</td>
+</tr>
+<tr>
+<td>MemberMXBean.compactAllDiskStores</td>
+<td>CLUSTER:MANAGE:DISK</td>
+</tr>
+</tbody></table>
+
+<h2 id="implement-authorization">Implement Authorization</h2>
+
+<p>Complete these items to implement authorization.</p>
+
+<ul>
+<li>Decide upon an authorization algorithm.
+The <a href="authorization_example.html">Authorization Example</a>
+stores a mapping of which principals (users) are permitted to do
+which operations.
+The algorithm bases its decision
+on a look up of the permissions granted to the principal attempting
+the operation.</li>
+<li>Define the <code>security-manager</code> property.
+See <a href="enable_security.html">Enable Security with Property Definitions</a>
+for details about this property.</li>
+<li>Implement the  <code>authorize</code> method of the <code>SecurityManager</code> interface.</li>
+<li>Define any extra resources that the implemented authorization algorithm
+needs in order to make a decision.</li>
+</ul>
+
+<h3 id="authorization-of-function-execution"><a id="AuthorizeFcnExecution" class="no-quick-link"></a>Authorization of Function Execution</h3>
+
+<p>By default, a function executed on servers requires that the
+entity invoking the function have <code>DATA:WRITE</code> permission on the
+region(s) involved.
+Since the default permission may not be appropriate for all functions,
+the permissions required may be altered.</p>
+
+<p>To implement a different set of permissions,
+override the <code>Function.getRequiredPermissions()</code> method
+in the function&rsquo;s class.
+The method should return a <code>Collection</code> of the permissions
+required of the entity that invokes an execution of the function.</p>
+
+<h3 id="authorization-of-methods-invoked-from-queries"><a id="AuthorizeMethodsInQueries" class="no-quick-link"></a>Authorization of Methods Invoked from Queries</h3>
+
+<p>Enabling the <code>SecurityManager</code> affects queries
+by restricting the methods that a running query may invoke.
+See <a href="../../developing/query_select/the_where_clause.html#the_where_clause__section_D2F8D17B52B04895B672E2FCD675A676">Method Invocations</a> for details.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

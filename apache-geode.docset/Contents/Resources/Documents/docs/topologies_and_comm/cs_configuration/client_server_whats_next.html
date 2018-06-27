@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Fine-Tuning Your Client/Server Configuration |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_cs_configuration docs_topologies_and_comm_cs_configuration_client_server_whats_next">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Fine-Tuning Your Client/Server Configuration
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can fine-tune your client/server system with server load-balancing and client thread use of pool connections. For example, you can configure how often the servers check their load with the cache server <code>load-poll-interval</code> property, or configure your own server load metrics by implementing the <code>org.apache.geode.cache.server</code> package.</p>
+
+<h2 id="how-server-load-conditioning-works"><a id="client_server_whats_next__section_64AD4CBC253B4C309E3D592D0CED2A6B" class="no-quick-link"></a>How Server Load Conditioning Works</h2>
+
+<p>When the client pool requests connection information from the server locator, the locator returns the least-loaded server for the connection type. The pool uses this &ldquo;best server&rdquo; response to open new connections and to condition (rebalance) its existing pool connections.</p>
+
+<ul>
+<li>  The locator tracks server availability and load according to information that the servers provide. Each server probes its load metrics periodically and, when it detects a change, sends new information to the locator. This information consists of current load levels and estimates of how much load would be added for each additional connection. The locator compares the load information from its servers to determine which servers can best handle more connections.</li>
+<li>  You can configure how often the servers check their load with the cache server’s <code>load-poll-interval</code>. You might want to set it lower if you find your server loads fluctuating too much during normal operation. The lower you set it, however, the more overhead your load balancing will use.</li>
+<li>  Between updates from the servers, the locators estimate which server is the least loaded by using the server estimates for the cost of additional connections. For example, if the current pool connection load for a server’s connections is 0.4 and each additional connection would add 0.1 to its load, the locator can estimate that adding two new pool connections will take the server’s pool connection load to 0.6.</li>
+<li>  Locators do not share connection information among themselves. These estimates provide rough guidance to the individual locators for the periods between updates from the servers.</li>
+</ul>
+
+<p>Geode provides a default utility that probes the server and its resource usage to give load information to the locators. The default probe returns the following load metrics:
+-   The pool connection load is the number of connections to the server divided by the server’s <code>max-connections</code> setting. This means that servers with a lower <code>max-connections</code> setting receives fewer connections than servers with a higher setting. The load is a number between 0 and 1, where 0 means there are no connections, and 1 means the server is at <code>max-connections</code>. The load estimate for each additional pool connection is 1/<code>max-connections</code>.
+-   The subscription connection load is the number of subscription queues hosted by this server. The load estimate for each additional subscription connection is 1.</p>
+
+<p>To use your own server load metrics instead of the default, implement the <code>ServerLoadProbe</code> or <code>ServerLoadProbeAdapter</code> and related interfaces and classes in the <code>org.apache.geode.cache.server</code> package. The load for each server is weighed relative to the loads reported by other servers in the system.</p>
+
+<h2 id="client-thread-use-of-pool-connections"><a id="client_server_whats_next__section_CE66DA4747BC4870893DB93690DAB95B" class="no-quick-link"></a>Client Thread Use of Pool Connections</h2>
+
+<p>By default, a client thread retrieves a connection from the open connection pool for each forwarded operation and returns the connection to the pool as soon as the request is complete. If your client thread runs a <code>put</code> on a client region, for example, that operation grabs a server connection, sends the <code>put</code> to the server, and then returns the connection to the pool. This action keeps the connections available to the most threads possible.</p>
+
+<h2 id="set-up-a-thread-local-(dedicated)-connection"><a id="client_server_whats_next__section_7CC2BB7D03D8466D881888127F7A06A9" class="no-quick-link"></a>Set Up a Thread-Local (Dedicated) Connection</h2>
+
+<p>You configure threads to use dedicated connections by setting <code>thread-local-connections</code> to true. In this case the thread holds its connection either until the thread explicitly releases the connection, or the connection expires based on <code>idle-timeout</code> or <code>load-conditioning-interval</code>.</p>
+
+<h2 id="release-a-thread-local-connection"><a id="client_server_whats_next__section_396E1207E2E84590B9557D449F0846FD" class="no-quick-link"></a>Release a Thread-Local Connection</h2>
+
+<p>If you use thread-local connections, you should release the connection as soon as your thread finishes its server activities.</p>
+
+<p>Call <code>releaseThreadLocalConnection</code> on the <code>Pool</code> instance you are using for the region:</p>
+<pre class="highlight plaintext"><code>Region myRegion ...
+PoolManager.find(myRegion).releaseThreadLocalConnection();
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

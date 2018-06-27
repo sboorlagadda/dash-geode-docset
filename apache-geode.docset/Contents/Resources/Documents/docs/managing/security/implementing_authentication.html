@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Implementing Authentication |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_security docs_managing_security_implementing_authentication">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Implementing Authentication
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Authentication lends a measure of security to a distributed system
+by verifying the identity of components as they connect to the system.
+All components use the same authentication mechanism.</p>
+
+<h2 id="how-authentication-works">How Authentication Works</h2>
+
+<p>When a component initiates a connection to the distributed system,
+the <code>SecurityManager.authenticate</code> method is invoked.
+The component provides its credentials in the form of properties
+as a parameter to the <code>authenticate</code> method.
+The credential is presumed to be the two properties
+<code>security-username</code> and <code>security-password</code>.
+The <code>authenticate</code> method is expected to either return an object
+representing a principal or throw an <code>AuthenticationFailedException</code>.</p>
+
+<p>A well-designed <code>authenticate</code> method will have a set of known user and password pairs that can be
+compared to the credential presented or will have a way of obtaining those pairs.</p>
+
+<h2 id="how-a-server-sets-its-credential">How a Server Sets Its Credential</h2>
+
+<p>In order to connect with a locator that does authentication,
+a server will need to set its credential, composed of the two properties
+<code>security-username</code> and <code>security-password</code>.
+There are two ways of accomplishing this:</p>
+
+<ul>
+<li><p>Set the <code>security-username</code> and <code>security-password</code> in the server&rsquo;s
+<code>gfsecurity.properties</code> file that will be read upon server start up,
+as in the example</p>
+<pre class="highlight plaintext"><code> security-username=admin
+ security-password=xyz1234
+</code></pre>
+
+<p>The user name and password are stored in the clear, so the
+<code>gfsecurity.properties</code> file must be protected by restricting access with
+file system permissions.</p></li>
+<li><p>Implement the <code>getCredentials</code> method of the <code>AuthInitialize</code> interface
+for the server.
+This callback&rsquo;s location is defined in the property <code>security-peer-auth-init</code>,
+as in the example</p>
+<pre class="highlight plaintext"><code> security-peer-auth-init=com.example.security.MyAuthInitialize
+</code></pre>
+
+<p>The implementation of <code>getCredentials</code> may then acquire values for
+the properties <code>security-username</code> and <code>security-password</code> in whatever way
+it wishes.
+It might look up values in a database or another external resource.</p></li>
+</ul>
+
+<p>Gateway senders and receivers communicate as a component of their
+server member.
+Therefore, the credential of the server become those of the gateway
+sender or receiver.</p>
+
+<h2 id="how-a-cache-client-sets-its-credential">How a Cache Client Sets Its Credential</h2>
+
+<!--  Revised for GEODE-1883
+In order to connect with a locator or a server that does authentication,
+a client will need to set its credential, composed of the two properties
+`security-username` and `security-password`.
+There are two ways of accomplishing this:
+
+- Set the `security-username` and `security-password` in the client's
+`gfsecurity.properties` file that will be read upon client start up,
+as in the example
+
+     ``` pre
+     security-username=clientapp
+     security-password=xyz1234
+     ```
+The user name and password are stored in the clear, so the
+`gfsecurity.properties` file must be protected by restricting access with
+file system permissions.
+To accomplish this:
+
+- Implement the `getCredentials` method of the `AuthInitialize` interface
+for the client.
+This callback's location is defined in the property `security-client-auth-init`,
+as in the example
+
+     ``` pre
+     security-client-auth-init=com.example.security.ClientAuthInitialize
+     ```
+The implementation of `getCredentials` may then acquire values for
+the properties `security-username` and `security-password` in whatever way
+it wishes.
+It might look up values in a database or another external resource,
+or it might prompt for values.
+-->
+
+<p>In order to connect with a locator or a server that does authentication,
+a client will need to set its credential, composed of the two properties
+<code>security-username</code> and <code>security-password</code>.
+To accomplish this:</p>
+
+<ul>
+<li><p>Implement the <code>getCredentials</code> method of the <code>AuthInitialize</code> interface
+for the client.
+This callback&rsquo;s location is defined in the property <code>security-client-auth-init</code>,
+as in the example</p>
+<pre class="highlight plaintext"><code> security-client-auth-init=com.example.security.ClientAuthInitialize
+</code></pre>
+
+<p>The implementation of <code>getCredentials</code> may then acquire values for
+the properties <code>security-username</code> and <code>security-password</code> in whatever way
+it wishes.
+It might look up values in a database or another external resource,
+or it might prompt for values.</p></li>
+</ul>
+
+<h2 id="how-other-components-set-their-credentials">How Other Components Set Their Credentials</h2>
+
+<p><code>gfsh</code> prompts for the user name and password upon invocation of
+a<code>gfsh connect</code> command.</p>
+
+<p>Pulse prompts for the user name and password upon start up.</p>
+
+<p>Due to the stateless nature of the REST API,
+a web application or other component that speaks to a server or locator
+via the REST API goes through authentication on each request.
+The header of the request needs to include attributes that define values for
+<code>security-username</code> and <code>security-password</code>.</p>
+
+<h2 id="implement-securitymanager-interface">Implement SecurityManager Interface</h2>
+
+<p>Complete these items to implement authentication done by either a
+locator or a server.</p>
+
+<ul>
+<li>Decide upon an authentication algorithm.
+The <a href="authentication_examples.html">Authentication Example</a>
+stores a set of user name and
+password pairs that represent the identities of components
+that will connect to the system.
+This simplistic algorithm returns the user name as a principal
+if the user name and password passed to the <code>authenticate</code> method
+are a match for one of the stored pairs.</li>
+<li>Define the <code>security-manager</code> property.
+See <a href="enable_security.html">Enable Security with Property Definitions</a>
+for details about this property.</li>
+<li>Implement the  <code>authenticate</code> method of the <code>SecurityManager</code> interface.</li>
+<li>Define any extra resources that the implemented authentication algorithm
+needs in order to make a decision.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Changing the File Specifications |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_change_file_spec">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Changing the File Specifications
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can change all file specifications in the <code>gemfire.properties</code> file and at the command line.</p>
+
+<p><strong>Note:</strong>
+Geode applications can use the API to pass <code>java.lang.System</code> properties to the distributed system connection. This changes file specifications made at the command line and in the <code>gemfire.properties</code> file. You can verify an application’s property settings in the configuration information logged at application startup. The configuration is listed when the <code>gemfire.properties</code> <code>log-level</code> is set to <code>config</code> or lower.</p>
+
+<p>This invocation of the application, <code>testApplication.TestApp1</code>, provides non-default specifications for both the <code>cache.xml</code> and <code>gemfire.properties</code> files:</p>
+<pre class="highlight plaintext"><code>java -Dgemfire.cache-xml-file=\
+/gemfireSamples/examples/dist/cacheRunner/queryPortfolios.xml \
+-DgemfirePropertyFile=defaultConfigs/gemfire.properties \
+testApplication.TestApp1
+</code></pre>
+
+<p>The gfsh start server command can use the same specifications:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server \
+--J=-Dgemfire.cache-xml-file=/gemfireSamples/examples/dist/cacheRunner/queryPortfolios.xml \
+--J=-DgemfirePropertyFile=defaultConfigs/gemfire.properties
+</code></pre>
+
+<p>You can also change the specifications for the <code>cache.xml</code> file inside the <code>gemfire.properties</code> file.</p>
+
+<p><strong>Note:</strong>
+Specifications in <code>gemfire.properties</code> files cannot use environment variables.</p>
+
+<p>Example <code>gemfire.properties</code> file with non-default <code>cache.xml</code> specification:</p>
+<pre class="highlight plaintext"><code>#Tue May 09 17:53:54 PDT 2006
+mcast-address=192.0.2.0
+mcast-port=10333
+locators=cache-xml-file=/gemfireSamples/examples/dist/cacheRunner/queryPortfolios.xml
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

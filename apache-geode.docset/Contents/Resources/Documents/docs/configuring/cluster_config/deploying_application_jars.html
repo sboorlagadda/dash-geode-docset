@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Deploying Application JARs to Apache Geode Members |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_deploying_application_jars">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Deploying Application JARs to Apache Geode Members
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can dynamically deploy your application JAR files to specific members or to all members in your distributed system. Geode automatically keeps track of JAR file versions; autoloads the deployed JAR files to the CLASSPATH; and auto-registers any functions that the JAR contains.</p>
+
+<p>To deploy and undeploy application JAR files in Apache Geode, use the <code>gfsh</code> <code>deploy</code> or <code>undeploy</code> command. You can deploy a single JAR or multiple JARs (by either specifying the JAR filenames or by specifying a directory that contains the JAR files), and you can also target the deployment to a member group or multiple member group. For example, after connecting to the distributed system where you want to deploy the JARs, you could type at the <code>gfsh</code> prompt:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; deploy --jars=group1_functions.jar
+</code></pre>
+
+<p>This command deploys the <code>group1_functions.jar</code> file to all members in the distributed system.</p>
+
+<p>To deploy the JAR file to a subset of members, use the <code>--groups</code> argument. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; deploy --jars=group1_functions.jar --groups=MemberGroup1
+</code></pre>
+
+<p>In the example it is assumed that you have already defined the member group that you want to use when starting up your members. See <a href="../chapter_overview.html#concept_lrh_gyq_s4">Configuring and Running a Cluster</a> for more information on how to define member groups and add a member to a group.</p>
+
+<p>To deploy all the JAR files that are located in a specific directory to all members:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; deploy --dir=libs/group1-libs
+</code></pre>
+
+<p>You can either provide a JAR file name or a directory of JARs for deployment, but you cannot specify both at once.</p>
+
+<p>To undeploy all previously deployed JAR files throughout the distributed system:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; undeploy
+</code></pre>
+
+<p>To undeploy a specific JAR file:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; undeploy --jars=group1_functions.jar
+</code></pre>
+
+<p>To target a specific member group when undeploying all JAR files:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; undeploy --groups=MemberGroup1
+</code></pre>
+
+<p>Only JAR files that have been previously deployed on members in the MemberGroup1 group will be undeployed.</p>
+
+<p>To see a list of all deployed JARs in your distributed system:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; list deployed
+</code></pre>
+
+<p>To see a list of all deployed JARs in a specific member group:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; list deployed --groups=MemberGroup1
+</code></pre>
+
+<p>Sample output:</p>
+<pre class="highlight plaintext"><code>
+ Member   |     Deployed JAR     |                JAR Location            
+--------- | -------------------- | ---------------------------------------------------
+datanode1 | group1_functions.jar | /usr/local/gemfire/deploy/vf.gf#group1_functions.jar#1
+datanode2 | group1_functions.jar | /usr/local/gemfire/deploy/vf.gf#group1_functions.jar#1
+</code></pre>
+
+<p>For more information on <code>gfsh</code> usage, see <a href="../../tools_modules/gfsh/chapter_overview.html">gfsh</a>.</p>
+
+<h2 id="deployment-location-for-jar-files"><a id="concept_4436C021FB934EC4A330D27BD026602C__section_D36E345C6E254D27B0F4B0C8711F5E6A" class="no-quick-link"></a>Deployment Location for JAR Files</h2>
+
+<p>The system location where JAR files are written on each member is determined by the <code>deploy-working-dir</code> Geode property configured for that member. For example, you could have the following configured in the <code>gemfire.properties</code> file for your member:</p>
+<pre class="highlight plaintext"><code>#gemfire.properties
+deploy-working-dir=/usr/local/gemfire/deploy
+</code></pre>
+
+<p>This deployment location can be local or a shared network resource (such as a mount location) used by multiple members in order to reduce disk space usage. If you use a shared directory, you still need to deploy the JAR file on every member that you want to have access to the application, because deployment updates the CLASSPATH and auto-registers functions.</p>
+
+<h2 id="about-deploying-jar-files-and-the-cluster-configuration-service">About Deploying JAR Files and the Cluster Configuration Service</h2>
+
+<p>By default, the cluster configuration service distributes deployed JAR files to all locators in the distributed system. When you start a new server using <code>gfsh</code>, the locator supplies configuration files and deployed jar files to the member and writes them to the server&rsquo;s directory.</p>
+
+<p>See <a href="gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<h2 id="versioning-of-jar-files"><a id="concept_4436C021FB934EC4A330D27BD026602C__section_D9219C5EEED64672930200677C2118C9" class="no-quick-link"></a>Versioning of JAR Files</h2>
+
+<p>When you deploy JAR files to a distributed system or member group, the JAR file is modified to indicate version information in its name. Each JAR filename is prefixed with <code>vf.gf#</code> and contains a version number at the end of the filename. For example, if you deploy <code>MyClasses.jar</code> five times, the filename is displayed as <code>vf.gf#MyClasses.jar#5</code> when you list all deployed jars.</p>
+
+<p>When you deploy a new JAR file, the member receiving the deployment checks whether the JAR file is a duplicate, either because the JAR file has already been deployed on that member or because the JAR file has already been deployed to a shared deployment working directory that other members are also using. If another member has already deployed this JAR file to the shared directory (determined by doing a byte-for-byte compare to the latest version in its directory), the member receiving the latest deployment does not write the file to disk. Instead, the member updates the ClassPathLoader to use the already deployed JAR file. If a newer version of the JAR file is detected on disk and is already in use, the deployment is canceled.</p>
+
+<p>When a member begins using a JAR file, the member obtains a shared lock on the file. If the member receives a newer version by deployment, the member releases the shared lock and tries to delete the existing JAR file in favor of the newer version. If no other member has a shared lock on the existing JAR, the existing, older version JAR is deleted.</p>
+
+<h2 id="automatic-class-path-loading"><a id="concept_4436C021FB934EC4A330D27BD026602C__section_F8AC59EEC8C5434FBC6F38A12A7371CE" class="no-quick-link"></a>Automatic Class Path Loading</h2>
+
+<p>When a cache is started, the new cache requests that the latest versions of each JAR file in the current working directory be added to the ClassPathLoader. If a JAR file has already been deployed to the ClassPathLoader, the ClassPathLoader updates its loaded version if a newer version is found; otherwise, there is no change. If detected, older versions of the JAR files are deleted if no other member has a shared lock on them.</p>
+
+<p>Undeploying a JAR file does not automatically unload the classes that were loaded during deployment. You need to restart your members to unload those classes.</p>
+
+<p>When a cache is closed it requests that all currently deployed JAR files be removed from the ClassPathLoader.</p>
+
+<p>If you are using a shared deployment working directory, all members sharing the directory should belong to the same member group. Upon restart, all members that share the same deployment working directory will deploy and autoload their CLASSPATH with any JARs found in the current working directory. This means that some members may load the JARs even though they are not part of the member group that received the original deployment.</p>
+
+<h2 id="automatic-function-registration"><a id="concept_4436C021FB934EC4A330D27BD026602C__section_C1ECA5A66C27403A9A18D0E04EFCC66D" class="no-quick-link"></a>Automatic Function Registration</h2>
+
+<p>When you deploy a JAR file that contains a function (in other words, contains a class that implements the Function interface), the function is automatically registered through the <code>FunctionService.registerFunction</code> method. If another JAR file is deployed (either with the same JAR filename or another filename) with the same function, the new implementation of the function is registered, overwriting the old one. If a JAR file is undeployed, any functions that were auto-registered at the time of deployment are unregistered. Because deploying a JAR file that has the same name multiple times results in the JAR being un-deployed and re-deployed, functions in the JAR are unregistered and re-registered each time this occurs. If a function with the same ID is registered from multiple differently named JAR files, the function is unregistered if any of those JAR files are re-deployed or un-deployed.</p>
+
+<p>During <code>cache.xml</code> load, the parameters for any declarables are saved. If functions found in a JAR file are also declarable, and have the same class name as the declarables whose parameters were saved after loading cache.xml, then function instances are created using those Parameters and are also registered. Therefore, if the same function is declared multiple times in the <code>cache.xml</code> with different sets of parameters, when the JAR is deployed a function is instantiated for each set of parameters. If any functions are registered using parameters from a <code>cache.xml</code> load, the default, no-argument function is not registered.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

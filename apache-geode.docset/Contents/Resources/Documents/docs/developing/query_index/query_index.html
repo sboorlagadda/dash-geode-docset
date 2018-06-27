@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Working with Indexes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_index docs_developing_query_index_query_index">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Working with Indexes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The Geode query engine supports indexing. An index can provide significant performance gains for query execution.</p>
+
+<p><a id="indexing__section_565C080FBDD0443C8504DF372E3C32C8"></a>
+A query run without the aid of an index iterates through every object in the collection. If an index is available that matches part or all of the query specification, the query iterates only over the indexed set, and query processing time can be reduced.</p>
+
+<ul>
+<li><p><strong><a href="indexing_guidelines.html">Tips and Guidelines on Using Indexes</a></strong></p>
+
+<p>Optimizing your queries with indexes requires a cycle of careful planning, testing, and tuning. Poorly-defined indexes can degrade the performance of your queries instead of improving it. This section gives guidelines for index usage in the query service.</p></li>
+<li><p><strong><a href="creating_an_index.html">Creating, Listing and Removing Indexes</a></strong></p>
+
+<p>The Geode <code>QueryService</code> API provides methods to create, list and remove the index. You can also use <code>gfsh</code> command-line interface to create, list and remove indexes, and use cache.xml to create an index.</p></li>
+<li><p><strong><a href="creating_key_indexes.html">Creating Key Indexes</a></strong></p>
+
+<p>Creating a key index is a good way to improve query performance when data is partitioned using a key or a field value. You can create key indexes by using the <code>createKeyIndex</code> method of the QueryService or by defining the index in <code>cache.xml</code>. Creating a key index makes the query service aware of the relationship between the values in the region and the keys in the region.</p></li>
+<li><p><strong><a href="creating_hash_indexes.html">Creating Hash Indexes</a></strong></p>
+
+<p><strong>Hash indexes are deprecated.</strong> Geode supports the creation of hash indexes for the purposes of performing equality-based queries.</p></li>
+<li><p><strong><a href="creating_map_indexes.html">Creating Indexes on Map Fields (&ldquo;Map Indexes&rdquo;)</a></strong></p>
+
+<p>To assist with the quick lookup of multiple values in a Map (or HashMap) type field, you can create an index (sometimes referred to as a &ldquo;map index&rdquo;) on specific (or all) keys in that field.</p></li>
+<li><p><strong><a href="create_multiple_indexes.html">Creating Multiple Indexes at Once</a></strong></p>
+
+<p>In order to speed and promote efficiency when creating indexes, you can define multiple indexes and then create them all at once.</p></li>
+<li><p><strong><a href="maintaining_indexes.html">Maintaining Indexes (Synchronously or Asynchronously) and Index Storage</a></strong></p>
+
+<p>Indexes are automatically kept current with the region data they reference. The region attribute <code>IndexMaintenanceSynchronous</code> specifies whether the region indexes are updated synchronously when a region is modified or asynchronously in a background thread.</p></li>
+<li><p><strong><a href="query_index_hints.html">Using Query Index Hints</a></strong></p>
+
+<p>You can use the hint keyword to allow Geode&rsquo;s query engine to prefer certain indexes.</p></li>
+<li><p><strong><a href="indexes_on_single_region_queries.html">Using Indexes on Single Region Queries</a></strong></p>
+
+<p>Queries with one comparison operation may be improved with either a key or range index, depending on whether the attribute being compared is also the primary key.</p></li>
+<li><p><strong><a href="using_indexes_with_equijoin_queries.html">Using Indexes with Equi-Join Queries</a></strong></p>
+
+<p>Equi-join queries are queries in which two regions are joined through an equality condition in the WHERE clause.</p></li>
+<li><p><strong><a href="indexes_with_overflow_regions.html">Using Indexes with Overflow Regions</a></strong></p>
+
+<p>You can use indexes when querying on overflow regions; however, there are caveats.</p></li>
+<li><p><strong><a href="using_indexes_with_equijoin_queries_multiple_regions.html">Using Indexes on Equi-Join Queries using Multiple Regions</a></strong></p>
+
+<p>To query across multiple regions, identify all equi-join conditions. Then, create as few indexes for the equi-join conditions as you can while still joining all regions.</p></li>
+<li><p><strong><a href="index_samples.html">Index Samples</a></strong></p>
+
+<p>This topic provides code samples for creating query indexes.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

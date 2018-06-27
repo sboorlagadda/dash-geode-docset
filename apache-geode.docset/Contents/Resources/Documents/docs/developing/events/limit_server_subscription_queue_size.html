@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Limit the Server's Subscription Queue Memory Use |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_limit_server_subscription_queue_size">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Limit the Server's Subscription Queue Memory Use
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="limit_server_subscription_queue_size__section_1791DFB89502480EB57F81D16AC0EBAC"></a>
+These are options for limiting the amount of server memory the subscription queues consume.</p>
+
+<ul>
+<li>  Optional: Conflate the subscription queue messages.</li>
+<li><p>Optional: Increase the frequency of queue synchronization. This only applies to configurations where server redundancy is used for high availability. Increase the client’s pool configuration, <code>subscription-ack-interval</code>. The client periodically sends a batch acknowledgment of messages to the server, rather than acknowledging each message individually. A lower setting speeds message delivery and generally reduces traffic between the server and client. A higher setting helps contain server queue size. Example:</p>
+<pre class="highlight plaintext"><code>&lt;!-- Set subscription ack interval to 3 seconds --&gt;
+&lt;cache&gt; 
+  &lt;pool ... subscription-enabled="true" 
+            subscription-ack-interval="3000"&gt; 
+  ... 
+&lt;/pool&gt;
+</code></pre>
+
+<p>You might want to lower the interval if you have a very busy system and want to reduce the space required in the servers for the subscription queues. More frequent acknowledgments means fewer events held in the server queues awaiting acknowledgment.</p></li>
+<li><p>Optional: Limit Queue Size. Cap the server queue size using overflow or blocking. These options help avoid out of memory errors on the server in the case of slow clients. A slow client slows the rate that the server can send messages, causing messages to back up in the queue, possibly leading to out of memory on the server. You can use one or the other of these options, but not both:</p>
+
+<ul>
+<li><p>Optional: Overflow to Disk. Configure subscription queue overflow by setting the server’s <code>client-subscription</code> properties. With overflow, the most recently used (MRU) events are written out to disk, keeping the oldest events, the ones that are next in line to be sent to the client, available in memory. Example:</p>
+<pre class="highlight plaintext"><code>&lt;!-- Set overflow after 10K messages are enqueued --&gt;
+&lt;cache-server port="40404"&gt; 
+  &lt;client-subscription 
+    eviction-policy="entry" 
+    capacity="10000" 
+    disk-store-name="svrOverflow"/&gt; 
+&lt;/cache-server&gt;
+</code></pre></li>
+<li><p>Optional: Block While Queue Full. Set the server’s <code>maximum-message-count</code> to the maximum number of event messages allowed in any single subscription queue before incoming messages are blocked. You can only limit the message count, not the size allocated for messages. Examples:</p>
+
+<p>XML:</p>
+<pre class="highlight plaintext"><code>&lt;!-- Set the maximum message count to 50000 entries --&gt;
+  &lt;cache-server port="41414" maximum-message-count="50000" /&gt;
+</code></pre>
+
+<p>API:</p>
+<pre class="highlight plaintext"><code>Cache cache = ...; 
+CacheServer cacheServer = cache.addCacheServer(); 
+cacheServer.setPort(41414); 
+cacheServer.setMaximumMessageCount(50000); 
+cacheServer.start(); 
+</code></pre>
+
+<p><strong>Note:</strong>
+With this setting, one slow client can slow the server and all of its other clients because this blocks the threads that write to the queues. All operations that add messages to the queue block until the queue size drops to an acceptable level. If the regions feeding these queues are partitioned or have <code>distributed-ack</code> or <code>global</code> scope, operations on them remain blocked until their event messages can be added to the queue. If you are using this option and see stalling on your server region operations, your queue capacity might be too low for your application behavior.</p></li>
+</ul></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

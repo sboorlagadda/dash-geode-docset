@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Network Partitioning Management Works |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_network_partitioning docs_managing_network_partitioning_how_network_partitioning_management_works">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Network Partitioning Management Works
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode handles network outages by using a weighting system to determine whether the remaining available members have a sufficient quorum to continue as a distributed system.</p>
+
+<p><a id="how_network_partitioning_management_works__section_548146BB8C24412CB7B43E6640272882"></a>
+Individual members are each assigned a weight, and the quorum is determined by comparing the total weight of currently responsive members to the previous total weight of responsive members.</p>
+
+<p>Your distributed system can split into separate running systems when members lose the ability to see each other. The typical cause of this problem is a failure in the network. When a partitioned system is detected, only one side of the system keeps running and the other side automatically shuts down.</p>
+
+<p>The network partitioning detection feature is enabled by default with a true value for the <code>enable-network-partition-detection</code> property. See <a href="handling_network_partitioning.html#handling_network_partitioning">Configure Apache Geode to Handle Network Partitioning</a> for details. Quorum weight calculations are always performed and logged regardless of this configuration setting.</p>
+
+<p>The overall process for detecting a network partition is as follows:</p>
+
+<ol>
+<li> The distributed system starts up. When you start up a distributed system, start the locators first, start the cache servers second, and then start other members such as applications or processes that access distributed system data.</li>
+<li> After the members start up, the oldest member, typically a locator, assumes the role of the membership coordinator. Peer discovery occurs as members come up and members generate a membership discovery list for the distributed system. Locators hand out the membership discovery list as each member process starts up. This list typically contains a hint on who the current membership coordinator is.</li>
+<li><p>Members join and if necessary, depart the distributed system:</p>
+
+<ul>
+<li>  Member processes make a request to the coordinator to join the distributed system. If authenticated, the coordinator creates a new membership view, hands the new membership view to the new member, and begins the process of sending the new membership view (to add the new member or members) by sending out a view preparation message to existing members in the view.</li>
+<li><p>While members are joining the system, it is possible that members are also leaving or being removed through the normal failure detection process. Failure detection removes unresponsive or slow members. See <a href="../monitor_tune/slow_receivers_managing.html">Managing Slow Receivers</a> and <a href="failure_detection.html#concept_CFD13177F78C456095622151D6EE10EB">Failure Detection and Membership Views</a> for descriptions of the failure detection process. If a new membership view is sent out that includes one or more failed processes, the coordinator will log the new weight calculations. At any point, if quorum loss is detected due to unresponsive processes, the coordinator will also log a severe level message to identify the failed processes:</p>
+<pre class="highlight plaintext"><code>Possible loss of quorum detected due to loss of {0} cache processes: {1}
+</code></pre>
+
+<p>where {0} is the number of processes that failed and {1} lists the processes.</p></li>
+</ul></li>
+<li><p>Whenever the coordinator is alerted of a membership change (a member either joins or leaves the distributed system), the coordinator generates a new membership view. The membership view is generated by a two-phase protocol:</p>
+
+<ol>
+<li> In the first phase, the membership coordinator sends out a view preparation message to all members and waits 12 seconds for a view preparation ack return message from each member. If the coordinator does not receive an ack message from a member within 12 seconds, the coordinator attempts to connect to the member&rsquo;s failure-detection socket. If the coordinator cannot connect to the member&rsquo;s failure-detection socket, the coordinator declares the member dead and starts the membership view protocol again from the beginning.</li>
+<li> In the second phase, the coordinator sends out the new membership view to all members that acknowledged the view preparation message or passed the connection test.</li>
+</ol></li>
+<li><p>Each time the membership coordinator sends a view, each member calculates the total weight of members in the current membership view and compares it to the total weight of the previous membership view. Some conditions to note:</p>
+
+<ul>
+<li>  When the first membership view is sent out, there are no accumulated losses. The first view only has additions.</li>
+<li>  A new coordinator may have a stale view of membership if it did not see the last membership view sent by the previous (failed) coordinator. If new members were added during that failure, then the new members may be ignored when the first new view is sent out.</li>
+<li>  If members were removed during the fail over to the new coordinator, then the new coordinator will have to determine these losses during the view preparation step.</li>
+</ul></li>
+<li><p>With a default value of <code>enable-network-partition-detection</code>, any member that detects that the total membership weight has dropped below 51% within a single membership view change (loss of quorum) declares a network partition event. The coordinator sends a network-partitioned-detected UDP message to all members (even to the non-responsive ones) and then closes the distributed system with a <code>ForcedDisconnectException</code>. If a member fails to receive the message before the coordinator closes the system, the member is responsible for detecting the event on its own.</p></li>
+</ol>
+
+<p>The presumption is that when a network partition is declared, the members that comprise a quorum will continue operations. The surviving members elect a new coordinator, designate a lead member, and so on.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

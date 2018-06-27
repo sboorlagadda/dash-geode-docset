@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Supported Literals |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_literals">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Supported Literals
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode supports the following literal types:</p>
+
+<p><dt><strong>boolean</strong></dt>
+<dd>A <code>boolean</code> value, either TRUE or FALSE</dd>
+<dt><strong>int</strong> and <strong>long</strong></dt>
+<dd>An integer literal is of type <code>long</code> if has a suffix of the ASCII letter L. Otherwise it is of type <code>int</code>.</dd>
+<dt><strong>floating point</strong></dt>
+<dd>A floating-point literal is of type <code>float</code> if it has a suffix of an ASCII letter <code>F</code>. Otherwise its type is <code>double</code>. Optionally, it can have a suffix of an ASCII letter <code>D</code>. A double or floating point literal can optionally include an exponent suffix of <code>E</code> or <code>e</code>, followed by a signed or unsigned number.</dd></p>
+
+<p><dt><strong>string</strong></dt>
+<dd>String literals are delimited by single quotation marks. Embedded single-quotation marks are doubled. For example, the character string <code>&#39;Hello&#39;</code> evaluates to the value <code>Hello</code>, while the character string <code>&#39;He said, &#39;&#39;Hello&#39;&#39;&#39;</code> evaluates to <code>He said, &#39;Hello&#39;</code>. Embedded newlines are kept as part of the string literal.</dd>
+<dt><strong>char</strong></dt>
+<dd>A literal is of type char if it is a string literal prefixed by the keyword <code>CHAR</code>, otherwise it is of type <code>string</code>. The <code>CHAR</code> literal for the single-quotation mark character is <code>CHAR</code> <code>&#39;&#39;&#39;&#39;</code> (four single quotation marks).</dd>
+<dt><strong>date</strong></dt>
+<dd>A <code>java.sql.Date</code> object that uses the JDBC format prefixed with the DATE keyword: <code>DATE yyyy-mm-dd</code>. In the <code>Date</code>, <code>yyyy</code> represents the year, <code>mm</code> represents the month, and <code>dd</code> represents the day. The year must be represented by four digits; a two-digit shorthand for the year is not allowed.</dd>
+<dt><strong>time</strong></dt>
+<dd>A <code>java.sql.Time</code> object that uses the JDBC format (based on a 24-hour clock) prefixed with the TIME keyword: <code>TIME hh:mm:ss</code>. In the <code>Time</code>, <code>hh</code> represents the hours, <code>mm</code> represents the minutes, and <code>ss</code> represents the seconds.</dd>
+<dt><strong>timestamp</strong></dt>
+<dd>A <code>java.sql.Timestamp</code> object that uses the JDBC format with a TIMESTAMP prefix: <code>TIMESTAMP yyyy-mm-dd hh:mm:ss.fffffffff</code> In the <code>Timestamp</code>, <code>yyyy-mm-dd</code> represents the <code>date</code>, <code>hh:mm:ss</code> represents the <code>time</code>, and <code>fffffffff</code> represents the fractional seconds (up to nine digits).</dd>
+<dt><strong>NIL</strong></dt>
+<dd>Equivalent alternative of <code>NULL</code>.</dd>
+<dt><strong>NULL</strong></dt>
+<dd>The same as <code>null</code> in Java.</dd>
+<a id="literals__section_undefined" class="no-quick-link"></a><dt><strong>UNDEFINED</strong></dt>
+<dd>A special literal, valid value for any data type, indicating that no value (not even NULL) has been designated for a given data item.</dd></p>
+
+<h2 id="the-difference-between-null-and-undefined">The Difference Between NULL and UNDEFINED</h2>
+
+<p>In OQL, as in Java, NULL is an assignable entity (an object) indicating &ldquo;no value&rdquo;.</p>
+
+<p>In OQL, UNDEFINED is a type. There is no Java equivalent. In OQL search results, an UNDEFINED value can be returned in two cases:</p>
+
+<ul>
+<li>As the result of a search for a key or value that does not exist</li>
+<li>As the result of accessing an attribute of a null-valued attribute.</li>
+</ul>
+
+<p>Searches for inequality return UNDEFINED values in their results.</p>
+
+<p>Note that if you access an attribute that has an explicit value of NULL, then it is not UNDEFINED.</p>
+
+<p>For example, if a query accesses the attribute <code>address.city</code> and <code>address</code> is NULL, the result is UNDEFINED.
+If the query accesses <code>address</code>, then the result is not UNDEFINED, it is NULL.</p>
+
+<h2 id="comparing-values-with-java.util.date"><a id="literals__section_BA2D0AC444EB45088F00D9E2C8A1DD06" class="no-quick-link"></a>Comparing Values With java.util.Date</h2>
+
+<p>You can compare temporal literal values <code>DATE</code>, <code>TIME</code>, and <code>TIMESTAMP</code> with <code>java.util.Date</code> values. There is no literal for <code>java.util.Date</code> in the query language.</p>
+
+<h2 id="type-conversion"><a id="literals__section_9EE6CFC410D2409188EDEAA43AC85851" class="no-quick-link"></a>Type Conversion</h2>
+
+<p>The Geode query processor performs implicit type conversions and promotions under certain cases in order to evaluate expressions that contain different types. The query processor performs binary numeric promotion, method invocation conversion, and temporal type conversion.</p>
+
+<h2 id="binary-numeric-promotion"><a id="literals__section_F5A3FC509FD04E09B5468BA94B814701" class="no-quick-link"></a>Binary Numeric Promotion</h2>
+
+<p>The query processor performs binary numeric promotion on the operands of the following operators:</p>
+
+<ul>
+<li>  Comparison operators &lt;, &lt;=, &gt;, and &gt;=</li>
+<li>  Equality operators = and &lt;&gt;</li>
+<li>  Binary numeric promotion widens the operands in a numeric expression to the widest representation used by any of the operands. In each expression, the query processor applies the following rules in the prescribed order until a conversion is made:
+
+<ol>
+<li> If either operand is of type double, the other is converted to double</li>
+<li> If either operand is of type float, the other is converted to float</li>
+<li> If either operand is of type long, the other is converted to long</li>
+<li> Both operands are converted to type int char</li>
+</ol></li>
+</ul>
+
+<h2 id="method-invocation-conversion"><a id="literals__section_BA277AC4A9B34C93A5291ECC1FDC11C7" class="no-quick-link"></a>Method Invocation Conversion</h2>
+
+<p>Method invocation conversion in the query language follows the same rules as Java method invocation conversion, except that the query language uses runtime types instead of compile time types, and handles null arguments differently than in Java. One aspect of using runtime types is that an argument with a null value has no typing information, and so can be matched with any type parameter. When a null argument is used, if the query processor cannot determine the proper method to invoke based on the non-null arguments, it throws an AmbiguousNameException</p>
+
+<h2 id="temporal-type-conversion"><a id="literals__section_0A1A6EFE98A24538B651373B1C6ED8C0" class="no-quick-link"></a>Temporal Type Conversion</h2>
+
+<p>The temporal types that the query language supports include the Java types java.util.Date , java.sql.Date , java.sql.Time , and java.sql.Timestamp , which are all treated the same and can be compared and used in indexes. When compared with each other, these types are all treated as nanosecond quantities.</p>
+
+<h2 id="enum-conversion"><a id="literals__section_73255A4630C94D04B461B1480AAF2F66" class="no-quick-link"></a>Enum Conversion</h2>
+
+<p>Enums are not automatically converted. To use Enum values in query, you must use the toString method of the enum object or use a query bind parameter. See <a href="../query_select/the_where_clause.html#the_where_clause__section_59E7D64746AE495D942F2F09EF7DB9B5">Enum Objects</a> for more information.</p>
+
+<h2 id="query-evaulation-of-float.nan-and-double.nan"><a id="literals__section_CB624C143A2743C5ADC6F95C962F176B" class="no-quick-link"></a>Query Evaulation of Float.NaN and Double.NaN</h2>
+
+<p>Float.NaN and Double.NaN are not evaluated as primitives; instead, they are compared in the same manner used as the JDK methods Float.compareTo and Double.compareTo. See <a href="../query_select/the_where_clause.html#the_where_clause__section_E7206D045BEC4F67A8D2B793922BF213">Double.NaN and Float.NaN Comparisons</a> for more information.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

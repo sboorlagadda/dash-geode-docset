@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Colocate Data from Different Partitioned Regions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_partitioned_regions docs_developing_partitioned_regions_colocating_partitioned_region_data">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Colocate Data from Different Partitioned Regions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default, Geode allocates the data locations for a partitioned region independent of the data locations for any other partitioned region. You can change this policy for any group of partitioned regions, so that cross-region, related data is all hosted by the same member.
+Colocation is required for some operations,
+and it increases performance for others by reducing the number of data
+accesses to entries that are hosted on other cluster members.</p>
+
+<p><a id="colocating_partitioned_region_data__section_131EC040055E48A6B35E981B5C845A65"></a></p>
+
+<p>Data colocation between partitioned regions generally improves the performance of data-intensive operations. You can reduce network hops for iterative operations on related data sets. Compute-heavy applications that are data-intensive can significantly increase overall throughput. For example, a query run on a patient&rsquo;s health records, insurance, and billing information is more efficient if all data is grouped in a single member. Similarly, a financial risk analytical application runs faster if all trades, risk sensitivities, and reference data associated with a single instrument are together.</p>
+
+<p><strong>Procedure</strong></p>
+
+<ol>
+<li><p>Identify one region as the central region, with which data in the other regions is explicitly colocated. If you use persistence for any of the regions, you must persist the central region.</p>
+
+<ol>
+<li> Create the central region before you create the others, either in the <code>cache.xml</code> or your code. Regions in the XML are created before regions in the code, so if you create any of your colocated regions in the XML, you must create the central region in the XML before the others. Geode will verify its existence when the others are created and return <code>IllegalStateException</code> if the central region is not there. Do not add any colocation specifications to this central region.</li>
+<li><p>For all other regions, in the region partition attributes, provide the central region&rsquo;s name in the <code>colocated-with</code> attribute. Use one of these methods:</p>
+
+<ul>
+<li><p>XML:</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt; 
+    &lt;region name="trades"&gt; 
+        &lt;region-attributes&gt; 
+            &lt;partition-attributes&gt;  
+                ...
+            &lt;partition-attributes&gt; 
+        &lt;/region-attributes&gt; 
+    &lt;/region&gt; 
+    &lt;region name="trade_history"&gt; 
+        &lt;region-attributes&gt; 
+            &lt;partition-attributes colocated-with="trades"&gt;   
+                ...
+            &lt;partition-attributes&gt; 
+        &lt;/region-attributes&gt; 
+    &lt;/region&gt; 
+&lt;/cache&gt; 
+</code></pre></li>
+<li><p>Java:</p>
+<pre class="highlight plaintext"><code>PartitionAttributes attrs = ...
+Region trades = new RegionFactory().setPartitionAttributes(attrs)
+    .create("trades");
+...
+attrs = new PartitionAttributesFactory().setColocatedWith(trades.getFullPath())
+    .create();
+Region trade_history = new RegionFactory().setPartitionAttributes(attrs)
+    .create("trade_history");
+</code></pre></li>
+<li><p>gfsh:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name="trades" type=PARTITION
+gfsh&gt; create region --name="trade_history" --colocated-with="trades"
+</code></pre></li>
+</ul></li>
+</ol></li>
+<li><p>For each of the colocated regions, use the same values for these partition attributes related to bucket management:</p>
+
+<ul>
+<li>  <code>recovery-delay</code></li>
+<li>  <code>redundant-copies</code></li>
+<li>  <code>startup-recovery-delay</code></li>
+<li>  <code>total-num-buckets</code></li>
+</ul></li>
+<li><p>If you custom partition your region data, specify the custom resolver for all colocated regions. This example uses the same partition resolver for both regions:</p>
+
+<ul>
+<li><p>XML:</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt; 
+    &lt;region name="trades"&gt; 
+        &lt;region-attributes&gt; 
+            &lt;partition-attributes&gt;  
+            &lt;partition-resolver name="TradesPartitionResolver"&gt; 
+                &lt;class-name&gt;myPackage.TradesPartitionResolver
+                &lt;/class-name&gt;
+            &lt;partition-attributes&gt; 
+        &lt;/region-attributes&gt; 
+    &lt;/region&gt; 
+    &lt;region name="trade_history"&gt; 
+        &lt;region-attributes&gt; 
+            &lt;partition-attributes colocated-with="trades"&gt;   
+            &lt;partition-resolver name="TradesPartitionResolver"&gt; 
+                &lt;class-name&gt;myPackage.TradesPartitionResolver
+                &lt;/class-name&gt;
+            &lt;partition-attributes&gt; 
+        &lt;/region-attributes&gt; 
+    &lt;/region&gt; 
+&lt;/cache&gt; 
+</code></pre></li>
+<li><p>Java:</p>
+<pre class="highlight plaintext"><code>PartitionResolver resolver = new TradesPartitionResolver();
+PartitionAttributes attrs = 
+    new PartitionAttributesFactory()
+    .setPartitionResolver(resolver).create();
+Region trades = new RegionFactory().setPartitionAttributes(attrs)
+    .create("trades");
+attrs = new PartitionAttributesFactory()
+    .setColocatedWith(trades.getFullPath()).setPartitionResolver(resolver)
+    .create();
+Region trade_history = new RegionFactory().setPartitionAttributes(attrs)
+    .create("trade_history");
+</code></pre></li>
+<li><p>gfsh:</p>
+
+<p>Specify a partition resolver as described in the configuration
+section of <a href="using_custom_partition_resolvers.html">Custom-Partition Your Region Data</a>.</p></li>
+</ul></li>
+<li><p>If you want to persist data in the colocated regions, persist the central region and then persist the other regions as needed. Use the same disk store for all of the colocated regions that you persist.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

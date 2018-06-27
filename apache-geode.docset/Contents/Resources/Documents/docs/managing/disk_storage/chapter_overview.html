@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Disk Storage |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_chapter_overview">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Disk Storage
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>With Apache Geode disk stores, you can persist data to disk as a backup to your in-memory copy and overflow data to disk when memory use gets too high.</p>
+
+<ul>
+<li><p><strong><a href="how_disk_stores_work.html">How Disk Stores Work</a></strong></p>
+
+<p>Overflow and persistence use disk stores individually or together to store data.</p></li>
+<li><p><strong><a href="file_names_and_extensions.html">Disk Store File Names and Extensions</a></strong></p>
+
+<p>Disk store files include store management files, access control files, and the operation log, or oplog, files, consisting of one file for deletions and another for all other operations.</p></li>
+<li><p><strong><a href="operation_logs.html">Disk Store Operation Logs</a></strong></p>
+
+<p>At creation, each operation log is initialized at the disk store&rsquo;s <code>max-oplog-size</code>, with the size divided between the <code>crf</code> and <code>drf</code> files. When the oplog is closed, Apache Geode shrinks the files to the space used in each file.</p></li>
+<li><p><strong><a href="overview_using_disk_stores.html">Configuring Disk Stores</a></strong></p>
+
+<p>In addition to the disk stores you specify, Apache Geode has a default disk store that it uses when disk use is configured with no disk store name specified. You can modify default disk store behavior.</p></li>
+<li><p><strong><a href="optimize_availability_and_performance.html">Optimizing a System with Disk Stores</a></strong></p>
+
+<p>Optimize availability and performance by following the guidelines in this section.</p></li>
+<li><p><strong><a href="starting_system_with_disk_stores.html">Start Up and Shut Down with Disk Stores</a></strong></p>
+
+<p>This section describes what happens during startup and shutdown and provides procedures for those operations.</p></li>
+<li><p><strong><a href="managing_disk_stores.html">Disk Store Management</a></strong></p>
+
+<p>The <code>gfsh</code> command-line tool has a number of options for examining and managing your disk stores. The <code>gfsh</code> tool, the <code>cache.xml</code> file and the DiskStore APIs are your management tools for online and offline disk stores.</p></li>
+<li><p><strong><a href="backup_restore_disk_store.html">Creating Backups for System Recovery and Operational Management</a></strong></p>
+
+<p>A backup is a copy of persisted data from a disk store. A backup is used to restore the disk store to the state it was in when the backup was made. The appropriate back up and restore procedures differ based upon whether the distributed system is online or offline. An online system has currently running members. An offline system does not have any running members.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

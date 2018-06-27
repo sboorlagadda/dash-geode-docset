@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Executing a Function in Apache Geode |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_function_exec docs_developing_function_exec_function_execution">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Executing a Function in Apache Geode
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="function_execution__section_BE483D79B81C49EE9855F506ED5AB014"></a>
+In this procedure it is assumed that you have your members and regions defined where you want to run functions.</p>
+
+<p>Main tasks:</p>
+
+<ol>
+<li> Write the function code.</li>
+<li> Register the function on all servers where you want to execute the function. The easiest way to register a function is to use the <code>gfsh</code> <code>deploy</code> command to deploy the JAR file containing the function code. Deploying the JAR automatically registers the function for you. See <a href="function_execution.html#function_execution__section_164E27B88EC642BA8D2359B18517B624">Register the Function Automatically by Deploying a JAR</a> for details. Alternatively, you can write the XML or application code to register the function. See <a href="function_execution.html#function_execution__section_1D1056F843044F368FB76F47061FCD50">Register the Function Programmatically</a> for details.</li>
+<li> Write the application code to run the function and, if the function returns results, to handle the results.</li>
+<li> If your function returns results and you need special results handling, code a custom <code>ResultsCollector</code> implementation and use it in your function execution.</li>
+</ol>
+
+<h2 id="write-the-function-code"><a id="function_execution__section_7D43B0C628D54F579D5C434D3DF69B3C" class="no-quick-link"></a>Write the Function Code</h2>
+
+<p>To write the function code, you implement the <code>Function</code> interface in the <code>org.apache.geode.cache.execute</code> package.</p>
+
+<p>Code the methods you need for the function. These steps do not have to be done in this order.</p>
+
+<ul>
+<li>Implement <code>getId</code> to return a unique name for your function. You can use this name to access the function through the <code>FunctionService</code> API.</li>
+<li><p>For high availability:</p>
+
+<ol>
+<li> Code <code>isHa</code> to return true to indicate to Geode that it can re-execute your function after one or more members fails</li>
+<li> Code your function to return a result</li>
+<li> Code <code>hasResult</code> to return true</li>
+</ol></li>
+<li><p>Code <code>hasResult</code> to return true if your function returns results to be processed and false if your function does not return any data - the fire and forget function.</p></li>
+<li><p>If the function will be executed on a region, implement <code>optimizeForWrite</code> to return false if your function only reads from the cache, and true if your function updates the cache. The method only works if, when you are running the function, the <code>Execution</code> object is obtained through a <code>FunctionService</code> <code>onRegion</code> call. <code>optimizeForWrite</code> returns false by default.</p></li>
+<li><p>If the function should be run with an authorization level other than
+the default of <code>DATA:WRITE</code>,
+implement an override of the <code>Function.getRequiredPermissions()</code> method.
+See <a href="../../managing/security/implementing_authorization.html#AuthorizeFcnExecution">Authorization of Function Execution</a> for details on this method.</p></li>
+<li><p>Code the <code>execute</code> method to perform the work of the function.</p>
+
+<ol>
+<li> Make <code>execute</code> thread safe to accommodate simultaneous invocations.</li>
+<li> For high availability, code <code>execute</code> to accommodate multiple identical calls to the function. Use the <code>RegionFunctionContext</code> <code>isPossibleDuplicate</code> to determine whether the call may be a high-availability re-execution. This boolean is set to true on execution failure and is false otherwise.
+<strong>Note:</strong>
+The <code>isPossibleDuplicate</code> boolean can be set following a failure from another member’s execution of the function, so it only indicates that the execution might be a repeat run in the current member.</li>
+<li> Use the function context to get information about the execution and the data:
+
+<ul>
+<li>  The context holds the function ID, the <code>ResultSender</code> object for passing results back to the originator, and function arguments provided by the member where the function originated.</li>
+<li>  The context provided to the function is the <code>FunctionContext</code>, which is automatically extended to <code>RegionFunctionContext</code> if you get the <code>Execution</code> object through a <code>FunctionService</code> <code>onRegion</code> call.</li>
+<li>  For data dependent functions, the <code>RegionFunctionContext</code> holds the <code>Region</code> object, the <code>Set</code> of key filters, and a boolean indicating multiple identical calls to the function, for high availability implementations.</li>
+<li>  For partitioned regions, the <code>PartitionRegionHelper</code> provides access to additional information and data for the region. For single regions, use <code>getLocalDataForContext</code>. For colocated regions, use <code>getLocalColocatedRegions</code>.
+<strong>Note:</strong>
+When you use <code>PartitionRegionHelper.getLocalDataForContext</code>, <code>putIfAbsent</code> may not return expected results if you are working on local data set instead of the region.</li>
+</ul></li>
+<li> To propagate an error condition or exception back to the caller of the function, throw a FunctionException from the <code>execute</code> method. Geode transmits the exception back to the caller as if it had been thrown on the calling side. See the Java API documentation for <a href="/releases/latest/javadoc/org/apache/geode/cache/execute/FunctionException.html">FunctionException</a> for more information.</li>
+</ol></li>
+</ul>
+
+<p>Example function code:</p>
+<pre class="highlight plaintext"><code>import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.geode.cache.execute.Function;
+import org.apache.geode.cache.execute.FunctionContext;
+import org.apache.geode.cache.execute.FunctionException;
+import org.apache.geode.cache.execute.RegionFunctionContext;
+import org.apache.geode.cache.partition.PartitionRegionHelper;
+
+public class MultiGetFunction implements Function {
+
+  public void execute(FunctionContext fc) {
+    if(! (fc instanceof RegionFunctionContext)){
+      throw new FunctionException("This is a data aware function, and has
+ to be called using FunctionService.onRegion.");
+    }
+    RegionFunctionContext context = (RegionFunctionContext)fc;
+    Set keys = context.getFilter();
+    Set keysTillSecondLast = new HashSet();
+    int setSize = keys.size();
+    Iterator keysIterator = keys.iterator();
+    for(int i = 0; i &lt; (setSize -1); i++)
+    {
+      keysTillSecondLast.add(keysIterator.next());
+    }
+    for (Object k : keysTillSecondLast) {
+      context.getResultSender().sendResult(
+          (Serializable)PartitionRegionHelper.getLocalDataForContext(context)
+              .get(k));
+    }
+    Object lastResult = keysIterator.next();
+    context.getResultSender().lastResult(
+        (Serializable)PartitionRegionHelper.getLocalDataForContext(context)
+            .get(lastResult));
+  }
+
+  public String getId() {
+    return getClass().getName();
+  }
+}
+</code></pre>
+
+<h2 id="register-the-function-automatically-by-deploying-a-jar"><a id="function_execution__section_164E27B88EC642BA8D2359B18517B624" class="no-quick-link"></a>Register the Function Automatically by Deploying a JAR</h2>
+
+<p>When you deploy a JAR file that contains a Function (in other words, contains a class that implements the Function interface), the Function will be automatically registered via the <code>FunctionService.registerFunction</code> method.</p>
+
+<p>To register a function by using <code>gfsh</code>:</p>
+
+<ol>
+<li> Package your class files into a JAR file.</li>
+<li> Start a <code>gfsh</code> prompt. If necessary, start a Locator and connect to the Geode distributed system where you want to run the function.</li>
+<li><p>At the gfsh prompt, type the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;deploy --jar=group1_functions.jar
+</code></pre>
+
+<p>where group1_functions.jar corresponds to the JAR file that you created in step 1.</p></li>
+</ol>
+
+<p>If another JAR file is deployed (either with the same JAR filename or another filename) with the same Function, the new implementation of the Function will be registered, overwriting the old one. If a JAR file is undeployed, any Functions that were auto-registered at the time of deployment will be unregistered. Since deploying a JAR file that has the same name multiple times results in the JAR being un-deployed and re-deployed, Functions in the JAR will be unregistered and re-registered each time this occurs. If a Function with the same ID is registered from multiple differently named JAR files, the Function will be unregistered if either of those JAR files is re-deployed or un-deployed.</p>
+
+<p>See <a href="../../configuring/cluster_config/deploying_application_jars.html#concept_4436C021FB934EC4A330D27BD026602C">Deploying Application JARs to Apache Geode Members</a> for more details on deploying JAR files.</p>
+
+<h2 id="register-the-function-programmatically"><a id="function_execution__section_1D1056F843044F368FB76F47061FCD50" class="no-quick-link"></a>Register the Function Programmatically</h2>
+
+<p>This section applies to functions that are invoked using the <code>Execution.execute(String functionId)</code> signature. When this method is invoked, the calling application sends the function ID to all members where the <code>Function.execute</code> is to be run. Receiving members use the ID to look up the function in the local <code>FunctionService</code>. In order to do the lookup, all of the receiving member must have previously registered the function with the function service.</p>
+
+<p>The alternative to this is the <code>Execution.execute(Function function)</code> signature. When this method is invoked, the calling application serializes the instance of <code>Function</code> and sends it to all members where the <code>Function.execute</code> is to be run. Receiving members deserialize the <code>Function</code> instance, create a new local instance of it, and run execute from that. This option is not available for non-Java client invocation of functions on servers.</p>
+
+<p>Your Java servers must register functions that are invoked by non-Java clients. You may want to use registration in other cases to avoid the overhead of sending <code>Function</code> instances between members.</p>
+
+<p>Register your function using one of these methods:</p>
+
+<ul>
+<li><p>XML:</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+    ...
+    &lt;/region&gt;
+&lt;function-service&gt;
+  &lt;function&gt;
+    &lt;class-name&gt;com.bigFatCompany.tradeService.cache.func.TradeCalc&lt;/class-name&gt;
+  &lt;/function&gt;
+&lt;/function-service&gt;
+</code></pre></li>
+<li><p>Java:</p>
+<pre class="highlight plaintext"><code>myFunction myFun = new myFunction();
+FunctionService.registerFunction(myFun);
+</code></pre>
+
+<p><strong>Note:</strong>
+Modifying a function instance after registration has no effect on the registered function. If you want to execute a new function, you must register it with a different identifier.</p></li>
+</ul>
+
+<h2 id="run-the-function"><a id="function_execution__section_6A0F4C9FB77C477DA5D995705C8BDD5E" class="no-quick-link"></a>Run the Function</h2>
+
+<p>This assumes you’ve already followed the steps for writing and registering the function.</p>
+
+<p>In every member where you want to explicitly execute the function and process the results, you can use the <code>gfsh</code> command line to run the function or you can write an application to run the function.</p>
+
+<p><strong>Running the Function Using gfsh</strong></p>
+
+<ol>
+<li> Start a gfsh prompt.</li>
+<li> If necessary, start a Locator and connect to the Geode distributed system where you want to run the function.</li>
+<li><p>At the gfsh prompt, type the following command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; execute function --id=function_id
+</code></pre>
+
+<p>Where <em>function_id</em> equals the unique ID assigned to the function. You can obtain this ID using the <code>Function.getId</code> method.</p></li>
+</ol>
+
+<p>See <a href="../../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_8BB061D1A7A9488C819FE2B7881A1278">Function Execution Commands</a> for more <code>gfsh</code> commands related to functions.</p>
+
+<p><strong>Running the Function via API Calls</strong></p>
+
+<ol>
+<li> Use one of the <code>FunctionService</code> <code>on*</code> methods to create an <code>Execute</code> object. The <code>on*</code> methods, <code>onRegion</code>, <code>onMembers</code>, etc., define the highest level where the function is run. For colocated partitioned regions, use <code>onRegion</code> and specify any one of the colocated regions. The function run using <code>onRegion</code> is referred to as a data dependent function - the others as data-independent functions.</li>
+<li><p>Use the <code>Execution</code> object as needed for additional function configuration. You can:</p>
+
+<ul>
+<li>  Provide a key <code>Set</code> to <code>withFilters</code> to narrow the execution scope for <code>onRegion</code> <code>Execution</code> objects. You can retrieve the key set in your <code>Function</code> <code>execute</code> method through <code>RegionFunctionContext.getFilter</code>.</li>
+<li>  Provide function arguments to <code>setArguments</code>. You can retrieve these in your <code>Function</code> <code>execute</code> method through <code>FunctionContext.getArguments</code>.</li>
+<li>  Define a custom <code>ResultCollector</code></li>
+</ul></li>
+<li><p>Call the <code>Execution</code> object to <code>execute</code> method to run the function.</p></li>
+<li><p>If the function returns results, call <code>getResult</code> from the results collector returned from <code>execute</code> and code your application to do whatever it needs to do with the results.
+<strong>Note:</strong>
+For high availability, you must call the <code>getResult</code> method.</p></li>
+</ol>
+
+<p>Example of running the function - for executing members:</p>
+<pre class="highlight plaintext"><code>MultiGetFunction function = new MultiGetFunction();
+FunctionService.registerFunction(function);
+
+writeToStdout("Press Enter to continue.");
+stdinReader.readLine();
+
+Set keysForGet = new HashSet();
+keysForGet.add("KEY_4");
+keysForGet.add("KEY_9");
+keysForGet.add("KEY_7");
+
+Execution execution = FunctionService.onRegion(exampleRegion)
+    .withFilter(keysForGet)
+    .setArguments(Boolean.TRUE)
+    .withCollector(new MyArrayListResultCollector());
+
+ResultCollector rc = execution.execute(function);
+// Retrieve results, if the function returns results
+List result = (List)rc.getResult();
+</code></pre>
+
+<h2 id="write-a-custom-results-collector"><a id="function_execution__section_F2AFE056650B4BF08BC865F746BFED38" class="no-quick-link"></a>Write a Custom Results Collector</h2>
+
+<p>This topic applies to functions that return results.</p>
+
+<p>When you execute a function that returns results, the function stores the results into a <code>ResultCollector</code> and returns the <code>ResultCollector</code> object. The calling application can then retrieve the results through the <code>ResultCollector</code> <code>getResult</code> method. Example:</p>
+<pre class="highlight plaintext"><code>ResultCollector rc = execution.execute(function);
+List result = (List)rc.getResult();
+</code></pre>
+
+<p>Geode’s default <code>ResultCollector</code> collects all results into an <code>ArrayList</code>. Its <code>getResult</code> methods block until all results are received. Then they return the full result set.</p>
+
+<p>To customize results collecting:</p>
+
+<ol>
+<li><p>Write a class that extends <code>ResultCollector</code> and code the methods to store and retrieve the results as you need. Note that the methods are of two types:</p>
+
+<ol>
+<li> <code>addResult</code> and <code>endResults</code> are called by Geode when results arrive from the <code>Function</code> instance <code>SendResults</code> methods</li>
+<li> <code>getResult</code> is available to your executing application (the one that calls <code>Execution.execute</code>) to retrieve the results</li>
+</ol></li>
+<li><p>Use high availability for <code>onRegion</code> functions that have been coded for it:</p>
+
+<ol>
+<li> Code the <code>ResultCollector</code> <code>clearResults</code> method to remove any partial results data. This readies the instance for a clean function re-execution.</li>
+<li> When you invoke the function, call the result collector <code>getResult</code> method. This enables the high availability functionality.</li>
+</ol></li>
+<li><p>In your member that calls the function execution, create the <code>Execution</code> object using the <code>withCollector</code> method, and passing it your custom collector. Example:</p>
+<pre class="highlight plaintext"><code>Execution execution = FunctionService.onRegion(exampleRegion)
+    .withFilter(keysForGet)
+    .setArguments(Boolean.TRUE)
+    .withCollector(new MyArrayListResultCollector());
+</code></pre></li>
+</ol>
+
+<h2 id="targeting-single-members-of-a-member-group-or-entire-member-groups"><a id="function_execution__section_638E1FB9B08F4CC4B62C07DDB3661C14" class="no-quick-link"></a>Targeting Single Members of a Member Group or Entire Member Groups</h2>
+
+<p>To execute a data independent function on a group of members or one member in a group of members, you can write your own nested function. You will need to write one nested function if you are executing the function from client to server and another nested function if you are executing a function from server to all members.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

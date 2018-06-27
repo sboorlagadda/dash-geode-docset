@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring RMI Registry Ports and RMI Connectors |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_configuring_rmi_connector">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring RMI Registry Ports and RMI Connectors
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode programmatically emulates out-of-the-box JMX provided by Java and creates a JMXServiceURL with RMI Registry and RMI Connector ports on all manageable members.</p>
+
+<h2 id="configuring-jmx-manager-port-and-bind-addresses"><a id="concept_BC793A7ACF9A4BD9A29C2DCC6894767D__section_143531EBBCF94033B8058FCF5F8A5A0D" class="no-quick-link"></a>Configuring JMX Manager Port and Bind Addresses</h2>
+
+<p>You can configure a specific connection port and address when launching a process that will host the Geode JMX Manager. To do this, specify values for the <code>jmx-manager-bind-address</code>, which specifies the JMX manager&rsquo;s IP address and <code>jmx-manager-port</code>, which defines the RMI connection port.</p>
+
+<p>The default Geode JMX Manager RMI port is 1099. You may need to modify this default if 1099 is reserved for other uses.</p>
+
+<h2 id="using-out-of-the-box-rmi-connectors"><a id="concept_BC793A7ACF9A4BD9A29C2DCC6894767D__section_BF6352A05CE94F35A8355232D22AC2BC" class="no-quick-link"></a>Using Out-of-the-Box RMI Connectors</h2>
+
+<p>If for some reason you need to use standard JMX RMI in your deployment for other monitoring purposes, set the Geode property <code>jmx-manager-port</code> to 0 on any members where you want to use standard JMX RMI.</p>
+
+<p>If you use out-of-the-box JMX RMI instead of starting an embedded Geode JMX Manager, you should consider setting <code>-Dsun.rmi.dgc.server.gcInterval=Long.MAX_VALUE-1</code> when starting the JVM for customer applications and client processes. Every Geode process internally sets this setting before creating and starting the JMX RMI connector in order to prevent full garbage collection from pausing processes.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

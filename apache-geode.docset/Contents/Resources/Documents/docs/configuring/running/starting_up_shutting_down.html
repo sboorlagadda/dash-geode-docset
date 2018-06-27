@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Starting Up and Shutting Down Your System |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_starting_up_shutting_down">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Starting Up and Shutting Down Your System
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Determine the proper startup and shutdown procedures, and write your startup and shutdown scripts.</p>
+
+<p>Well-designed procedures for starting and stopping your system can speed startup and protect your data. The processes you need to start and stop include server and locator processes and your other Geode applications, including clients. The procedures you use depend in part on your system’s configuration and the dependencies between your system processes.</p>
+
+<p>Use the following guidelines to create startup and shutdown procedures and scripts. Some of these instructions use <a href="../../tools_modules/gfsh/chapter_overview.html"><code>gfsh</code></a>.</p>
+
+<h2 id="starting-up-your-system"><a id="starting_up_shutting_down__section_3D111558326D4A38BE48C17D44BB66DB" class="no-quick-link"></a>Starting Up Your System</h2>
+
+<p>You should follow certain order guidelines when starting your Geode system.</p>
+
+<p>Start server-distributed systems before you start their client applications. In each distributed system, follow these guidelines for member startup:</p>
+
+<ul>
+<li>  Start locators first. See <a href="running_the_locator.html">Running Geode Locator Processes</a> for examples of locator start up commands.</li>
+<li>  Start cache servers before the rest of your processes unless the implementation requires that other processes be started ahead of them. See <a href="running_the_cacheserver.html">Running Geode Server Processes</a> for examples of server start up commands.</li>
+<li>  If your distributed system uses both persistent replicated and non-persistent replicated regions, you should start up all the persistent replicated members in parallel before starting the non-persistent regions. This way, persistent members will not delay their startup for other persistent members with later data.</li>
+<li>  For a system that includes persistent regions, see <a href="../../managing/disk_storage/starting_system_with_disk_stores.html">Start Up and Shut Down with Disk Stores</a>.</li>
+<li>  If you are running producer processes and consumer or event listener processes, start the consumers first. This ensures the consumers and listeners do not miss any notifications or updates.</li>
+<li><p>If you are starting up your locators and peer members all at once, you can use the <code>locator-wait-time</code> property (in seconds) upon process start up. This timeout allows peers to wait for the locators to finish starting up before attempting to join the distributed system. If a process has been configured to wait for a locator to start, it will log an info-level message</p>
+
+<blockquote>
+<p><code>GemFire startup was unable to contact a                             locator. Waiting for one to start. Configured locators are                             frodo[12345],pippin[12345].</code></p>
+</blockquote>
+
+<p>The process will then sleep for a second and retry until it either connects or the number of seconds specified in <code>locator-wait-time</code> has elapsed. By default, <code>locator-wait-time</code> is set to zero meaning that a process that cannot connect to a locator upon startup will throw an exception.</p></li>
+</ul>
+
+<p><strong>Note:</strong>
+You can optionally override the default timeout period for shutting down individual processes. This override setting must be specified during member startup. See <a href="#starting_up_shutting_down__section_mnx_4cp_cv">Shutting Down the System</a> for details.</p>
+
+<h2 id="starting-up-after-losing-data-on-disk"><a id="starting_up_shutting_down__section_2F8ABBFCE641463C8A8721841407993D" class="no-quick-link"></a>Starting Up After Losing Data on Disk</h2>
+
+<p>This information pertains to catastrophic loss of Geode disk store files. If you lose disk store files, your next startup may hang, waiting for the lost disk stores to come back online. If your system hangs at startup, use the <code>gfsh</code> command <code>show missing-disk-store</code> to list missing disk stores and, if needed, revoke missing disk stores so your system startup can complete. You must use the Disk Store ID to revoke a disk store. These are the two commands:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;show missing-disk-stores
+
+Disk Store ID             |   Host    |               Directory                                           
+------------------------------------ | --------- | -------------------------------------
+60399215-532b-406f-b81f-9b5bd8d1b55a | excalibur | /usr/local/gemfire/deploy/disk_store1 
+
+gfsh&gt;revoke missing-disk-store --id=60399215-532b-406f-b81f-9b5bd8d1b55a
+</code></pre>
+
+<p><strong>Note:</strong>
+This <code>gfsh</code> commands require that you are connected to the distributed system via a JMX Manager node.</p>
+
+<h2 id="shutting-down-the-system"><a id="starting_up_shutting_down__section_mnx_4cp_cv" class="no-quick-link"></a>Shutting Down the System</h2>
+
+<p>Shut down your Geode system by using either the <code>gfsh</code> <code>shutdown</code> command or by shutting down individual members one at a time.</p>
+
+<h2 id="using-the-shutdown-command"><a id="starting_up_shutting_down__section_0EB4DDABB6A348BA83B786EEE7C84CF1" class="no-quick-link"></a>Using the shutdown Command</h2>
+
+<p>If you are using persistent regions, (members are persisting data to disk), you should use the <code>gfsh</code> <code>shutdown</code> command to stop the running system in an orderly fashion. This command synchronizes persistent partitioned regions before shutting down, which makes the next startup of the distributed system as efficient as possible.</p>
+
+<p>If possible, all members should be running before you shut them down so synchronization can occur. Shut down the system using the following <code>gfsh</code> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown
+</code></pre>
+
+<p>By default, the shutdown command will only shut down data nodes. If you want to shut down all nodes including locators, specify the <code>--include-locators=true</code> parameter. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --include-locators=true
+</code></pre>
+
+<p>This will shut down all locators one by one, shutting down the manager last.</p>
+
+<p>To shutdown all data members after a grace period, specify a time-out option (in seconds).</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --time-out=60
+</code></pre>
+
+<p>To shutdown all members including locators after a grace period, specify a time-out option (in seconds).</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --include-locators=true --time-out=60
+</code></pre>
+
+<h2 id="shutting-down-system-members-individually"><a id="starting_up_shutting_down__section_A07D40BC118544D0984860A3B4A5CB29" class="no-quick-link"></a>Shutting Down System Members Individually</h2>
+
+<p>If you are not using persistent regions, you can shut down the distributed system by shutting down each member in the reverse order of their startup. (See <a href="#starting_up_shutting_down__section_3D111558326D4A38BE48C17D44BB66DB">Starting Up Your System</a> for the recommended order of member startup.)</p>
+
+<p>Shut down the distributed system members according to the type of member. For example, use the following mechanisms to shut down members:</p>
+
+<ul>
+<li>  Use the appropriate mechanism to shut down any Geode-connected client applications that are running in the distributed system.</li>
+<li><p>Shut down any cache servers. To shut down a server, issue the following <code>gfsh</code> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --name=&lt;...&gt;
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop server --dir=&lt;server_working_dir&gt;
+</code></pre></li>
+<li><p>Shut down any locators. To shut down a locator, issue the following <code>gfsh</code> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --name=&lt;...&gt;
+</code></pre>
+
+<p>or</p>
+<pre class="highlight plaintext"><code>gfsh&gt;stop locator --dir=&lt;locator_working_dir&gt;
+</code></pre></li>
+<li><p>Do not use the command line <code>kill -9</code> to shut down a server under
+ordinary circumstances.
+Especially on systems with a small number of members,
+using a <code>kill</code> instead of a <code>gfsh stop</code> can cause the partition detection
+mechanism to place the system in an end state that will wait forever to
+reconnect to the killed server,
+and there will be no way to restart that killed server.
+If a <code>kill</code> command appears the only way to rid the system of a server,
+then <code>kill</code> <em>all</em> the processes of the distributed system
+or use <code>kill -INT</code>, which will allow an orderly shutdown of the process. </p></li>
+</ul>
+
+<h2 id="option-for-system-member-shutdown-behavior"><a id="starting_up_shutting_down__section_7CF680CF8A924C57A7052AE2F975DA81" class="no-quick-link"></a>Option for System Member Shutdown Behavior</h2>
+
+<p>The <code>DISCONNECT_WAIT</code> command line argument sets the maximum time for each individual step in the shutdown process. If any step takes longer than the specified amount, it is forced to end. Each operation is given this grace period, so the total length of time the cache member takes to shut down depends on the number of operations and the <code>DISCONNECT_WAIT</code> setting. During the shutdown process, Geode produces messages such as:</p>
+<pre class="highlight plaintext"><code>Disconnect listener still running
+</code></pre>
+
+<p>The <code>DISCONNECT_WAIT</code> default is 10000 milliseconds.</p>
+
+<p>To change it, set this system property on the Java command line used for member startup. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --J=-DDistributionManager.DISCONNECT_WAIT=&lt;milliseconds&gt;
+</code></pre>
+
+<p>Each process can have different <code>DISCONNECT_WAIT</code> settings.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

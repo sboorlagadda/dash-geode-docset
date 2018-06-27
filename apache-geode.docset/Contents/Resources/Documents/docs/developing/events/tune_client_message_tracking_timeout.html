@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Tune the Client's Subscription Message Tracking Timeout |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_tune_client_message_tracking_timeout">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Tune the Client's Subscription Message Tracking Timeout
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="tune_client_message_tracking_timeout__section_C655A41D47694BDC9164E5D83C23FA7C"></a>
+If the client pool&rsquo;s <code>subscription-message-tracking-timeout</code> is set too low, your client will discard tracking records for live threads, increasing the likelihood of processing duplicate events from those threads.</p>
+
+<p>This setting is especially important in systems where it is vital to avoid or greatly minimize duplicate events. If you detect that duplicate messages are being processed by your clients, increasing the timeout may help. Setting <code>subscription-message-tracking-timeout</code> may not completely eliminate duplicate entries, but careful configuration can help minimize occurrences.</p>
+
+<p>Duplicates are monitored by keeping track of message sequence IDs from the source thread where the operation originated. For a long-running system, you would not want to track this information for very long periods or the information may be kept long enough for a thread ID to be recycled. If this happens, messages from a new thread may be discarded mistakenly as duplicates of messages from an old thread with the same ID. In addition, maintaining this tracking information for old threads uses memory that might be freed up for other things.</p>
+
+<p>To minimize duplicates and reduce the size of the message tracking list, set your client <code>subscription-message-tracking-timeout</code> higher than double the sum of these times:</p>
+
+<ul>
+<li>  The longest time your originating threads might wait between operations</li>
+<li>  For redundant servers add:
+
+<ul>
+<li>  The server’s <code>message-sync-interval</code></li>
+<li>  Total time required for failover (usually 7-10 seconds, including the time to detect failure)</li>
+</ul></li>
+</ul>
+
+<p>You risk losing live thread tracking records if you set the value lower than this. This could result in your client processing duplicate event messages into its cache for the associated threads. It is worth working to set the <code>subscription-message-tracking-timeout</code> as low as you reasonably can.</p>
+<pre class="highlight plaintext"><code>&lt;!-- Set the tracking timeout to 70 seconds --&gt;
+&lt;pool name="client" subscription-enabled="true" subscription-message-tracking-timeout="70000"&gt; 
+    ...
+&lt;/pool&gt;
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

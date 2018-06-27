@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Operators |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_operators">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Operators
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode supports comparison, logical, unary, arithmetic, map, index, dot, and right arrow operators.</p>
+
+<h2 id="comparison-operators"><a id="operators__section_A3FB372F85D840D7A49CB95BD7FCA7C6" class="no-quick-link"></a>Comparison Operators</h2>
+
+<p>Comparison operators compare two values and return the results, either TRUE or FALSE.</p>
+
+<p>The following are supported comparison operators:</p>
+
+<table><thead>
+<tr>
+<th>Operator</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>&lt;</td>
+<td>less than   </td>
+</tr>
+<tr>
+<td>&lt;=</td>
+<td>less than or equal to</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>greater than</td>
+</tr>
+<tr>
+<td>&gt;=</td>
+<td>greater than or equal to</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>=</td>
+<td>equal to</td>
+</tr>
+<tr>
+<td>!=</td>
+<td>not equal to</td>
+</tr>
+<tr>
+<td>&lt;&gt;</td>
+<td>not equal to</td>
+</tr>
+</tbody></table>
+
+<p>Regarding equality and inequality operators:</p>
+
+<ul>
+<li>The equality and inequality operators have lower precedence than the other comparison operators.</li>
+<li>The equality and inequality operators can be used with null.</li>
+<li>Inequality queries return results for which the search field is <a href="literals.html#literals__section_undefined">UNDEFINED</a>.</li>
+<li>To perform equality or inequality comparisons with <a href="literals.html#literals__section_undefined">UNDEFINED</a>, use the IS_DEFINED and IS_UNDEFINED preset query functions instead of these comparison operators.</li>
+</ul>
+
+<h2 id="logical-operators"><a id="operators__section_6A85A9DDA47E47009FDE1CC38D7BA66C" class="no-quick-link"></a>Logical Operators</h2>
+
+<p>The logical operators AND and OR allow you to create more complex expressions by combining expressions to produce a boolean result. When you combine two conditional expressions using the AND operator, both conditions must evaluate to true for the entire expression to be true. When you combine two conditional expressions using the OR operator, the expression evaluates to true if either one or both of the conditions are true. You can create complex expressions by combining multiple simple conditional expressions with AND and OR operators. When expressions use AND and OR operators, AND has higher precedence than OR.</p>
+
+<h2 id="unary-operators"><a id="operators__section_A970AE75B0D24E0B9E1B61BE2D9842D8" class="no-quick-link"></a>Unary Operators</h2>
+
+<p>Unary operators operate on a single value or expression, and have lower precedence than comparison operators in expressions. Geode supports the unary operator NOT. NOT is the negation operator, which changes the value of the operand to its opposite. For example, if an expression evaluates to TRUE, NOT changes it to FALSE. The operand must be a boolean.</p>
+
+<h2 id="arithmetic-operators"><a id="operators_arithmetic_OQL" class="no-quick-link"></a>Arithmetic Operators</h2>
+
+<p>Arithmetic operators operate on two values or expressions. 
+Any of the expected arithmetic exceptions may result,
+such as overflow or a divide by zero.
+<code>QueryInvocationTargetException</code> will be thrown,
+and <code>getCause()</code> will state <code>ArithmeticException</code>.</p>
+
+<p>The following are supported arithmetic operators:</p>
+
+<table><thead>
+<tr>
+<th>Operator</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>+</td>
+<td>addition</td>
+</tr>
+<tr>
+<td>-</td>
+<td>subtraction</td>
+</tr>
+<tr>
+<td>*</td>
+<td>multiplication</td>
+</tr>
+<tr>
+<td>/</td>
+<td>division</td>
+</tr>
+<tr>
+<td>%</td>
+<td>modulus</td>
+</tr>
+<tr>
+<td>MOD</td>
+<td>modulus</td>
+</tr>
+</tbody></table>
+
+<h2 id="map-and-index-operators"><a id="operators__section_E78FB4FB3703471C8186A0E26D25F01F" class="no-quick-link"></a>Map and Index Operators</h2>
+
+<p>Map and index operators access elements in key/value collections (such as maps and regions) and ordered collections (such as arrays, lists, and <code>String</code>s). The operator is represented by a set of square brackets (<code>[ ]</code>) immediately following the name of the collection. The mapping or indexing specification is provided inside these brackets.</p>
+
+<p>Array, list, and <code>String</code> elements are accessed using an index value. Indexing starts from zero for the first element, 1 for the second element, and so on. If <code>myList</code> is an array, list, or <code>String</code> and <code>index</code> is an expression that evaluates to a non-negative integer, then <code>myList[index]</code> represents the (<code>index + 1</code>)th element of <code>myList</code>. The elements of a <code>String</code> are the list of characters that make up the string.</p>
+
+<p>Map and region values are accessed by key using the same syntax. The key can be any <code>Object</code>. For a <code>Region</code>, the map operator performs a non-distributed <code>get</code> in the local cache only - with no use of <code>netSearch</code>. So <code>myRegion[keyExpression]</code> is the equivalent of <code>myRegion.getEntry(keyExpression).getValue</code>.</p>
+
+<h2 id="dot,-right-arrow,-and-forward-slash-operators"><a id="operators__section_6C0BB787B2324B85AA02AA19D4822A83" class="no-quick-link"></a>Dot, Right Arrow, and Forward Slash Operators</h2>
+
+<p>The dot operator (<code>.</code>) separates attribute names in a path expression, and specifies the navigation through object attributes. An alternate equivalent to the dot is the right arrow, (<code>-&gt;</code>). The forward slash is used to separate region names when navigating into subregions.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

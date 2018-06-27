@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Improving Performance on vSphere |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_performance_on_vsphere">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Improving Performance on vSphere
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="operating-system-guidelines"><a id="topic_F48990A6A37144988D49E132E17E117C" class="no-quick-link"></a>Operating System Guidelines</h2>
+
+<p>Use the latest supported version of the guest OS, and use Java large paging.</p>
+
+<ul>
+<li>  <strong>Use the latest supported version of the guest operating system</strong>. This guideline is probably the most important. Upgrade the guest OS to a recent version supported by Geode. For example, for RHEL, use at least version 7.0 or for SLES, use at least 11.0. For Windows, use Windows Server 2012. For RedHat Linux users, it is particularly beneficial to use RHEL 7 since there are specific enhancements in the RHEL 7 release that improve virtualized latency sensitive workloads.</li>
+<li><p><strong>Use Java large paging in guest OS</strong>. Configure Java on the guest OS to use large pages. Add the following command line option when launching Java:</p>
+<pre class="highlight plaintext"><code>-XX:+UseLargePages
+</code></pre></li>
+</ul>
+
+<h2 id="numa,-cpu,-and-bios-settings"><a id="topic_D8393B1A75364E46B0F959F0DE820E9E" class="no-quick-link"></a>NUMA, CPU, and BIOS Settings</h2>
+
+<p>This section provides VMware- recommended NUMA, CPU, and BIOS settings for your hardware and virtual machines.</p>
+
+<ul>
+<li>  Always enable hyper-threading, and do not overcommit CPU.</li>
+<li>  For most production Apache Geode servers, always use virtual machines with at least two vCPUs .</li>
+<li>  Apply non-uniform memory access (NUMA) locality by sizing virtual machines to fit within the NUMA node.</li>
+<li>  VMware recommends the following BIOS settings:
+
+<ul>
+<li>  <strong>BIOS Power Management Mode:</strong> Maximum Performance.</li>
+<li>  <strong>CPU Power and Performance Management Mode:</strong> Maximum Performance.</li>
+<li>  <strong>Processor Settings:</strong>Turbo Mode enabled.</li>
+<li>  <strong>Processor Settings:</strong>C States disabled.</li>
+</ul></li>
+</ul>
+
+<p><strong>Note:</strong>
+Settings may vary slightly depending on your hardware make and model. Use the settings above or equivalents as needed.</p>
+
+<h2 id="physical-and-virtual-nic-settings"><a id="topic_7A5F1EAD7A6C4E21BB1FF7CF3B625BC5" class="no-quick-link"></a>Physical and Virtual NIC Settings</h2>
+
+<p>These guidelines help you reduce latency.</p>
+
+<ul>
+<li><p><strong>Physical NIC:</strong> VMware recommends that you disable interrupt coalescing on the physical NIC of your ESXi host by using the following command:</p>
+<pre class="highlight plaintext"><code>ethtool -C vmnicX rx-usecs 0 rx-frames 1 rx-usecs-irq 0 rx-frames-irq 0
+</code></pre>
+
+<p>where <code>vmnicX</code> is the physical NIC as reported by the ESXi command:</p>
+<pre class="highlight plaintext"><code>esxcli network nic list
+</code></pre>
+
+<p>You can verify that your settings have taken effect by issuing the command:</p>
+<pre class="highlight plaintext"><code>ethtool -C vmnicX
+</code></pre>
+
+<p>If you restart the ESXi host, the above configuration must be reapplied.</p>
+
+<p><strong>Note:</strong>
+Disabling interrupt coalescing can reduce latency in virtual machines; however, it can impact performance and cause higher CPU utilization. It can also defeat the benefits of Large Receive Offloads (LRO) because some physical NICs (such as Intel 10GbE NICs) automatically disable LRO when interrupt coalescing is disabled. See <a href="http://kb.vmware.com/kb/1027511">http://kb.vmware.com/kb/1027511</a> for more details.</p></li>
+<li><p><strong>Virtual NIC:</strong> Use the following guidelines when configuring your virtual NICs:</p>
+
+<ul>
+<li>  Use VMXNET3 virtual NICs for your latency-sensitive or otherwise performance-critical virtual machines. See <a href="http://kb.vmware.com/kb/1001805">http://kb.vmware.com/kb/1001805</a> for details on selecting the appropriate type of virtual NIC for your virtual machine.</li>
+<li>  VMXNET3 supports adaptive interrupt coalescing that can help drive high throughput to virtual machines that have multiple vCPUs with parallelized workloads (multiple threads), while minimizing latency of virtual interrupt delivery. However, if your workload is extremely sensitive to latency, VMware recommends that you disable virtual interrupt coalescing for your virtual NICs. You can do this programmatically via API or by editing your virtual machine&rsquo;s .vmx configuration file. Refer to your vSphere API Reference or VMware ESXi documentation for specific instructions.</li>
+</ul></li>
+</ul>
+
+<h2 id="vmware-vsphere-vmotion-and-drs-cluster-usage"><a id="topic_E6EB8AB6CCEF435A98B48B867FE9BFEB" class="no-quick-link"></a>VMware vSphere vMotion and DRS Cluster Usage</h2>
+
+<p>This topic discusses use limitations of vSphere vMotion, including the use of it with DRS.</p>
+
+<ul>
+<li>  When you first commission the data management system, place VMware vSphere Distributed Resource Scheduler™ (DRS) in manual mode to prevent an automatic VMware vSphere vMotion® operation that can affect response times.</li>
+<li>  Reduce or eliminate the use of vMotion to migrate Geode virtual machines when they are under heavy load.</li>
+<li>  Do not allow vMotion migrations with Apache Geode locator processes, as the latency introduced to this process can cause other members of the Apache Geode servers to falsely suspect that other members are dead.</li>
+<li>  Use dedicated Apache Geode vSphere DRS clusters. This is especially important when you consider that the physical NIC and virtual NIC are specifically tuned to disable Interrupt Coalescing on every NIC of an ESXi host in the cluster. This type of tuning benefits Geode workloads, but it can hurt other non-Apache Geode workloads that are memory throughput-bound as opposed to latency sensitive as in the case of Apache Geode workloads.</li>
+<li>  If using a dedicated vSphere DRS cluster is not an option, and Apache Geode must run in a shared DRS cluster, make sure that DRS rules are set up not to perform vMotion migrations on Geode virtual machines.</li>
+<li>  If you must use vMotion for migration, VMware recommends that all vMotion migration activity of Apache Geode members occurs over 10GbE, during periods of low activity and scheduled maintenance windows.</li>
+</ul>
+
+<h2 id="placement-and-organization-of-virtual-machines"><a id="topic_E53BBF3D09A54953B02DCE2BD00D51E0" class="no-quick-link"></a>Placement and Organization of Virtual Machines</h2>
+
+<p>This section provides guidelines on JVM instances and placement of redundant copies of cached data.</p>
+
+<ul>
+<li>  Have one JVM instance per virtual machine.</li>
+<li>  Increasing the heap space to service the demand for more data is better than installing a second instance of a JVM on a single virtual machine. If increasing the JVM heap size is not an option, consider placing the second JVM on a separate newly created virtual machine, thus promoting more effective horizontal scalability. As you increase the number of Apache Geode servers, also increase the number of virtual machines to maintain a 1:1:1 ratio among the Apache Geode server, the JVM, and the virtual machines.</li>
+<li>  Size for a minimum of four vCPU virtual machines with one Apache Geode server running in one JVM instance. This allows ample CPU cycles for the garbage collector, and the rest for user transactions.</li>
+<li>  Because Apache Geode can place redundant copies of cached data on any virtual machine, it is possible to inadvertently place two redundant data copies on the same ESX/ESXi host. This is not optimal if a host fails. To create a more robust configuration, use VM1-to-VM2 anti-affinity rules, to indicate to vSphere that VM1 and VM2 can never be placed on the same host because they hold redundant data copies.</li>
+</ul>
+
+<h2 id="virtual-machine-memory-reservation"><a id="topic_567308E9DE07406BB5BF420BE77B6558" class="no-quick-link"></a>Virtual Machine Memory Reservation</h2>
+
+<p>This section provides guidelines for sizing and setting memory.</p>
+
+<ul>
+<li>  Set memory reservation at the virtual machine level so that ESXi provides and locks down the needed physical memory upon virtual machine startup. Once allocated, ESXi does not allow the memory to be taken away.</li>
+<li>  Do not overcommit memory for Geode hosts.</li>
+<li>  When sizing memory for a Geode server within one JVM on one virtual machine, the total reserved memory for the virtual machine should not exceed what is available within one NUMA node for optimal performance.</li>
+</ul>
+
+<h2 id="vsphere-high-availability-and-apache-geode"><a id="topic_424B940584044CF6A685E86802548A27" class="no-quick-link"></a>vSphere High Availability and Apache Geode</h2>
+
+<p>On Apache Geode virtual machines, disable vSphere High Availability (HA).</p>
+
+<p>If you are using a dedicated Apache Geode DRS cluster, then you can disable HA across the cluster. However, if you are using a shared cluster, exclude Geode virtual machines from vSphere HA.</p>
+
+<p>Additionally, to support high availability, you can also set up anti-affinity rules between the Apache Geode virtual machines to prevent two Apache Geode servers from running on the same ESXi host within the same DRS cluster.</p>
+
+<h2 id="storage-guidelines"><a id="topic_913B15841C4249A68697F3D91281A645" class="no-quick-link"></a>Storage Guidelines</h2>
+
+<p>This section provides storage guidelines for persistence files, binaries, logs, and more.</p>
+
+<ul>
+<li>  Use the PVSCSI driver for I/O intensive Apache Geode workloads.</li>
+<li>  Align disk partitions at the VMFS and guest operating system levels.</li>
+<li>  Provision VMDK files as eagerzeroedthick to avoid lazy zeroing for Apache Geode members.</li>
+<li>  Use separate VMDKs for Apache Geode persistence files, binaries, and logs.</li>
+<li>  Map a dedicated LUN to each VMDK.</li>
+<li>  For Linux virtual machines, use NOOP scheduling as the I/O scheduler instead of Completely Fair Queuing (CFQ). Starting with the Linux kernel 2.6, CFQ is the default I/O scheduler in many Linux distributions. See <a href="http://kb.vmware.com/kb/2011861">http://kb.vmware.com/kb/2011861</a> for more information.</li>
+</ul>
+
+<h2 id="additional-resources"><a id="topic_628F038FD4954E56BF4192F17FD3D119" class="no-quick-link"></a>Additional Resources</h2>
+
+<p>These older VMware publications provide additional resources on optimizing 
+for vSphere.</p>
+
+<ul>
+<li>  &ldquo;Performance Best Practices for VMware vSphere 5.0&rdquo; - <a href="http://www.vmware.com/pdf/Perf_Best_Practices_vSphere5.0.pdf">http://www.vmware.com/pdf/Perf_Best_Practices_vSphere5.0.pdf</a></li>
+<li>  &ldquo;Best Practices for Performance Tuning of Latency-Sensitive Workloads in vSphere Virtual Machines&rdquo; - <a href="http://www.vmware.com/files/pdf/techpaper/VMW-Tuning-Latency-Sensitive-Workloads.pdf">http://www.vmware.com/files/pdf/techpaper/VMW-Tuning-Latency-Sensitive-Workloads.pdf</a></li>
+<li>  &ldquo;Enterprise Java Applications on VMware - Best Practices Guide&rdquo; - <a href="http://www.vmware.com/resources/techresources/1087">http://www.vmware.com/resources/techresources/1087</a></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

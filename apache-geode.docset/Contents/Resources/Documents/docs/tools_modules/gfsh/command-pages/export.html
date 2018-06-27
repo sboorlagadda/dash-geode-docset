@@ -1,0 +1,435 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      export |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_export">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    export
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="concept_B8A3E21674294C65AE9F9A60F37A284E"></a></p>
+
+<p>Export configurations, data, logs and stack-traces.</p>
+
+<ul>
+<li><p><strong><a href="#topic_mdv_jgz_ck">export cluster-configuration</a></strong></p>
+
+<p>Export a cluster configuration zip file that contains the <code>cache.xml</code> files, <code>gemfire.properties</code> files, and application jar files needed to configure and operate a Geode distributed system.</p></li>
+<li><p><strong><a href="#topic_C7C69306F93743459E65D46537F4A1EE">export config</a></strong></p>
+
+<p>Export configuration properties for a member or members.</p></li>
+<li><p><strong><a href="#topic_263B70069BFC4A7185F86B3272011734">export data</a></strong></p>
+
+<p>Export user data from a region to a file.</p></li>
+<li><p><strong><a href="#topic_B80978CC659244AE91E2B8CE56EBDFE3">export logs</a></strong></p>
+
+<p>Export logs to a given directory.</p></li>
+<li><p><strong><a href="#topic_sjg_bvt_gq">export offline-disk-store</a></strong></p>
+
+<p>Export region data from an offline disk store into gemfire snapshot files.</p></li>
+<li><p><strong><a href="#topic_195D27B8B2B64A4E84CF2256636D54BD">export stack-traces</a></strong></p>
+
+<p>Export the stack trace for a member or members.</p></li>
+</ul>
+
+<h2 id="export-cluster-configuration"><a id="topic_mdv_jgz_ck" class="no-quick-link"></a>export cluster-configuration</h2>
+
+<p>Exports a cluster configuration zip file that contains the <code>cache.xml</code> files, <code>gemfire.properties</code> files, and application jar files needed to configure and operate a Geode distributed system.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p>See <a href="../../../configuring/cluster_config/gfsh_persist.html#concept_r22_hyw_bl">Overview of the Cluster Configuration Service</a>.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>export cluster-configuration --zip-file-name=value
+</code></pre>
+
+<p><strong>Export Cluster-Configuration Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--zip-file-name</span></td>
+<td><em>Required.</em> Filename of the zip file to contain the exported cluster configuration. May also include an absolute or relative path.</td>
+<td> </td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;export cluster-configuration --zip-file-name=/group/shared-configs/devClusterConfig.zip
+gfsh&gt;export cluster-configuration --zip-file-name=my-configs/myClusterConfig.zip
+gfsh&gt;export cluster-configuration --zip-file-name=myClusterConfig.zip
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;export cluster-configuration --zip-file-name=mySharedConfig.zip
+Downloading cluster configuration : /home/username/gemfire/mySharedConfig.zip
+</code></pre>
+
+<h2 id="export-config"><a id="topic_C7C69306F93743459E65D46537F4A1EE" class="no-quick-link"></a>export config</h2>
+
+<p>Export configuration properties for a member or members.</p>
+
+<p>If you do not specify any parameters, all member configurations will be exported.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>export config [--members=value(,value)*] [--groups=value(,value)*]
+[--dir=value]
+</code></pre>
+
+<p><strong>Export Config Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--members</span></td>
+<td>Name/Id of the member(s) whose configuration will be exported.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members whose configuration will be exported.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory to which the exported configuration files will be written.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>export config
+export config --members=member1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;export config --members=member1
+Downloading Cache XML file: c:\PivotalGemFire\Latest\.\member1-cache.xml
+Downloading properties file: c:\PivotalGemFire\Latest\.\member1-gf.properties
+</code></pre>
+
+<h2 id="export-data"><a id="topic_263B70069BFC4A7185F86B3272011734" class="no-quick-link"></a>export data</h2>
+
+<p>Export user data from a region to a file or files.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<p>To export data from any region, replicated or partitioned, sequentially to a single file, use the <code>--file</code> option:</p>
+<pre class="highlight plaintext"><code>export data --region=value --member=value --file=value
+</code></pre>
+
+<p>In this scenario, data from replicated and partitioned regions is exported sequentially to a single file on the specified member.</p>
+
+<p>In the case of partitioned regions, you can speed up the export process by using the <code>--parallel</code> option:</p>
+<pre class="highlight plaintext"><code>export data  --parallel --region=value --member=value --dir=value
+</code></pre>
+
+<p>In this scenario, partitioned region data is exported simultaneously on all hosting nodes to directories local to those respective nodes.</p>
+
+<ul>
+<li><p>Parallel export applies only to partitioned regions.</p></li>
+<li><p>The <code>--file</code> and <code>--dir</code> options are mutually exclusive; <code>--file</code> can be used only for serial export, <code>--dir</code> can be used for both serial and parallel exports.</p></li>
+</ul>
+
+<p><strong>Export Data Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--region</span></td>
+<td><em>Required.</em> Region from which data is to be exported.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;member</span></td>
+<td><em>Required.</em> Name/Id of a member that hosts the region. In a serial export, all data is exported to the specified file on the host where the member is running. In a parallel export, data from a partitioned region partially hosted on this member is exported for each partition to files on the nodes that host those partitions.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--file</span></td>
+<td>File to which the exported data is to be written. The file must have an extension of <code>.gfd</code>. Cannot be specified at the same time as --dir, cannot be used with &#8209;&#8209;parallel.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory to which the exported data is to be written. Required if --parallel is true. Cannot be specified at the same time as --file.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--parallel</span></td>
+<td>Export local data on each node to a directory on that machine. Available for partitioned regions only.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>export data --region=region2 --file=region2_20121001.gfd --member=server2
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code> gfsh&gt;export data --region=region2 --file=region2_20121001.gfd --member=server1
+Data succesfully exported from region : region2 to file : C:\PivotalGemFire\
+Latest\server1\region2_20121001.gfd on host : 192.0.2.0
+</code></pre>
+
+<h2 id="export-logs"><a id="topic_B80978CC659244AE91E2B8CE56EBDFE3" class="no-quick-link"></a>export logs</h2>
+
+<p>Export logs to a given directory.</p>
+
+<p>All files that have logs in the specified time range will be exported. If no time range is specified, all logs will be exported.</p>
+
+<p>The <code>--dir</code> parameter specifies a local directory to which log files will be written. This is used only when you are exporting logs using an http connection.  If executed over http, the zip archive will be saved in the specified directory on the user&rsquo;s client machine. If not specified, logs are written to the location specified by the <code>user.dir</code> system property. When the command is executed over JMX, logs will be saved as <code>exportedlogs_xxx.zip</code> in the connected locator&rsquo;s working directory.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>export logs [--dir=value] [--groups=value(,value)*] [--members=value(,value)*] 
+[--log-level=value] [--only-log-level=value] [--merge-log=value] 
+[--start-time=value] [--end-time=value] [logs-only(=value)?] 
+[--stats-only(=value)?] [--file-size-limit(=value)?]
+</code></pre>
+
+<p><strong>Export Logs Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Local directory to which log files will be written when logs are exported using an http connection. Ignored when the command is executed over JMX.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members whose log files will be exported.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;members</span></td>
+<td>Name/ID of the member(s) whose log files will be exported.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--log-level</span></td>
+<td>Minimum level of log entries to export. Valid values are: <code>OFF</code>, <code>FATAL</code>, <code>ERROR</code>, <code>WARN</code>, <code>INFO</code>, <code>DEBUG</code>, <code>TRACE</code>, and <code>ALL</code>.</td>
+<td><code>INFO</code></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--only-log-level</span></td>
+<td>Whether to only include only entries that exactly match the <span class="keyword parmname">--log-level</span> specified.</td>
+<td>false</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;merge&#8209;log</span></td>
+<td>Whether to merge logs after exporting to the target directory (deprecated).</td>
+<td>false</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--start-time</span></td>
+<td>Log entries that occurred after this time will be exported. Format: yyyy/MM/dd/HH/mm/ss/SSS/z OR yyyy/MM/dd</td>
+<td>no limit</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--end-time</span></td>
+<td>Log entries that occurred before this time will be exported. Format: yyyy/MM/dd/HH/mm/ss/SSS/z OR yyyy/MM/dd</td>
+<td>no limit</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--logs-only</span></td>
+<td>Whether to export only logs (not statistics)</td>
+<td>If parameter not specified: false. If parameter specified without a value: true</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--stats-only</span></td>
+<td>Whether to export only statistics (not logs)</td>
+<td>If parameter not specified: false. If parameter specified without a value: true</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--file-size-limit</span></td>
+<td>Limits total unzipped size of the exported files. Specify 0 (zero) for no limit. Value is in megabytes by default or [k,m,g,t] may be specified.</td>
+<td>If parameter not specified: 100m. If parameter specified without a value: 0</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example commands, showing output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;export logs --dir=data/logs
+Logs exported to the connected member's file system: /my-locator/data/logs/exportedLogs_1489513007261.zip
+</code></pre>
+<pre class="highlight plaintext"><code>gfsh&gt;export logs --dir=data/logs --file-size-limit=1k
+Estimated exported logs expanded file size = 95599, file-size-limit = 1024.
+To disable exported logs file size check use option "--file-size-limit=0".
+
+gfsh&gt;export logs --dir=data/logs --file-size-limit=99k
+Logs exported to the connected member's file system: /my-locator/data/logs/exportedLogs_1489513007261.zip
+</code></pre>
+
+<h2 id="export-offline-disk-store"><a id="topic_sjg_bvt_gq" class="no-quick-link"></a>export offline-disk-store</h2>
+
+<p>Export region data from an offline disk store into gemfire snapshot files.</p>
+
+<p><strong>Availability:</strong> Online or offline.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>export offline-disk-store --name=value --disk-dirs=value(,value)* --dir=value
+</code></pre>
+
+<p><strong>Export Offline-Disk-Store Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name</span></td>
+<td><em>Required.</em> Name of the disk store to be exported.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--disk-dirs</span></td>
+<td>Directories which contain the disk store files.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory to export the snapshot files to.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code> export offline-disk-store --name= DiskStore1 \
+--disk-dirs=/home/username/gemfire/mydiskStore1Dir --dir=/home/username/gemfire/export
+</code></pre>
+
+<h2 id="export-stack-traces"><a id="topic_195D27B8B2B64A4E84CF2256636D54BD" class="no-quick-link"></a>export stack-traces</h2>
+
+<p>Export the stack trace for a member or members.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>export stack-traces --file=value [--members=value(,value)*] [--groups=value(,value)*]
+</code></pre>
+
+<p><strong>Export Stack-Traces Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--file</span></td>
+<td><em>Required.</em> Filename to which the stack-traces will be written.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--members</span></td>
+<td>Name or ID of the member(s) whose log files will be exported.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--groups</span></td>
+<td>Group(s) of members whose log files will be exported.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>export stack-traces --file=stack.txt
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;export stack-traces --file=stack.txt
+stack-trace(s) exported to file: C:\PivotalGemFire\Latest\locator1\stack.txt
+On host : GemFireStymon
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      POST /gemfire-api/v1/queries?id=&lt;queryId&gt;&q=&lt;OQL-statement&gt; |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_rest_apps docs_rest_apps_post_create_query">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    POST /gemfire-api/v1/queries?id=&lt;queryId&gt;&q=&lt;OQL-statement&gt;
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Create (prepare) the specified parameterized query and assign the corresponding ID for lookup.</p>
+
+<h2 id="resource-url">Resource URL</h2>
+<pre class="highlight plaintext"><code>http://&lt;hostname_or_http-service-bind-address&gt;:&lt;http-service-port&gt;/gemfire-api/v1/queries?id=&lt;queryId&gt;&amp;q="&lt;OQL-statement&gt;"
+</code></pre>
+
+<h2 id="parameters">Parameters</h2>
+
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Parameter</th>
+<th>Description</th>
+<th>Example Values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td><strong>Required.</strong> Unique identifier for the named parameterized query.</td>
+<td>selectCustomers</td>
+</tr>
+<tr class="even">
+<td>q</td>
+<td><strong>Required.</strong> OQL query statement. Use doublequotes to surround the OQL query statement.</td>
+<td><pre class="pre"><code>&quot;SELECT o FROM /orders o WHERE o.quantity &gt; $1 AND o.totalprice &gt; $2&quot;</code></pre></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Note:</strong>
+For this release, you cannot specify the query string inside the request body (as JSON). You must specify the query as a URL parameter.</p>
+
+<h2 id="example-request">Example Request</h2>
+<pre class="highlight plaintext"><code>POST /gemfire-api/v1/queries?id=selectOrders&amp;q="SELECT o FROM /orders o WHERE o.quantity &gt; $1 AND o.totalprice &gt; $2"
+Accept: application/json
+</code></pre>
+
+<h2 id="example-success-response">Example Success Response</h2>
+<pre class="highlight plaintext"><code>Response Payload: null
+
+201 CREATED
+Location: http://localhost:8080/gemfire-api/v1/queries/selectOrders
+</code></pre>
+
+<h2 id="error-codes">Error Codes</h2>
+
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Status Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400 BAD REQUEST</td>
+<td>Query ID not specified or malformed OQL statement</td>
+</tr>
+<tr>
+<td>401 UNAUTHORIZED</td>
+<td>Invalid Username or Password</td>
+</tr>
+<tr>
+<td>403 FORBIDDEN</td>
+<td>Insufficient privileges for operation</td>
+</tr>
+<tr>
+<td>409 CONFLICT</td>
+<td>QueryId already assigned to another query</td>
+</tr>
+<tr class="even">
+<td>500 INTERNAL SERVER ERROR</td>
+<td>Error encountered at Geode server. Check the HTTP response body for a stack trace of the exception.
+<ul>
+<li>Query store does not exist!</li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

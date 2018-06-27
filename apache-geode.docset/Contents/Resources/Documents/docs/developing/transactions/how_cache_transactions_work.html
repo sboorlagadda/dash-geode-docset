@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Geode Cache Transactions Work |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_how_cache_transactions_work">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Geode Cache Transactions Work
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_fls_1j1_wk"></a></p>
+
+<p>This section provides an explanation of how transactions work on Geode caches.</p>
+
+<p>All the regions in a Geode member cache can participate in a transaction. A Java application can operate on the cache using multiple transactions. A transaction is associated with only one thread, and a thread can operate on only one transaction at a time. Child threads do not inherit existing transactions.</p>
+
+<ul>
+<li><p><strong><a href="#concept_hls_1j1_wk">Transaction View</a></strong></p></li>
+<li><p><strong><a href="#concept_sbj_lj1_wk">Committing Transactions</a></strong></p></li>
+<li><p><strong><a href="cache_transactions_by_region_type.html#topic_nlq_sk1_wk">Transactions by Region Type</a></strong></p></li>
+<li><p><strong><a href="client_server_transactions.html">Client Transactions</a></strong></p></li>
+<li><p><strong><a href="transactional_and_nontransactional_ops.html#transactional_and_nontransactional_ops">Comparing Transactional and Non-Transactional Operations</a></strong></p></li>
+<li><p><strong><a href="transaction_semantics.html">Geode Cache Transaction Semantics</a></strong></p></li>
+</ul>
+
+<h2 id="transaction-view">Transaction View</h2>
+
+<p>A transaction is isolated from changes made concurrently to the cache. Each transaction has its own private view of the cache, including the entries it has read and the changes it has made. The first time the transaction touches an entry in the cache, either to read or write, it produces a snapshot of that entry’s state in the transaction’s view. The transaction maintains its current view of the entry, which reflects only the changes made within the transaction. The transaction remembers the entry’s original state and uses it at commit time to discover write conflicts.</p>
+
+<p><img src="../../images/Transaction-simple.png" id="concept_hls_1j1_wk__image_D21EF847CD1D4B64AD1786033FB44F5C" class="image" /></p>
+
+<h2 id="committing-transactions">Committing Transactions</h2>
+
+<p>When a commit succeeds, the changes recorded in the transaction view are merged into the cache. If the commit fails or the transaction is rolled back, all of its changes are dropped.</p>
+
+<p>When a transaction is committed, the transaction management system uses a two-phase commit protocol:</p>
+
+<ol>
+<li> Reserves all the entries involved in the transaction from changes by any other transactional thread. For distributed regions, it reserves the entries in the entire distributed system. For partitioned regions, it reserves them on the data store, where the transaction is running.</li>
+<li> Checks the cache for conflicts on affected keys, to make sure all entries are still in the same state they were in when this transaction first accessed them.</li>
+<li> If any conflict is detected, the manager rolls back the transaction.</li>
+<li><p>If no conflict is detected, the manager:</p>
+
+<ol>
+<li> Calls the <code>TransactionWriter</code> in the member where the transaction is running. This allows the system to write through transactional updates to an external data source.</li>
+<li> Updates the local cache and distributes the updates to the other members holding the data. Cache listeners are called for these updates, in each cache where the changes are made, the same as for non-transactional operations.</li>
+<li> Calls the <code>TransactionListener</code>s in the member where the transaction is running.</li>
+</ol></li>
+<li><p>Releases the transaction reservations on the entries.</p></li>
+</ol>
+
+<p>The manager updates the local cache and distributes the updates to other members in a non-atomic way.</p>
+
+<ul>
+<li>  If other threads read the keys the transaction is modifying, they may see some in their pre-transaction state and some in their post-transaction state.</li>
+<li>  If other, non-transactional sources update the keys the transaction is modifying, the changes may intermingle with this transaction’s changes. The other sources can include distributions from remote members, loading activities, and other direct cache modification calls from the same member. When this happens, after your commit finishes, the cache state may not be what you expected.</li>
+</ul>
+
+<p>If the transaction fails to complete any of the steps, a CommitConflictException is thrown to the calling application.</p>
+
+<p>Once the members involved in the transaction have been asked to commit, the transaction completes even if one of the participating members were to leave the system during the commit. The transaction completes successfully so long as all remaining members are in agreement.</p>
+
+<p>Each member participating in the transaction maintains a membership listener on the transaction coordinator. If the transaction coordinator goes away after issuing the final commit call, the transaction completes in the remaining members.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

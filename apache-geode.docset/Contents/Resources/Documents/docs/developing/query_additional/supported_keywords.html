@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Supported Keywords |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_supported_keywords">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Supported Keywords
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<table><thead>
+<tr>
+<th>Query Language Keyword</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>AND</td>
+<td>Logical operator used to create complex expressions by combining two or more expressions to produce a Boolean result. When you combine two conditional expressions using the AND operator, both conditions must evaluate to true for the entire expression to be true.</td>
+<td>See <a href="operators.html#operators">Operators</a></td>
+</tr>
+<tr>
+<td>AS</td>
+<td>Used to provide a label for a path expression so you can refer to the path by the label later.</td>
+<td>See <a href="../query_select/the_from_clause.html#the_from_clause__section_AB1734C16DC348479C00FD6829B933AA">Aliases and Synonyms</a></td>
+</tr>
+<tr>
+<td>COUNT</td>
+<td>Returns the number of results that match the provided criteria.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_B2CBA00EB83F463DAF4769D7859C64C8">COUNT</a></td>
+</tr>
+<tr>
+<td>DISTINCT</td>
+<td>Restricts the select statement to unique results (eliminates duplicates).</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_972EE73A6F3E4427B6A99DB4EDF5860D">DISTINCT</a></td>
+</tr>
+<tr>
+<td>ELEMENT</td>
+<td>Query function. Extracts a single element from a collection or array. This function throws a <code>FunctionDomainException</code> if the argument is not a collection or array with exactly one element.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_69DCAD624E9640028BC86FD67649DEB2">Preset Query Functions</a></td>
+</tr>
+<tr>
+<td>FROM</td>
+<td>You can access any object or object attribute that is available in the current scope of the query.</td>
+<td>See <a href="../query_select/the_from_clause.html#the_from_clause">FROM Clause</a></td>
+</tr>
+<tr>
+<td>&lt;HINT&gt;</td>
+<td>Keyword that instructs the query engine to prefer certain indexes.</td>
+<td>See <a href="../query_index/query_index_hints.html">Using Query Index Hints</a></td>
+</tr>
+<tr>
+<td>IMPORT</td>
+<td>Used to establish the namescope for objects.</td>
+<td>See <a href="../query_select/the_import_statement.html#concept_2E9F15B2FE9041238B54736103396BF7">IMPORT Statement</a></td>
+</tr>
+<tr>
+<td>IN</td>
+<td>The IN expression is a Boolean indicating whether one expression is present inside a collection of expressions of a compatible type.</td>
+<td>See <a href="../query_select/the_where_clause.html#the_where_clause__section_AC12146509F141378E493078540950C7">IN and SET</a></td>
+</tr>
+<tr>
+<td>IS_DEFINED</td>
+<td>Query function. Returns TRUE if the expression does not evaluate to <a href="literals.html#literals__section_undefined">UNDEFINED</a>. Inequality queries include undefined values in their query results. With the IS_DEFINED function, you can limit results to only those elements with defined values.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_69DCAD624E9640028BC86FD67649DEB2">Preset Query Functions</a></td>
+</tr>
+<tr>
+<td>IS_UNDEFINED</td>
+<td>Query function. Returns TRUE if the expression evaluates to <a href="literals.html#literals__section_undefined">UNDEFINED</a>. With the exception of inequality queries, most queries do not include undefined values in their query results. The IS_UNDEFINED function allows undefined values to be included, so you can identify elements with undefined values.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_69DCAD624E9640028BC86FD67649DEB2">Preset Query Functions</a></td>
+</tr>
+<tr>
+<td>LIMIT</td>
+<td>Limits the number of returned results. If you use the limit keyword, you cannot also run operations on the query result set that perform any kind of summary activities. For example trying to run add or addAll or a SelectResult from a query with a LIMIT clause throws an exception.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_25D7055B33EC47B19B1B70264B39212F">LIMIT</a></td>
+</tr>
+<tr>
+<td>LIKE</td>
+<td>LIKE can be used to mean &lsquo;equals to&rsquo;, or if you terminate the string with a wildcard character (<code>%</code>), it behaves like &#39;starts with&rsquo;. Note that the wildcard can only be used at the end of the comparison string. You can escape the wildcard character to represent the <code>%</code> character. You can also use the LIKE predicate if an index is present.</td>
+<td>See <a href="../query_select/the_where_clause.html#the_where_clause__section_D91E0B06FFF6431490CC0BFA369425AD">LIKE</a></td>
+</tr>
+<tr>
+<td>NOT</td>
+<td>The example returns the set of portfolios that have positions. Note that NOT cannot use an index.</td>
+<td>See <a href="operators.html#operators">Operators</a></td>
+</tr>
+<tr>
+<td>NVL</td>
+<td>Returns expr2 if expr1 is null. The expressions can be query parameters (bind arguments), path expressions, or literals.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_69DCAD624E9640028BC86FD67649DEB2">Preset Query Functions</a></td>
+</tr>
+<tr>
+<td>OR</td>
+<td>If an expression uses both AND and OR operators, the AND expression has higher precedence than OR.</td>
+<td>See <a href="operators.html#operators">Operators</a></td>
+</tr>
+<tr>
+<td>ORDER BY</td>
+<td>Allows you to order query results (either in ascending or descending order).</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_D9DF0F785CA94EF8B367C3326CC12990">ORDER BY</a></td>
+</tr>
+<tr>
+<td>SELECT</td>
+<td>Allows you to filter data from the collection of object(s) returned by a WHERE search operation.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E">SELECT Statement</a></td>
+</tr>
+<tr>
+<td>SET</td>
+<td>Specifies a collection of values that can be compared to the returned values of query.</td>
+<td>See <a href="../query_select/the_where_clause.html#the_where_clause__section_AC12146509F141378E493078540950C7">IN and SET</a></td>
+</tr>
+<tr>
+<td>&lt;TRACE&gt;</td>
+<td>Enables debugging on the following query string.</td>
+<td>See <a href="query_debugging.html#concept_2D557E24AAB24044A3DB36B3124F6748">Query Debugging</a></td>
+</tr>
+<tr>
+<td>TO_DATE</td>
+<td>Returns a Java Data class object. The arguments must be String S with date_str representing the date and format_str representing the format used by date_str. The format_str you provide is parsed using java.text.SimpleDateFormat.</td>
+<td>See <a href="../query_select/the_select_statement.html#concept_85AE7D6B1E2941ED8BD2A8310A81753E__section_69DCAD624E9640028BC86FD67649DEB2">Preset Query Functions</a></td>
+</tr>
+<tr>
+<td>TYPE</td>
+<td>Specifying object type in the FROM clause helps the query engine to process the query at optimal speed.</td>
+<td>See <a href="../query_select/the_from_clause.html#the_from_clause__section_A5B42CCB7C924949954AEC2DAAD51134">Object Typing</a></td>
+</tr>
+<tr>
+<td>WHERE</td>
+<td>Resolves to a collection of objects. The collection is then available for iteration in the query expressions that follow in the WHERE clause.</td>
+<td>See <a href="../query_select/the_where_clause.html#the_where_clause">WHERE Clause</a></td>
+</tr>
+</tbody></table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

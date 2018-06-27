@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Organizing Servers Into Logical Member Groups |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_cs_configuration docs_topologies_and_comm_cs_configuration_configure_servers_into_logical_groups">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Organizing Servers Into Logical Member Groups
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>In a client/server configuration, by putting servers into logical member groups, you can control which servers your clients use and target specific servers for specific data or tasks. You can configure servers to manage different data sets or to direct specific client traffic to a subset of servers, such as those directly connected to a back-end database.</p>
+
+<p><a id="configure_servers_into_logical_groups__section_411EA6C46AD4456C987C0759A05340F2"></a>
+You can also define member groups to deploy JARs in parallel or to perform administrative commands across a member group.</p>
+
+<p>To add servers to a member group, you can configure the following:</p>
+
+<ol>
+<li><p>Add the member group names to the <code>gemfire.properties</code> file for the server. For example:</p>
+<pre class="highlight plaintext"><code>groups=Portfolios,ManagementGroup1
+</code></pre>
+
+<p>A server can belong to more than one member group. If specifying multiple group membership for the server, use a comma-separated list. Alternatively, if you are using the <code>gfsh</code> command interface to start up the server, provide a group name as a parameter:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 \
+--group=Portfolios,ManagementGroup1
+</code></pre></li>
+<li><p>To configure a client to connect to a specific member group, modify the client&rsquo;s <code>cache.xml</code> file to define a distinct pool for each <code>server-group</code> and assign the pools to the corresponding client regions:</p>
+<pre class="highlight plaintext"><code>&lt;pool name="PortfolioPool" server-group="Portfolios" ...
+  &lt;locator host="lucy" port="41111"&gt;
+  ...
+&lt;/pool&gt;
+   ...
+&lt;region name="clientRegion" ... 
+  &lt;region-attributes pool-name="PortfolioPool" ...
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

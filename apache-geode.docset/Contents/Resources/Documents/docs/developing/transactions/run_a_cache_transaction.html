@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How to Run a Geode Cache Transaction |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_run_a_cache_transaction">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How to Run a Geode Cache Transaction
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="task_f15_mr3_5k"></a></p>
+
+<p>This topic describes how to run a Geode cache transaction.</p>
+
+<p>Applications manage transactions on a per-cache basis. A Geode cache transaction starts with a <code>CacheTransactionManager.begin</code> method and continues with a series of operations, which are typically region operations such as region create, update, clear and destroy. The begin, commit, and rollback are directly controlled by the application. A commit, failed commit, or voluntary rollback by the transaction manager ends the transaction.</p>
+
+<p>You can run transactions on any type of cache region except regions with <strong>global</strong> scope. An operation attempted on a region with global scope throws an <code>UnsupportedOperationException</code> exception.</p>
+
+<p>A transaction may not be nested within another transaction. An attempt to begin a nested transaction will throw an <code>IllegalStateException</code> exception.</p>
+
+<p>This discussion centers on transactions on replicated and partitioned regions. If you use non-replicated distributed regions, follow the guidelines for replicated regions.</p>
+
+<ol>
+<li><strong>Configure the cache copy-on-read behavior in the members hosting the transactional data, or perform cache updates that avoid in-place changes.</strong> This allows the transaction manager to control when cache updates are visible outside the transaction. See <a href="working_with_transactions.html#concept_vx2_gs4_5k">Setting Global Copy on Read</a>.</li>
+<li><p><strong>Configure your regions for transactions in the members hosting the transactional data.</strong></p>
+
+<table><thead>
+<tr>
+<th>If you use&hellip;</th>
+<th>then you should&hellip;</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><strong>replicated regions</strong></td>
+<td>Use <code>distributed-ack</code> scope. The region shortcuts specifying <code>REPLICATE</code> use <code>distributed-ack</code> scope. This is particularly important if you have more than one data producer. With one data producer, you can safely use <code>distributed-no-ack</code>.</td>
+</tr>
+<tr>
+<td><strong>partitioned regions</strong></td>
+<td>Custom partition and colocate data among regions so all the data for any single transaction is hosted by a single member. If the transaction is run from a member other than the one hosting the data, the transaction will run by proxy in the member hosting the data. The partitioned region must be defined for the application that runs the transaction, but the data can be hosted in a remote member.</td>
+</tr>
+<tr>
+<td><strong>persistent regions</strong></td>
+<td>Configure Geode to allow transactions on persistent regions. By default, the configuration does not allow transactions on persistent regions. Enable the use of transactions on persistent regions by setting the property <code>gemfire.ALLOW_PERSISTENT_TRANSACTIONS</code> to true.</td>
+</tr>
+<tr>
+<td><strong>a mix of partitioned and replicated regions</strong></td>
+<td>Make sure any replicated region involved in the transaction is hosted on every member that hosts the partitioned region data. All data for a single transaction must reside within a single host.</td>
+</tr>
+<tr>
+<td><strong>delta propagation</strong></td>
+<td>Set the region attribute <code>cloning-enabled</code> to true. This lets Geode do conflict checks at commit time. Without this, the transaction will throw an <code>UnsupportedOperationInTransactionException</code> exception.</td>
+</tr>
+<tr>
+<td><strong>global JTA transactions with only Geode cache transactions</strong></td>
+<td>Set the region attribute <code>ignore-jta</code> to true for all regions that you do <em>not</em> want to participate in JTA global transactions. It is false by default. For instructions on how to run a JTA global transaction, see <a href="JTA_transactions.html">JTA Global Transactions with Geode</a>.</td>
+</tr>
+</tbody></table></li>
+<li><p><strong>Update your cache event handler and transaction event handler implementations to handle your transactions.</strong> 
+Cache event handlers may be used with transactions. Cache listeners are called after the commit, instead of after each cache operation, and the cache listeners receive conflated transaction events. Cache writers and loaders are called as usual, at the time of the operation.</p>
+
+<p>Follow these additional guidelines when writing cache event handler callbacks:</p>
+
+<ul>
+<li>  Make sure cache callbacks are transactionally aware, because a transactional operation could launch callbacks that are not transactional.</li>
+<li>  Make sure cache listeners will operate properly, given entry event conflation. Two events for the same key are conflated by removing the existing event and queuing the new event.</li>
+</ul>
+
+<p>See <a href="working_with_transactions.html#concept_ysx_nf1_wk">Using Cache Writer and Cache Listener Plug-Ins</a> for more information.</p>
+
+<p>Transaction event handlers are available. Transaction event handlers are cache-wide. You can install one transaction writer and any number of transaction listeners. Follow these guidelines:
+<ul>
+<li>Implement with synchronization for thread safety. Listener and writer handlers may be invoked at the same time by different threads for different transactions.</li>
+<li>Keep transactional callback implementations lightweight, and avoid doing anything that might cause the callbacks to block.</li>
+</ul>
+See <a href="working_with_transactions.html#concept_ocw_vf1_wk">Configuring Transaction Plug-In Event Handlers</a> for more information.</p></li>
+<li><p><strong>Write the transaction code.</strong> For example: </p>
+<pre class="highlight plaintext"><code>CacheTransactionManager txManager =
+          cache.getCacheTransactionManager();
+
+try {
+    txManager.begin();
+    // ... do work
+    txManager.commit();
+} catch (CommitConflictException conflict) {
+    // ... do necessary work for a transaction that failed on commit
+}
+</code></pre>
+
+<p>Follow these guidelines when writing the transaction:</p>
+
+<ul>
+<li>  Start each transaction with a begin operation.</li>
+<li>  Consider whether you will want to suspend and resume the transaction. If some operations should not be part of the transaction, you may want to suspend the transaction while performing non-transactional operations. After the non-transactional operations are complete, you can resume the transaction. See <a href="transaction_suspend_resume_example.html#concept_40AAC4332DCE4E4EB60C4BA141B729A4">Basic Suspend and Resume Transaction Example</a> for an example.</li>
+<li>  If your transaction operates on a mix of partitioned and replicated regions, do the first region operation on an entry of the partitioned region. This sets the host for the entire transaction.</li>
+<li>  If you did not configure copy-on-read to true, be sure all cache updates avoid in-place changes.</li>
+<li>  Take into account the behavior of transactional and non-transactional operations. All transactional operations that are run after the begin and before the commit or rollback are included in the transaction.</li>
+<li>  End each transaction with a commit or a rollback. Do not leave any transaction in an uncommitted or unrolled back state. Transactions do not time out, so they will remain for the life of the application.</li>
+</ul></li>
+<li><p><strong>Review all of your code for compatibility with transactions.</strong> 
+When you commit a transaction, while the commit is in process, the changes are visible in the distributed cache. This provides better performance than locking everything involved with the transaction updates, but it means that another process accessing data used in the transaction might get some data in the pre-transaction state and some in the post-transaction state.</p>
+
+<p>For example, suppose keys 1 and 2 are modified within a transaction, such that both values change from A to B. In another thread, it is possible to read key 1 with value B and key 2 with value A, after the commit begins, but before the commit completes. This is possible due to the nature of Geode reads. This choice sacrifices atomic visibility in favor of performance; reads do not block writes, and writes do not block reads.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

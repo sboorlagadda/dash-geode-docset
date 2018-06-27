@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Setting Up the CLASSPATH |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_getting_started docs_getting_started_setup_classpath">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Setting Up the CLASSPATH
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic describes how Geode processes set their CLASSPATH.</p>
+
+<p>To simplify CLASSPATH environment settings, Geode has organized all application libraries required by Geode processes into <code>*-dependencies.jar</code> files. All dependency JAR files are located in the <code>path_to_product/lib</code> directory. When starting a server or locator process using <code>gfsh</code>, the required application JAR files are automatically loaded into the process&rsquo;s CLASSPATH for you.</p>
+
+<p><strong>Note:</strong>
+To embed Geode in your application, add <code>path_to_product/lib/geode-dependencies.jar</code> to your CLASSPATH.</p>
+
+<p>The following table lists the dependency JAR files associated with various Geode processes:</p>
+
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Geode Process</th>
+<th>Associated JAR Files</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>gfsh</td>
+<td>gfsh-dependencies.jar</td>
+</tr>
+<tr class="even">
+<td>server and locator</td>
+<td>geode-dependencies.jar
+<div class="note note">
+Note:
+<p>Use this library for all standalone or embedded Geode processes (including Java clients) that host cache data.</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="modifying-the-classpath-in-gfsh-managed-processes">Modifying the CLASSPATH in gfsh-Managed Processes</h2>
+
+<p>There are two options for updating the CLASSPATH of Geode server and locator processes that are started on the gfsh command line.</p>
+
+<p><strong>Option 1:</strong> Specify the <code>--classpath</code> parameter upon process startup. For example, to modify the CLASSPATH of a locator:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start locator --name=locator1 --classpath=/path/to/applications/classes.jar
+</code></pre>
+
+<p>And to modify the CLASSPATH of a server:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start server --name=server1 --classpath=/path/to/applications/classes.jar
+</code></pre>
+
+<p>Application classes supplied as arguments to the <code>--classpath</code> option are <em>prepended</em> to the server or locator&rsquo;s CLASSPATH, beginning in second position. The first entry in the CLASSPATH is reserved for the core Geode jar file, for security reasons.</p>
+
+<p><strong>Option 2:</strong> Define the CLASSPATH environment variable in your OS environment. Then, specify the <code>--include-system-classpath</code> parameter upon process startup. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start locator --name=locator1 --include-system-classpath=true
+</code></pre>
+
+<p>The same can also be done for server processes:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start server --name=server1 --include-system-classpath=true
+</code></pre>
+
+<p>This option <em>appends</em> the contents of the system CLASSPATH environment variable to the locator or server&rsquo;s CLASSPATH upon startup. Specifying this option without a value sets it to true.</p>
+
+<h2 id="setting-the-classpath-for-applications-and-standalone-java-processes">Setting the CLASSPATH for Applications and Standalone Java Processes</h2>
+
+<p>If you are starting a Geode process programmatically (standalone or embedded), we recommend that you specify the CLASSPATH upon program execution using the <code>java -classpath</code> or <code>java -cp</code> command-line option. This method is preferred to setting the CLASSPATH as an environment variable since it allows you to set the value individually for each application without affecting other applications and without other applications modifying its value.</p>
+
+<p>For example, to start up a Geode locator process using the LocatorLauncher API, you can execute the following on the command line:</p>
+<pre class="highlight plaintext"><code>prompt# java -cp "path_to_product/lib/geode-dependencies.jar"
+org.apache.geode.distributed.LocatorLauncher start locator1
+&lt;locator-launcher-options&gt;
+</code></pre>
+
+<p>To start up a Geode server process using the ServerLauncher API:</p>
+<pre class="highlight plaintext"><code>prompt# java -cp "path_to_product/lib/geode-dependencies.jar:/path/to/your/applications/classes.jar"
+org.apache.geode.distributed.ServerLauncher start server1
+&lt;server-launcher-options&gt;
+</code></pre>
+
+<p>Note that in addition to the <code>*-dependencies.jar</code> file associated with the process, you must also specify any custom application JARs that you wish to access in your Geode process. For example, if you are planning on using a customized compressor on your regions, you should specify the application JAR that contains the compressor application you wish to use.</p>
+
+<p>To start up an application with an embedded cache:</p>
+<pre class="highlight plaintext"><code>java -cp "path_to_product/lib/geode-dependencies.jar:/path/to/your/applications/classes.jar"
+com.mycompany.package.ApplicationWithEmbeddedCache
+</code></pre>
+
+<p><strong>Note:</strong>
+Another method for updating the CLASSPATH of a server process with your own applications is to use the <code>gfsh deploy</code> command. Deploying application JAR files will automatically update the CLASSPATH of all members that are targeted for deployment. See <a href="../configuring/cluster_config/deploying_application_jars.html#concept_4436C021FB934EC4A330D27BD026602C">Deploying Application JARs to Apache Geode Members</a> for more details.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

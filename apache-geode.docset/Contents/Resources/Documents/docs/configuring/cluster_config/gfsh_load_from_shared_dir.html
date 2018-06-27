@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Loading Existing Configuration Files into Cluster Configuration |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_gfsh_load_from_shared_dir">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Loading Existing Configuration Files into Cluster Configuration
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To load an existing cache.xml or gemfire.properties configuration file into a new cluster, use the <code>--load-cluster-configuration-from-dir</code> parameter when starting up the locator.</p>
+
+<p>You can use this technique to migrate a single server&rsquo;s configuration into the cluster configuration service. To load an existing cache.xml file or cluster configuration into a cluster, perform the following steps:</p>
+
+<ol>
+<li> Make sure the locator is not currently running.</li>
+<li> Within the locator&rsquo;s working directory, create a <code>cluster_config/cluster</code> directory if the directory does not already exist.</li>
+<li> Copy the desired configuration files (cache.xml or gemfire.properties, or both) into the <code>cluster_config/cluster</code> directory.</li>
+<li><p>Rename the configuration files as follows:</p>
+
+<ul>
+<li>  Rename <code>cache.xml</code> to <code>cluster.xml</code></li>
+<li>  Rename <code>gemfire.properties</code> to <code>cluster.properties</code></li>
+</ul></li>
+<li><p>Start the locator in <code>gfsh</code> as follows:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=&lt;locator_name&gt; --enable-cluster-configuration=true --load-cluster-configuration-from-dir=true
+</code></pre>
+
+<p>After successful startup, the locator should report that the &ldquo;Cluster configuration service is up and running.&rdquo; Any servers that join this cluster and have <code>--use-cluster-configuration</code> set to true will pick up these configuration files.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

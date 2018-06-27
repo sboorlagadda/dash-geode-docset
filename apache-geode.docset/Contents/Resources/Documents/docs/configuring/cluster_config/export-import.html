@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Exporting and Importing Cluster Configurations |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_export-import">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Exporting and Importing Cluster Configurations
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The cluster configuration service exports and imports configurations created using <code>gfsh</code> for an entire Apache Geode cluster.</p>
+
+<p>The cluster configuration service saves the cluster configuration as you create regions, disk-stores and other objects using <code>gfsh</code> commands. You can export this configuration as well as any jar files that contain application files to a zip file and then import this configuration to create a new cluster.</p>
+
+<h2 id="exporting-a-cluster-configuration">Exporting a Cluster Configuration</h2>
+
+<p>Issue the <code>gfsh</code> <code>export cluster-configuration</code> command to save the configuration data for your
+cluster in a zip file. This zip file contains subdirectories for cluster-level configurations and a
+directory for each group specified in the cluster. The contents of these directories are described
+in <a href="gfsh_config_troubleshooting.html#concept_ylt_2cb_y4">Cluster Configuration Files and Troubleshooting</a>.</p>
+
+<p>To export a cluster configuration, run the <code>gfsh</code> <code>export cluster-configuration</code> command while connected to a Geode cluster. For example:</p>
+<pre class="highlight plaintext"><code>export cluster-configuration --zip-file-name=/home/username/configs/myClusterConfig.zip
+</code></pre>
+
+<p>See <a href="../../tools_modules/gfsh/command-pages/export.html#topic_mdv_jgz_ck">export cluster-configuration</a>.</p>
+
+<p><strong>Note:</strong>
+<code>gfsh</code> only saves cluster configuration values for configurations specified using <code>gfsh</code>. Configurations created by the management API are not saved with the cluster configurations.</p>
+
+<h2 id="importing-a-cluster-configuration">Importing a Cluster Configuration</h2>
+
+<p>Use the <code>gfsh</code> <code>import cluster-configuration</code> command to configure a new cluster based on a configuration exported from another system.
+You can import a cluster configuration only into a new cluster, that is, when:</p>
+
+<ul>
+<li>There are no running cache servers</li>
+</ul>
+
+<p>or</p>
+
+<ul>
+<li>The only running cache servers meet all of the following criteria:
+
+<ul>
+<li>Have been recently started</li>
+<li>Have no regions defined in them</li>
+<li>Have been given no other configuration changes since they started</li>
+</ul></li>
+</ul>
+
+<p>After you have imported the configuration, any servers you start receive this cluster configuration.</p>
+
+<p>To import a cluster configuration, start one or more locators and then run the <code>gfsh</code> <code>import cluster-configuration</code> command. For example:</p>
+<pre class="highlight plaintext"><code>import cluster-configuration --zip-file-name=/home/username/configs/myClusterConfig.zip
+</code></pre>
+
+<p>See <a href="../../tools_modules/gfsh/command-pages/import.html#topic_vnv_grz_ck">import cluster-configuration</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Main Features |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_getting_started docs_getting_started_product_intro">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Main Features
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section summarizes main features and key functionality.</p>
+
+<ul>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_CF0E3E5C4F884374B8F2F536DD2A375C">High Read-and-Write Throughput</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_9C5D669B583646F1B817284EB494DDA7">Low and Predictable Latency</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_EF7A73D35D1241289C9CA19EDDEBE959">High Scalability</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_CEB4ABFF83054AF6A47EA2FA09C240B1">Continuous Availability</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_86D2B8CC346349F3913209AF87648A02">Reliable Event Notifications</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_A65B5F0DE8BF4AA6AFF16E3A75D4E0AD">Parallelized Application Behavior on Data Stores</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_97CABBFF553647F6BBBC40AA7AF6D4C7">Shared-Nothing Disk Persistence</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_FCB2640F1BED4692A93F9300A41CE70D">Reduced Cost of Ownership</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_92A444D4B422434EBD5F81D11F32C1C7">Single-Hop Capability for Client/Server</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_577F601BC9854AA6B53CD3440F9B9A6A">Client/Server Security</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_091A306900D7402CAE5A46B5F9BFD612">Multisite Data Distribution</a></li>
+<li>  <a href="product_intro.html#concept_3B5E445B19884680900161BDF25E32C9__section_FF4C3B6E26104C4D93186F6FFE22B321">Continuous Querying</a></li>
+<li>  <a href="product_intro.html#mainfeatures_heterogeneousdatasharing">Heterogeneous Data Sharing</a></li>
+</ul>
+
+<h2 id="high-read-and-write-throughput"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_CF0E3E5C4F884374B8F2F536DD2A375C" class="no-quick-link"></a>High Read-and-Write Throughput</h2>
+
+<p>Read-and-write throughput is provided by concurrent main-memory data structures and a highly optimized distribution infrastructure. Applications can make copies of data dynamically in memory through synchronous or asynchronous replication for high read throughput or partition the data across many system members to achieve high read-and-write throughput. Data partitioning doubles the aggregate throughput if the data access is fairly balanced across the entire data set. Linear increase in throughput is limited only by the backbone network capacity.</p>
+
+<h2 id="low-and-predictable-latency"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_9C5D669B583646F1B817284EB494DDA7" class="no-quick-link"></a>Low and Predictable Latency</h2>
+
+<p>The optimized caching layer minimizes context switches between threads and processes. It manages data in highly concurrent structures to minimize contention points. Communication to peer members is synchronous if the receivers can keep up, which keeps the latency for data distribution to a minimum. Servers manage object graphs in serialized form to reduce the strain on the garbage collector.</p>
+
+<p>Subscription management (interest registration and continuous queries) is partitioned across server data stores, ensuring that a subscription is processed only once for all interested clients. The resulting improvements in CPU use and bandwidth utilization improve throughput and reduce latency for client subscriptions.</p>
+
+<h2 id="high-scalability"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_EF7A73D35D1241289C9CA19EDDEBE959" class="no-quick-link"></a>High Scalability</h2>
+
+<p>Scalability is achieved through dynamic partitioning of data across many members and spreading the data load uniformly across the servers. For &ldquo;hot&rdquo; data, you can configure the system to expand dynamically to create more copies of the data. You can also provision application behavior to run in a distributed manner in close proximity to the data it needs.</p>
+
+<p>If you need to support high and unpredictable bursts of concurrent client load, you can increase the number of servers managing the data and distribute the data and behavior across them to provide uniform and predictable response times. Clients are continuously load balanced to the server farm based on continuous feedback from the servers on their load conditions. With data partitioned and replicated across servers, clients can dynamically move to different servers to uniformly load the servers and deliver the best response times.</p>
+
+<p>You can also improve scalability by implementing asynchronous &ldquo;write behind&rdquo; of data changes to external data stores, like a database. This avoids a bottleneck by queuing all updates in order and redundantly. You can also conflate updates and propagate them in batch to the database.</p>
+
+<h2 id="continuous-availability"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_CEB4ABFF83054AF6A47EA2FA09C240B1" class="no-quick-link"></a>Continuous Availability</h2>
+
+<p>In addition to guaranteed consistent copies of data in memory, applications can persist data to disk on one or more members synchronously or asynchronously by using a &ldquo;shared nothing disk architecture.&rdquo; All asynchronous events (store-forward events) are redundantly managed in at least two members such that if one server fails, the redundant one takes over. All clients connect to logical servers, and the client fails over automatically to alternate servers in a group during failures or when servers become unresponsive.</p>
+
+<h2 id="reliable-event-notifications"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_86D2B8CC346349F3913209AF87648A02" class="no-quick-link"></a>Reliable Event Notifications</h2>
+
+<p>Publish/subscribe systems offer a data-distribution service where new events are published into the system and routed to all interested subscribers in a reliable manner. Traditional messaging platforms focus on message delivery, but often the receiving applications need access to related data before they can process the event. This requires them to access a standard database when the event is delivered, limiting the subscriber by the speed of the database.</p>
+
+<p>Data and events are offered through a single system. Data is managed as objects in one or more distributed data regions, similar to tables in a database. Applications simply insert, update, or delete objects in data regions, and the platform delivers the object changes to the subscribers. The subscriber receiving the event has direct access to the related data in local memory or can fetch the data from one of the other members through a single hop.</p>
+
+<h2 id="parallelized-application-behavior-on-data-stores"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_A65B5F0DE8BF4AA6AFF16E3A75D4E0AD" class="no-quick-link"></a>Parallelized Application Behavior on Data Stores</h2>
+
+<p>You can execute application business logic in parallel on members. The data-aware function-execution service permits execution of arbitrary, data-dependent application functions on the members where the data is partitioned for locality of reference and scale.</p>
+
+<p>By colocating the relevant data and parallelizing the calculation, you increase overall throughput. The calculation latency is inversely proportional to the number of members on which it can be parallelized.</p>
+
+<p>The fundamental premise is to route the function transparently to the application that carries the data subset required by the function and to avoid moving data around on the network. Application function can be executed on only one member, in parallel on a subset of members, or in parallel across all members. This programming model is similar to the popular Map-Reduce model from Google. Data-aware function routing is most appropriate for applications that require iteration over multiple data items (such as a query or custom aggregation function).</p>
+
+<h2 id="shared-nothing-disk-persistence"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_97CABBFF553647F6BBBC40AA7AF6D4C7" class="no-quick-link"></a>Shared-Nothing Disk Persistence</h2>
+
+<p>Each distributed system member manages data on disk files independent of other members. Failures in disks or cache failures in one member do not affect the ability of another cache instance to operate safely on its disk files. This &ldquo;shared nothing&rdquo; persistence architecture allows applications to be configured such that different classes of data are persisted on different members across the system, dramatically increasing the overall throughput of the application even when disk persistence is configured for application objects.</p>
+
+<p>Unlike a traditional database system, separate files are not used to manage data and transaction logs. All data updates are appended to files that are similar to transactional logs of traditional databases. You can avoid disk-seek times if the disk is not concurrently used by other processes, and the only cost incurred is the rotational latency.</p>
+
+<h2 id="reduced-cost-of-ownership"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_FCB2640F1BED4692A93F9300A41CE70D" class="no-quick-link"></a>Reduced Cost of Ownership</h2>
+
+<p>You can configure caching in tiers. The client application process can host a cache locally (in memory and overflow to disk) and delegate to a cache server farm on misses. Even a 30 percent hit ratio on the local cache translates to significant savings in costs. The total cost associated with every single transaction comes from the CPU cycles spent, the network cost, the access to the database, and intangible costs associated with database maintenance. By managing the data as application objects, you avoid the additional cost (CPU cycles) associated with mapping SQL rows to objects.</p>
+
+<h2 id="single-hop-capability-for-client/server"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_92A444D4B422434EBD5F81D11F32C1C7" class="no-quick-link"></a>Single-Hop Capability for Client/Server</h2>
+
+<p>Clients can send individual data requests directly to the server holding the data key, avoiding multiple hops to locate data that is partitioned. Metadata in the client identifies the correct server. This feature improves performance and client access to partitioned regions in the server tier.</p>
+
+<h2 id="client/server-security"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_577F601BC9854AA6B53CD3440F9B9A6A" class="no-quick-link"></a>Client/Server Security</h2>
+
+<p>There may be multiple, distinct users in client applications. This feature accommodates installations in which clients are embedded in application servers and each application server supports data requests from many users. Each user may be authorized to access a small subset of data on the servers, as in a customer application where each customer can access only their own orders and shipments. Each user in the client connects to the server with its own set of credentials and has its own access authorization to the server cache.</p>
+
+<h2 id="multisite-data-distribution"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_091A306900D7402CAE5A46B5F9BFD612" class="no-quick-link"></a>Multisite Data Distribution</h2>
+
+<p>Scalability problems can result from data sites being spread out geographically across a wide-area network (WAN). Models address these topologies, ranging from a single peer-to-peer cluster to reliable communications between data centers across the WAN. This model allows distributed systems to scale out in an unbounded and loosely coupled fashion without loss of performance, reliability or data consistency.</p>
+
+<p>At the core of this architecture is the gateway sender configuration used for distributing region events to a remote site. You can deploy gateway sender instances in parallel, which enables an increase in throughput for distributing region events across the WAN. You can also configure gateway sender queues for persistence and high availability to avoid data loss in the case of a member failure.</p>
+
+<h2 id="continuous-querying"><a id="concept_3B5E445B19884680900161BDF25E32C9__section_FF4C3B6E26104C4D93186F6FFE22B321" class="no-quick-link"></a>Continuous Querying</h2>
+
+<p>In messaging systems like Java Message Service, clients subscribe to topics and queues. Any message delivered to a topic is sent to the subscriber. Geode allows continuous querying by having applications express complex interest using Object Query Language.</p>
+
+<h2 id="heterogeneous-data-sharing"><a id="mainfeatures_heterogeneousdatasharing" class="no-quick-link"></a>Heterogeneous Data Sharing</h2>
+
+<p>C#, C++ and Java applications can share application business objects 
+without going through a transformation layer such as SOAP or XML.
+The server side behavior, though implemented in Java,
+provides a unique native cache for C++ and .NET applications.
+Application objects can be managed in the C++ process heap and 
+distributed to other processes using a common “on-the-wire” representation
+for objects.
+A C++ serialized object can be directly deserialized as an equivalent Java 
+or C# object.
+A change to a business object in one language can trigger reliable notifications in applications written in the other supported languages.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

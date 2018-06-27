@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How to Run a Geode Cache Transaction that Coordinates with an External Database |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_run_a_cache_transaction_with_external_db">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How to Run a Geode Cache Transaction that Coordinates with an External Database
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Coordinate a Geode cache transaction with an external database by using CacheWriter/CacheListener and TransactionWriter/TransactionListener plug-ins, <strong>to provide an alternative to using JTA transactions</strong>.</p>
+
+<p>There are a few things you should be careful about while working with Geode cache transactions and external databases:</p>
+
+<ul>
+<li><p>When you set up the JDBC connection, make sure that auto-commit is disabled. For example, in Java:</p>
+<pre class="highlight plaintext"><code>Connection getConnection() throws SQLException {
+    Connection con = ... // create the connection
+    con.setAutoCommit(false);
+    return con;
+}
+</code></pre></li>
+<li><p>The BEGIN statement, database operations and the PREPARE statement must all happen in the same connection session. In order to accomplish this, you will need to obtain the same JDBC connection session across multiple CacheWriter and TransactionWriter/TransactionListener invocations. One way to do this would be to look up the connection (from a user managed Map) based on <code>cacheTransactionManager.getTransactionId()</code>.</p></li>
+<li><p>Make sure that the prepare transaction feature is enabled in your external database. It is disabled in PostgreSQL by default. In PostgreSQL, the following property must be modified to enable it:</p>
+<pre class="highlight plaintext"><code>max_prepared_transactions = 1 # 1 or more enables, zero (default) disables this feature.
+</code></pre></li>
+</ul>
+
+<p>Use the following procedure to write a Geode cache transaction that coordinates with an external database:</p>
+
+<ol>
+<li> Configure Geode regions as necessary as described in <a href="run_a_cache_transaction.html#task_f15_mr3_5k">How to Run a Geode Cache Transaction</a>.</li>
+<li> Begin the transaction.</li>
+<li> If you have not previously committed a previous transaction in this connection, start a database transaction by issuing a BEGIN statement.</li>
+<li> Perform Geode cache operations; each cache operation invokes the CacheWriter. Implement the CacheWriter to perform the corresponding external database operations.</li>
+<li><p>Commit the transaction.
+At this point, the TransactionWriter is invoked. The TransactionWriter returns a TransactionEvent, which contains all the operations in the transaction. Call PREPARE TRANSACTION within your TransactionWriter code.</p></li>
+<li><p>After a transaction is successfully committed in Geode, the TransactionListener is invoked. The TransactionListener calls COMMIT PREPARED to commit the database transaction.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

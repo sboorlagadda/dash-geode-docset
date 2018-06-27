@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Notification Federation |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_notification_federation_and_alerts">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Notification Federation
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>All notifications emitted from managed nodes are federated to all JMX Managers in the system.</p>
+
+<p>These notifications are federated and then emitted by the DistributedSystemMXBean. If you attach a <code>javax.management.NotificationListener</code> to your DistributedSystemMXBean, the NotificationListener can listen to notifications from all MemberMXBeans and all CacheServerMXBeans.</p>
+
+<h2 id="attaching-listeners-to-mxbeans"><a id="topic_212EE5A2ABAB4E8E8EF71807C9ECEF1A__section_2909371D90764736B3AC7BE9E4BC1BE4" class="no-quick-link"></a>Attaching Listeners to MXBeans</h2>
+
+<p>When you attach a notification listener to the DistributedSystemMXBean, the DistributedSystemMXBean then acts as the notification hub for the entire distributed system. You do not have to attach a listener to each individual member or cache server MBean in order to listen to all the notifications in the distributed system.</p>
+
+<p>The following is an example of attaching a NotificationListener to an MBean using the JMX MBeanServer API:</p>
+<pre class="highlight plaintext"><code>NotificationListener myListener = ...
+ObjectName mbeanName = ... 
+MBeanServer.addNotificationListener(mbeanName, myListener, null, null);  
+</code></pre>
+
+<p>JMX Managers will emit notifications for all distributed system members with two exceptions:</p>
+
+<ul>
+<li>  If you use cache.xml to define resources such as regions and disks, then notifications for these resources are not federated to the JMX Manager. In those cases, the DistributedSystemMXBean cannot emit those notifications.</li>
+<li>  If a JMX Manager is started after a resource has been created, the JMX Manager cannot emit notifications for that resource.</li>
+</ul>
+
+<h2 id="system-alert-notifications"><a id="topic_212EE5A2ABAB4E8E8EF71807C9ECEF1A__section_7463D13112D54406953416356835E290" class="no-quick-link"></a>System Alert Notifications</h2>
+
+<p>System alerts are Geode alerts wrapped within a JMX notification. The JMX Manager registers itself as an alert listener with each member of the system, and by default, it receives all messages logged with the SEVERE alert level by any node in the distributed system. Consequently, the DistributedSystemMXBean will then emit notifications for these alerts on behalf of the DistributedSystem.</p>
+
+<p>By default, the JMX Manager registers itself to send notifications only for SEVERE level alerts. To change the alert level that the JMX Manager will send notifications for, use the <code>DistributedMXBean.changeAlertLevel</code> method. Possible alert levels to set are WARNING, ERROR, SEVERE, and NONE. After changing the level, the JMX Manager will only emit that level of log message as notifications.</p>
+
+<p>Notification objects include <strong>type</strong>, <strong>source</strong> and <strong>message</strong> attributes. System alerts also include the <strong>userData</strong> attribute. For system alerts, the notification object attributes correspond to the following:</p>
+
+<ul>
+<li>  <strong>type</strong>: system.alert</li>
+<li>  <strong>source</strong>: Distributed System ID</li>
+<li>  <strong>message</strong>: alert message</li>
+<li>  <strong>userData</strong>: name or ID of the member that raised the alert</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

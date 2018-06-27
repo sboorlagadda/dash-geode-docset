@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Changing the Default Geode Configuration in the Tomcat Module |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_tomcat_changing_gf_default_cfg">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Changing the Default Geode Configuration in the Tomcat Module
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default, the Tomcat module will run Geode automatically with pre-configured settings. You can change these Geode settings.</p>
+
+<p>Here are the default settings:</p>
+
+<ul>
+<li>  Locators are used for member discovery.</li>
+<li>  The region name is set to <code>gemfire_modules_sessions</code>.</li>
+<li>  The cache region is replicated for peer-to-peer configurations and partitioned (with redundancy turned on) for client/server configurations.</li>
+<li>  Geode clients have local caching turned on and when the local cache needs to evict data, it will evict least-recently-used (LRU) data first.</li>
+</ul>
+
+<p><strong>Note:</strong>
+On the application server side, the default inactive interval for session expiration is set to 30 minutes. To change this value, refer to <a href="tc_additional_info.html#tc_additional_info__section_C7C4365EA2D84636AE1586F187007EC4">Session Expiration</a>.</p>
+
+<h2 id="changing-geode-distributed-system-properties"><a id="tomcat_changing_gf_default_cfg__section_changing_sys_props" class="no-quick-link"></a>Changing Geode Distributed System Properties</h2>
+
+<p>Geode system properties must be set by adding properties to Tomcat&rsquo;s <code>server.xml</code> file. When setting properties, use the following syntax:</p>
+<pre class="highlight plaintext"><code>&lt;Listener 
+  className="org.apache.geode.modules.session.catalina.xxxLifecycleListener"
+  name="value" 
+  name="value" 
+  ...
+/&gt; 
+</code></pre>
+
+<p>If the <code>xxxLifecycleListener</code> is a <code>PeerToPeerCacheLifecycleListener</code>, then a minimal addition to the <code>server.xml</code> file is</p>
+<pre class="highlight plaintext"><code>&lt;Listener 
+  className="org.apache.geode.modules.session.catalina.
+     PeerToPeerCacheLifecycleListener"
+  cache-xml-file="cache-peer.xml" 
+  locators="localhost[10334]" 
+ /&gt; 
+</code></pre>
+
+<p>The list of configurable Tomcat&rsquo;s <code>server.xml</code> system properties include any of the properties that can be specified in Geode&rsquo;s <code>gemfire.properties</code> file. The following list contains some of the properties that can be configured.</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>cache-xml-file</td>
+<td>name of the cache configuration file</td>
+<td><code>cache-peer.xml</code> for peer-to-peer, <code>cache-client.xml</code> for client/server</td>
+</tr>
+<tr>
+<td>locators (only for peer-to-peer topology)</td>
+<td>(required) list of locators (host[port]) used by Geode members; if a single locator listens on its default port, then set this value to <code>&quot;localhost[10334]&quot;</code></td>
+<td>empty string</td>
+</tr>
+<tr>
+<td>log-file</td>
+<td>name of the Geode log file</td>
+<td><code>gemfire_modules.log</code></td>
+</tr>
+<tr>
+<td>statistic-archive-file</td>
+<td>name of the Geode statistics file</td>
+<td><code>gemfire_modules.gfs</code></td>
+</tr>
+<tr>
+<td>statistic-sampling-enabled</td>
+<td>whether Geode statistics sampling is enabled</td>
+<td>false</td>
+</tr>
+</tbody></table>
+
+<p>For more information on these properties, along with the full list of properties, see the <a href="../../reference/book_intro.html#reference">Reference</a>.</p>
+
+<p>In addition to the standard Geode system properties, the following cache-specific properties can also be configured with the <code>LifecycleListener</code>.</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>criticalHeapPercentage</td>
+<td>percentage of heap at which updates to the cache are refused</td>
+<td>0 (disabled)</td>
+</tr>
+<tr>
+<td>evictionHeapPercentage</td>
+<td>percentage of heap at which session eviction begins</td>
+<td>80.0</td>
+</tr>
+<tr>
+<td>rebalance</td>
+<td>whether a rebalance of the cache should be done when the application server instance is started</td>
+<td>false</td>
+</tr>
+</tbody></table>
+
+<p>Although these properties are not part of the standard Geode system properties, they apply to the entire JVM instance and are therefore also handled by the <code>LifecycleListener</code>. For more information about managing the heap, refer to <a href="../../managing/heap_use/heap_management.html#resource_manager">Managing Heap and Off-heap Memory</a>.</p>
+
+<h2 id="changing-cache-configuration-properties"><a id="tomcat_changing_gf_default_cfg__section_changing_cache_config_props" class="no-quick-link"></a>Changing Cache Configuration Properties</h2>
+
+<p>To edit Geode cache properties such as the name and the characteristics of the cache region, you add these properties to Tomcat&rsquo;s <code>context.xml</code> file. When adding properties, unless otherwise specified, use the following syntax:</p>
+<pre class="highlight plaintext"><code>&lt;Manager 
+  className="org.apache.geode.modules.session.catalina.Tomcat7DeltaSessionManager"
+  name="value" 
+  name="value" 
+  ...
+/&gt; 
+</code></pre>
+
+<p>In the preceding code snippet, <code>name</code> is the property name and <code>value</code> is the property value. For example:</p>
+<pre class="highlight plaintext"><code>&lt;Manager className="org.apache.geode.modules.session.catalina.
+      Tomcat7DeltaSessionManager" 
+  regionAttributesId="PARTITION_REDUNDANT" 
+  regionName="my_region" 
+/&gt; 
+</code></pre>
+
+<p>This example creates a partitioned region by the name of &ldquo;my_region&rdquo;.</p>
+
+<p>The following parameters are the cache configuration parameters that can be added to Tomcat&rsquo;s <code>context.xml</code> file.</p>
+
+<p><dt><strong>CommitSessionValve</strong></dt>
+<dd>Whether to wait until the end of the HTTP request to save all session attribute changes to the Geode cache; if the configuration line is present in the application&rsquo;s <code>context.xml</code> file, then only one put will be performed into the cache for the session per HTTP request. If the configuration line is not included, then the session is saved each time the <code>setAttribute</code> or <code>removeAttribute</code> method is invoked. As a consequence, multiple puts are performed into the cache during a single session. This configuration setting is recommended for any applications that modify the session frequently during a single HTTP request.</dd></p>
+
+<p>Default: Set</p>
+
+<p>To disable this configuration, remove or comment out the following line from Tomcat&rsquo;s <code>context.xml</code> file.</p>
+<pre class="highlight plaintext"><code>&lt;Valve className="org.apache.geode.modules.session.catalina.CommitSessionValve"/&gt;
+</code></pre>
+
+<p><dt><strong>enableDebugListener</strong></dt>
+<dd>Whether to enable a debug listener in the session region; if this parameter is set to true, info-level messages are logged to the GemFire log when sessions are created, updated, invalidated or expired.</dd></p>
+
+<p>Default: <code>false</code></p>
+
+<p>The Geode API equivalent to setting this parameter:</p>
+<pre class="highlight plaintext"><code>// Create factory
+AttributesFactory factory = ...; &lt;or&gt; RegionFactory factory = ...;
+// Add cache listener
+factory.addCacheListener(new DebugCacheListener());
+</code></pre>
+
+<p><dt><strong>enableLocalCache</strong></dt>
+<dd>Whether a local cache is enabled. If this parameter is set to true, the app server load balancer should be configured for sticky session mode.</dd></p>
+
+<p>Default: <code>false</code> for peer-to-peer, <code>true</code> for client/server</p>
+
+<p>The Geode API equivalent to setting this parameter:</p>
+<pre class="highlight plaintext"><code>// For peer-to-peer members: 
+Cache.createRegionFactory(REPLICATE_PROXY); 
+// For client members: 
+ClientCache.createClientRegionFactory(CACHING_PROXY_HEAP_LRU);
+</code></pre>
+
+<p><dt><strong>regionAttributesId</strong></dt>
+<dd>Specifies the region shortcut. For more information see <a href="../../basic_config/data_regions/region_shortcuts.html">Region Shortcuts and Custom Named Region Attributes</a>; when using a partitioned region attribute, it is recommended that you use PARTITION_REDUNDANT (rather than PARTITION) to ensure that the failure of a server does not result in lost session data.</dd></p>
+
+<p>Default: REPLICATE for peer-to-peer, PARTITION_REDUNDANT for client/server</p>
+
+<p>The Geode API equivalent to setting this parameter:</p>
+<pre class="highlight plaintext"><code>// Creates a region factory for the specified region shortcut 
+Cache.createRegionFactory(regionAttributesId); 
+</code></pre>
+
+<p><dt><strong>regionName</strong></dt>
+<dd>Name of the region.</dd></p>
+
+<p>Default: gemfire_modules_sessions</p>
+
+<p>The Geode API equivalent to setting this parameter:</p>
+<pre class="highlight plaintext"><code>// Creates a region with the specified name 
+RegionFactory.create(regionName); 
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Partitioned Regions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_partitioned_regions docs_developing_partitioned_regions_managing_partitioned_regions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Partitioned Regions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Plan the configuration and ongoing management of your partitioned region for host and accessor members and configure the regions for startup.</p>
+
+<p><a id="configure_partitioned_regions__section_241583D88E244AB6AB5CD05BF55F6A0A"></a>
+Before you begin, understand <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ol>
+<li> Start your region configuration using one of the <code>PARTITION</code> region shortcut settings. See <a href="../../basic_config/data_regions/region_shortcuts.html">Region Shortcuts and Custom Named Region Attributes</a>.</li>
+<li> If you need high availability for your partitioned region, configure for that. See <a href="configuring_ha_for_pr.html">Configure High Availability for a Partitioned Region</a>.</li>
+<li> Estimate the amount of space needed for the region. If you use redundancy, this is the max for all primary and secondary copies stored in the member. For example, with redundancy of one, each region data entry requires twice the space than with no redundancy, because the entry is stored twice. See <a href="../../reference/topics/memory_requirements_for_cache_data.html#calculating_memory_requirements">Memory Requirements for Cached Data</a>.</li>
+<li> Configure the total number of buckets for the region. This number must be the same for colocated regions. See <a href="configuring_bucket_for_pr.html#configuring_total_buckets">Configuring the Number of Buckets for a Partitioned Region</a>.</li>
+<li><p>Configure your members&rsquo; data storage and data loading for the region:</p>
+
+<ol>
+<li> You can have members with no local data storage and members with varying amounts of storage. Determine the max memory available in your different member types for this region. These will be set in the <code>partition-attributes</code> <code>local-max-memory</code>. This is the only setting in <code>partition-attributes</code> that can vary between members. Use these max values and your estimates for region memory requirements to help you figure how many members to start out with for the region.</li>
+<li> For members that store data for the region (<code>local-max-memory</code> greater than 0), define a data loader. See <a href="../outside_data_sources/implementing_data_loaders.html#implementing_data_loaders">Implement a Data Loader</a>.</li>
+<li> If you have members with no local data storage (<code>local-max-memory</code> set to 0), review your system startup/shutdown procedures. Make sure there is always at least one member with local data storage running when any members with no storage are running.</li>
+</ol></li>
+<li><p>If you want to custom partition the data in your region or colocate data between multiple regions, code and configure accordingly. See <a href="custom_partitioning_and_data_colocation.html#custom_partitioning_and_data_colocation">Understanding Custom Partitioning and Data Colocation</a>.</p></li>
+<li><p>Plan your partition rebalancing strategy and configure and program for that. See <a href="rebalancing_pr_data.html#rebalancing_pr_data">Rebalancing Partitioned Region Data</a>.</p></li>
+</ol>
+
+<p><strong>Note:</strong>
+To configure a partitioned region using gfsh, see <a href="../../tools_modules/gfsh/gfsh_command_index.html#concept_C291647179C5407A876CC7FCF91CF756">gfsh Command Help</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

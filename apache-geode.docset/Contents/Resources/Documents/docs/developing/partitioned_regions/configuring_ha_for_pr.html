@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configure High Availability for a Partitioned Region |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_partitioned_regions docs_developing_partitioned_regions_configuring_ha_for_pr">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configure High Availability for a Partitioned Region
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Configure in-memory high availability for your partitioned region. Set other high-availability options, like redundancy zones and redundancy recovery strategies.</p>
+
+<p>Here are the main steps for configuring high availability for a partitioned region. See later sections for details.</p>
+
+<ol>
+<li> Set the number of redundant copies the system should maintain of the region data. See <a href="set_pr_redundancy.html#set_pr_redundancy">Set the Number of Redundant Copies</a>. </li>
+<li> (Optional) If you want to group your data store members into redundancy zones, configure them accordingly. See <a href="set_redundancy_zones.html#set_redundancy_zones">Configure Redundancy Zones for Members</a>. </li>
+<li> (Optional) If you want Geode to only place redundant copies on different physical machines, configure for that. See <a href="set_enforce_unique_host.html#set_pr_redundancy">Set Enforce Unique Host</a>. </li>
+<li><p>Decide how to manage redundancy recovery and change Geode&rsquo;s default behavior as needed. </p>
+
+<ul>
+<li><strong>After a member crashes</strong>. If you want automatic redundancy recovery, change the configuration for that. See <a href="set_crash_redundancy_recovery.html#set_crash_redundancy_recovery">Configure Member Crash Redundancy Recovery for a Partitioned Region</a>. </li>
+<li><strong>After a member joins</strong>. If you do <em>not</em> want immediate, automatic redundancy recovery, change the configuration for that. See <a href="set_join_redundancy_recovery.html#set_join_redundancy_recovery">Configure Member Join Redundancy Recovery for a Partitioned Region</a>. </li>
+</ul></li>
+<li><p>Decide how many buckets Geode should attempt to recover in parallel when performing redundancy recovery. By default, the system recovers up to 8 buckets in parallel. Use the <code>gemfire.MAX_PARALLEL_BUCKET_RECOVERIES</code> system property to increase or decrease the maximum number of buckets to recover in parallel any time redundancy recovery is performed.</p></li>
+<li><p>For all but fixed partitioned regions, review the points at which you kick off rebalancing. Redundancy recovery is done automatically at the start of any rebalancing. This is most important if you run with no automated recovery after member crashes or joins. See <a href="rebalancing_pr_data.html#rebalancing_pr_data">Rebalancing Partitioned Region Data</a>. </p></li>
+</ol>
+
+<p>During runtime, you can add capacity by adding new members for the region. For regions that do not use fixed partitioning, you can also kick off a rebalancing operation to spread the region buckets among all members.</p>
+
+<ul>
+<li><p><strong><a href="set_pr_redundancy.html">Set the Number of Redundant Copies</a></strong></p>
+
+<p>Configure in-memory high availability for your partitioned region by specifying the number of secondary copies you want to maintain in the region&rsquo;s data stores.</p></li>
+<li><p><strong><a href="set_redundancy_zones.html">Configure Redundancy Zones for Members</a></strong></p>
+
+<p>Group members into redundancy zones so Geode will separate redundant data copies into different zones.</p></li>
+<li><p><strong><a href="set_enforce_unique_host.html">Set Enforce Unique Host</a></strong></p>
+
+<p>Configure Geode to use only unique physical machines for redundant copies of partitioned region data.</p></li>
+<li><p><strong><a href="set_crash_redundancy_recovery.html">Configure Member Crash Redundancy Recovery for a Partitioned Region</a></strong></p>
+
+<p>Configure whether and how redundancy is recovered in a partition region after a member crashes.</p></li>
+<li><p><strong><a href="set_join_redundancy_recovery.html">Configure Member Join Redundancy Recovery for a Partitioned Region</a></strong></p>
+
+<p>Configure whether and how redundancy is recovered in a partition region after a member joins.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

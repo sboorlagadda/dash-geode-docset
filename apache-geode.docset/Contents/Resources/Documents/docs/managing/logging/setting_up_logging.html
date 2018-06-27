@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Set Up Logging |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_logging docs_managing_logging_setting_up_logging">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Set Up Logging
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You configure logging in a member&rsquo;s <code>gemfire.properties</code> or at startup with <code>gfsh</code>.</p>
+
+<p><a id="setting_up_logging__section_35F8A9028A91441785BCACD6CD40A498"></a>
+Before you begin, make sure you understand <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</p>
+
+<ol>
+<li> Run a time synchronization service such as NTP on all Geode host machines. This is the only way to produce logs that are useful for troubleshooting. Synchronized time stamps ensure that log messages from different hosts can be merged to accurately reproduce a chronological history of a distributed run.</li>
+<li> Use a sniffer to monitor your logs Look for new or unexpected warnings, errors, or severe messages. The logs output by your system have their own characteristics, indicative of your system configuration and of the particular behavior of your applications, so you must become familiar with your applications&rsquo; logs to use them effectively.</li>
+<li><p>Configure member logging in each member&rsquo;s <code>gemfire.properties</code> as needed:</p>
+<pre class="highlight plaintext"><code># Default gemfire.properties log file settings
+log-level=config
+log-file=
+log-file-size-limit=0
+log-disk-space-limit=0
+</code></pre>
+
+<p><strong>Note:</strong>
+You can also specify logging parameters when you start up members (either locators or servers) using the <code>gfsh</code> command-line utility. In addition, you can modify log file properties and log-level settings while a member is already running by using the <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_7E6B7E1B972D4F418CB45354D1089C2B">alter runtime</a> command.</p>
+
+<ol>
+<li> Set <code>log-level</code>. Options are <code>severe</code> (the highest level), <code>error</code>, <code>warning</code>, <code>info</code>, <code>config</code>, and <code>fine</code>. The lower levels include higher level settings, so a setting of <code>warning</code> would log <code>warning</code>, <code>error</code>, and <code>severe</code> messages. For general troubleshooting, we recommend setting the log level at <code>config</code> or higher.  The <code>fine</code> setting can fill up disk rather quickly and impact system performance. Use <code>fine</code> only if necessary.</li>
+<li><p>Specify the log file name in <code>log-file</code>. This can be relative or absolute. If this property is not specified, the defaults are:</p>
+
+<ul>
+<li>  Standard output for applications</li>
+<li><p>For servers, the default log file location is:</p>
+<pre class="highlight plaintext"><code>working-directory/server-name.log
+</code></pre>
+
+<p>By default, when starting a server through <code>gfsh</code>, the <em>working -directory</em> corresponds to the directory (named after itself) that the cache server creates upon startup. Alternatively, you can specify a different working directory path when you start the cache server. The <em>server-name</em> corresponds to the name of the cache server provided upon startup.</p></li>
+<li><p>For a standalone locator, the default log file location is:</p>
+<pre class="highlight plaintext"><code>working-directory/locator-name.log
+</code></pre>
+
+<p>By default, when starting a locator through <code>gfsh</code>, the <em>working -directory</em> corresponds to the directory (named after itself) created when the locator starts up. Alternatively, you can specify a different working directory path when you start a locator. The <em>locator-name</em> corresponds to the name of the locator provided upon startup. If you are using a colocated or embedded locator, the locator logs will be part of the member’s log file.</p></li>
+</ul>
+
+<p>For the easiest logs examination and troubleshooting, send your logs to files instead of standard out.
+<strong>Note:</strong>
+Make sure each member logs to its own files. This makes the logs easier to decipher.</p></li>
+<li><p>Set the maximum size of a single log file in <code>log-file-size-limit</code>. If not set, the single, main log file is used. If set, the metadata file, the main log, and rolled child logs are used.</p></li>
+<li><p>Set the maximum size of all log files in <code>log-disk-space-limit</code>. If non-zero, this limits the combined size of all inactive log files, deleting oldest files first to stay under the limit. A zero setting indicates no limit.</p></li>
+</ol></li>
+<li><p>If you are using the <code>gfsh</code> command-line interface, <code>gfsh</code> can creates its own log file in the directory where you run the <code>gfsh</code> or <code>gfsh.bat</code> script. By default, gfsh does not generate log files for itself. To enable gfsh logs, set the following system property to the desired log level before starting gfsh:</p>
+<pre class="highlight plaintext"><code>export JAVA_ARGS=-Dgfsh.log-level=[severe|warning|info|config|fine|finer|finest]
+</code></pre>
+
+<p>gfsh log files are named <code>gfsh-0_0.log</code>.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

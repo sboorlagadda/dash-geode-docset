@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Run-time Considerations for Multicast |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_multicast_communication_runtime_considerations">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Run-time Considerations for Multicast
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>When you use multicast for messaging and data distribution, you need to understand how the health monitoring setting works and how to control memory use.</p>
+
+<p><strong>Multicast Health Monitor</strong></p>
+
+<p>The Geode management and monitoring system is supplemented by a <code>maxRetransmissionRatio</code> health
+monitoring setting for distributed system members. This ratio is the number of retransmission
+requests received divided by the number of multicast datagrams written. If the ratio is at 1.0, the
+member is retransmitting as many packets as it originally sent. Retransmissions are point-to-point,
+and many processes may request retransmission, so this number can get quite high if problems
+occur. The default value for <code>maxRetransmissionRatio</code> is 0.2.</p>
+
+<p>For example, consider a distributed system with one producer and two consumers of cache events using
+multicast to transmit cache updates. The new member is added, which is running on a machine without
+multicast enabled. As a result, there is a retransmission request for every cache update, and the
+<code>maxRetransmissionRatio</code> changes to 1.0.</p>
+
+<p><strong>Controlling Memory Use on Geode Hosts with Multicast</strong></p>
+
+<p>Running out of memory can impede a member’s performance and eventually lead to severe errors.</p>
+
+<p>When data is distributed over multicast, Geode incurs a fixed overhead of memory reserved for transmission buffers. A specified amount of memory is reserved for each distributed region. These producer-side buffers are used only when a receiver is not getting enough CPU to read from its own receiving buffer as quickly as the producer is sending. In this case, the receiver complains of lost data. The producer then retrieves the data, if it still exists in its buffer, and resends to the receiver.</p>
+
+<p>Tuning the transmission buffers requires a careful balance. Larger buffers mean that more data remains available for retransmission, providing more protection in case of a problem. On the other hand, a larger amount of reserved memory means that less memory is available for caching.</p>
+
+<p>You can adjust the transmission buffer size by resetting the <code>mcast-send-buffer-size</code> parameter in the <code>gemfire.properties</code> file:</p>
+<pre class="highlight plaintext"><code>mcast-send-buffer-size=45000
+</code></pre>
+
+<p><strong>Note:</strong>
+The maximum buffer size is constrained only by the limits of your system. If you are not seeing problems that could be related to lack of memory then do not change the default, since it provides greater protection in case of network problems.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Advanced Querying |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_advanced_querying">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Advanced Querying
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section includes advanced querying topics such as using query indexes, using query bind parameters, querying partitioned regions and query debugging.</p>
+
+<ul>
+<li><p><strong><a href="../querying_basics/performance_considerations.html">Performance Considerations</a></strong></p>
+
+<p>This topic covers considerations for improving query performance.</p></li>
+<li><p><strong><a href="../querying_basics/monitor_queries_for_low_memory.html">Monitoring Low Memory When Querying</a></strong></p>
+
+<p>The query monitoring feature prevents out-of-memory exceptions from occurring when you execute queries or create indexes.</p></li>
+<li><p><strong><a href="query_timeout.html">Timeouts for Long-Running Queries</a></strong></p>
+
+<p>Configure a timeout value for long running queries, such that they do
+not complete, and Geode throws an exception when a 
+query runs for longer than the configured value.</p></li>
+<li><p><strong><a href="using_query_bind_parameters.html">Using Query Bind Parameters</a></strong></p>
+
+<p>Using query bind parameters in Geode queries is similar to using prepared statements in SQL where parameters can be set during query execution. This allows you to build a query once and execute it multiple times by passing the query conditions during run time.</p></li>
+<li><p><strong><a href="../querying_basics/querying_partitioned_regions.html">Querying Partitioned Regions</a></strong></p>
+
+<p>Geode allows you to manage and store large amounts of data across distributed nodes using partitioned regions. The basic unit of storage for a partitioned region is a bucket, which resides on a Geode node and contains all the entries that map to a single hashcode. In a typical partitioned region query, the system distributes the query to all buckets across all nodes, then merges the result sets and sends back the query results.</p></li>
+<li><p><strong><a href="query_debugging.html">Query Debugging</a></strong></p>
+
+<p>You can debug a specific query at the query level by adding the <code>&lt;trace&gt;</code> keyword before the query string that you want to debug.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

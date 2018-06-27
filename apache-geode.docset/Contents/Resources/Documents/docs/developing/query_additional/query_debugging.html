@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Query Debugging |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_additional docs_developing_query_additional_query_debugging">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Query Debugging
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can debug a specific query at the query level by adding the <code>&lt;trace&gt;</code> keyword before the query string that you want to debug.</p>
+
+<p>Here is an example:</p>
+<pre class="highlight plaintext"><code>&lt;trace&gt; select * from /exampleRegion
+</code></pre>
+
+<p>You can also write:</p>
+<pre class="highlight plaintext"><code>&lt;TRACE&gt; select * from /exampleRegion
+</code></pre>
+
+<p>When the query is executed, Geode will log a message in <code>$GEMFIRE_DIR/system.log</code> with the following information:</p>
+<pre class="highlight plaintext"><code>[info 2011/08/29 11:24:35.472 PDT CqServer &lt;main&gt; tid=0x1] Query Executed in 9.619656 ms; rowCount = 99; indexesUsed(0) "select *  from /exampleRegion" 
+</code></pre>
+
+<p>If you want to enable debugging for all queries, you can enable query execution logging by setting a System property on the command line during start-up:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server_name -–J=-Dgemfire.Query.VERBOSE=true
+</code></pre>
+
+<p>Or you can set the property programmatically:</p>
+<pre class="highlight plaintext"><code>System.setProperty("gemfire.Query.VERBOSE","true");
+</code></pre>
+
+<p>As an example, let us say you have an EmployeeRegion that that contains Employee objects as values and the objects have public fields in them like ID and status.</p>
+<pre class="highlight plaintext"><code>Employee.java
+Class Employee {
+ public int ID;
+ public String status;
+ - - - - - -
+ - - - - - -
+}
+</code></pre>
+
+<p>In addition, you have created the following indexes for the region:</p>
+<pre class="highlight plaintext"><code>&lt;index name="sampleIndex-1"&gt;
+&lt;functional from-clause="/test " expression="ID"/&gt;
+&lt;/index&gt;
+&lt;index name="sampleIndex-2"&gt;
+&lt;functional from-clause="/test " expression="status"/&gt;
+&lt;/index&gt;
+</code></pre>
+
+<p>After you have set <code>gemfire.Query.VERBOSE</code> to &ldquo;true&rdquo;, you could see the following debug messages in the logs after running queries on the EmployeeRegion or its indexes:</p>
+
+<ul>
+<li><p>If indexes are not used in the query execution, you would see a debug message like this:</p>
+<pre class="highlight plaintext"><code>[info 2011/08/29 11:24:35.472 PDT CqServer &lt;main&gt; tid=0x1] Query Executed in 9.619656 ms; rowCount = 99; indexesUsed(0) "select * from /test k where ID &gt; 0 and status='active'"
+</code></pre></li>
+<li><p>When single index is used in query execution, you might see a debug message like this:</p>
+<pre class="highlight plaintext"><code>[info 2011/08/29 11:24:35.472 PDT CqServer &lt;main&gt; tid=0x1] Query Executed in 101.43499 ms; rowCount = 199; indexesUsed(1):sampleIndex-1(Results: 199) "select count *   from /test k where ID &gt; 0"
+</code></pre></li>
+<li><p>When multiple indexes are used by a query, you might see a debug message like this:</p>
+<pre class="highlight plaintext"><code>[info 2011/08/29 11:24:35.472 PDT CqServer &lt;main&gt; tid=0x1] Query Executed in 79.43847 ms; rowCount = 199; indexesUsed(2):sampleIndex-2(Results: 100),sampleIndex-1(Results: 199) "select * from /test k where ID &gt; 0 OR status='active'"
+</code></pre></li>
+</ul>
+
+<p>In above log messages, the following information is provided:</p>
+
+<ul>
+<li>  &ldquo;rowCount&rdquo; represents ResultSet size for the query.</li>
+<li>  &ldquo;indexesUsed(\n) &rdquo; shows n indexes were used for finding the results of the query.</li>
+<li>  Each index name and its corresponding results are reported respectively.</li>
+<li>  The log can be identified with the original query string itself appended in the end.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

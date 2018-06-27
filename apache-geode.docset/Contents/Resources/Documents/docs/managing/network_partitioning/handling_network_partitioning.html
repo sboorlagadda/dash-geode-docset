@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configure Apache Geode to Handle Network Partitioning |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_network_partitioning docs_managing_network_partitioning_handling_network_partitioning">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configure Apache Geode to Handle Network Partitioning
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section lists configuration considerations relating to network partition detection.</p>
+
+<p><a id="handling_network_partitioning__section_EAF1957B6446491A938DEFB06481740F"></a>
+The system uses a combination of member coordinators and system members, designated as lead members, to detect and resolve network partitioning problems.</p>
+
+<ul>
+<li><p>Network partition detection works in all environments. Using multiple locators mitigates the effect of network partitioning. See <a href="../../topologies_and_comm/p2p_configuration/setting_up_a_p2p_system.html">Configuring Peer-to-Peer Discovery</a>.</p></li>
+<li><p>Network partition detection is enabled by default. The default setting in the <code>gemfire.properties</code> file is</p>
+<pre class="highlight plaintext"><code>enable-network-partition-detection=true
+</code></pre>
+
+<p>Processes that do not have network partition detection enabled are not eligible to be the lead member, so their failure will not trigger declaration of a network partition.</p>
+
+<p>All system members should have the same setting for <code>enable-network-partition-detection</code>. If they do not, the system throws a <code>GemFireConfigException</code> upon startup.</p></li>
+<li><p>The property <code>enable-network-partition-detection</code> must be true if you are using either partitioned or persistent regions. If you create a persistent region and <code>enable-network-partition-detection</code> to set to false, you will receive the following warning message:</p>
+<pre class="highlight plaintext"><code>Creating persistent region {0}, but enable-network-partition-detection is set to false.
+      Running with network partition detection disabled can lead to an unrecoverable system in the
+      event of a network split."
+</code></pre></li>
+<li><p>Configure regions you want to protect from network partitioning with a scope setting of <code>DISTRIBUTED_ACK</code> or <code>GLOBAL</code>. Do not use <code>DISTRIBUTED_NO_ACK</code> scope. This prevents operations from being performed throughout the distributed system before a network partition is detected.
+<strong>Note:</strong>
+GemFire issues an alert if it detects <code>DISTRIBUTED_NO_ACK</code> regions when network partition detection is enabled:</p>
+<pre class="highlight plaintext"><code>Region {0} is being created with scope {1} but enable-network-partition-detection is enabled in the distributed system. 
+This can lead to cache inconsistencies if there is a network failure.
+
+</code></pre></li>
+<li><p>These other configuration parameters affect or interact with network partitioning detection. Check whether they are appropriate for your installation and modify as needed.</p>
+
+<ul>
+<li>  If you have network partition detection enabled, the threshold percentage value for allowed membership weight loss is automatically configured to 51. You cannot modify this value. <strong>Note:</strong> The weight loss calculation uses round to nearest. Therefore, a value of 50.51 is rounded to 51 and will cause a network partition.</li>
+<li>  Failure detection is initiated if a member&rsquo;s <code>ack-wait-threshold</code> (default is 15 seconds) and <code>ack-severe-alert-threshold</code> (15 seconds) properties elapse before receiving a response to a message. If you modify the <code>ack-wait-threshold</code> configuration value, you should modify <code>ack-severe-alert-threshold</code> to match the other configuration value.</li>
+<li>  If the system has clients connecting to it, the clients&rsquo; <code>cache.xml</code> pool <code>read-timeout</code> should be set to at least three times the <code>member-timeout</code> setting in the server&rsquo;s <code>gemfire.properties</code> file. The default pool <code>read-timeout</code> setting is 10000 milliseconds.</li>
+<li>  You can adjust the default weights of members by specifying the system property <code>gemfire.member-weight</code> upon startup. For example, if you have some VMs that host a needed service, you could assign them a higher weight upon startup.</li>
+</ul></li>
+<li><p>By default, members that are forced out of the distributed system by a network partition event will automatically restart and attempt to reconnect. Data members will attempt to reinitialize the cache. See <a href="../member-reconnect.html">Handling Forced Cache Disconnection Using Autoreconnect</a>.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

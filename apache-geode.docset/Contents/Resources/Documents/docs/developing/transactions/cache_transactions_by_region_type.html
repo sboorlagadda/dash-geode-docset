@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Transactions by Region Type |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_cache_transactions_by_region_type">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Transactions by Region Type
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_nlq_sk1_wk"></a></p>
+
+<p>A transaction is managed on a per-cache basis, so multiple regions in the cache can participate in a single transaction. The data scope of a Geode cache transaction is the cache that hosts the transactional data. For partitioned regions, this may be a remote host to the one running the transaction application. Any transaction that includes one or more partitioned regions is run on the member storing the primary copy of the partitioned region data. Otherwise, the transaction host is the same one running the application.</p>
+
+<ul>
+<li><p>The client executing the transaction code is called the transaction initiator.</p></li>
+<li><p>The member contacted by the transaction initiator is called the transaction delegate.</p></li>
+<li><p>The member that hosts the data—and the transaction—is called the transaction host.</p></li>
+</ul>
+
+<p>The transaction host may be the same member or different member from the transaction initiator. In either case, when the transaction commits, data distribution is done from the transaction host in the same way.</p>
+
+<p><strong>Note:</strong>
+If you have consistency checking enabled in your region, the transaction will generate all necessary version information for the region update when the transaction commits. See <a href="working_with_transactions.html#transactions_and_consistency">Transactions and Consistent Regions</a> for more details.</p>
+
+<h2 id="transactions-and-partitioned-regions">Transactions and Partitioned Regions</h2>
+
+<p><a id="concept_ysk_xj1_wk"></a></p>
+
+<p>In partitioned regions, transaction operations are done first on the primary data store then distributed to other members from there, regardless of which member initiates the cache operation. This is the same as is done for normal cache operations on partitioned regions.</p>
+
+<p>In this figure, M1 runs two transactions.</p>
+
+<ul>
+<li>  The first transaction, T1, works on data whose primary buckets are stored in M1, so M1 is the transaction host.</li>
+<li>  The second transaction, T2, works on data whose primary buckets are stored in M2, so M1 is the transaction delegate and M2 is the transaction host.</li>
+</ul>
+
+<p><em>Transaction on a Partitioned Region:</em></p>
+
+<p><img src="../../images_svg/transactions_partitioned_1.svg" id="concept_ysk_xj1_wk__image_9BF680072A674BCF9F01958753F02952" class="image imageleft" /></p>
+
+<p>The transaction is managed on the transaction host. This includes the transactional view, all operations, and all local cache event handling. In this example, when T2 is committed, the data on M2 is updated and the transaction events are distributed throughout the system, exactly as if the transaction had originated on M2.</p>
+
+<p>The first region operation within the transaction determines the transaction host. All other operations must also work with that as their transaction host:</p>
+
+<ul>
+<li>  All partitioned region data managed inside the transaction must use the transaction host as their primary data store. In the example, if transaction T2 tried to work on entry W in addition to entries Y and Z, the <code>TransactionDataNotColocatedException</code> would be thrown. For information on partitioning data so it is properly colocated for transactions, see <a href="../partitioned_regions/custom_partitioning_and_data_colocation.html#custom_partitioning_and_data_colocation">Understanding Custom Partitioning and Data Colocation</a>. In addition, the data must not be moved during the transaction. Design partitioned region rebalancing to avoid rebalancing while transactions are running. See <a href="../partitioned_regions/rebalancing_pr_data.html#rebalancing_pr_data">Rebalancing Partitioned Region Data</a>.</li>
+<li>  All non-partitioned region data managed inside the transaction must be available on the transaction host and must be distributed. Operations on regions with local scope are not allowed in transactions with partitioned regions.</li>
+</ul>
+
+<p>The next figure shows a transaction that operates on two partitioned regions and one replicated region. As with the single region example, all local event handling is done on the transaction host.</p>
+
+<p>For a transaction to work, the first operation must be on one of the partitioned regions, to establish M2 as the transaction host. Running the first operation on a key in the replicated region would set M1 as the transaction host, and subsequent operations on the partitioned region data would fail with a <code>TransactionDataNotColocatedException</code> exception.</p>
+
+<p><em>Transaction on a Partitioned Region with Other Regions:</em></p>
+
+<p><img src="../../images_svg/transactions_partitioned_2.svg" id="concept_ysk_xj1_wk__image_34496249618F46F8B8F7E2D4F342E1E6" class="image" /></p>
+
+<h2 id="transactions-and-replicated-regions">Transactions and Replicated Regions</h2>
+
+<p><a id="concept_nl5_pk1_wk"></p>
+
+<p><a id="concept_nl5_pk1_wk__section_C55E80C7136D4A9A8327563E4B89356D"></a>
+For replicated regions, the transaction and its operations are applied to the local member and the resulting transaction state is distributed to other members according to the attributes of each region.</p>
+
+<p><strong>Note:</strong>
+If possible, use <code>distributed-ack</code> scope for your regions where you will run transactions. The <code>REPLICATE</code> region shortcuts use <code>distributed-ack</code> scope.</p>
+
+<p>The region’s scope affects how data is distributed during the commit phase. Transactions are supported for these region scopes:</p>
+
+<ul>
+<li>  <code>distributed-ack</code>. Handles transactional conflicts both locally and between members. The <code>distributed-ack</code> scope is designed to protect data consistency. This scope provides the highest level of coordination among transactions in different members. When the commit call returns for a transaction run on all distributed-ack regions, you can be sure that the transaction’s changes have already been sent and processed. In addition, any callbacks in the remote member have been invoked.</li>
+<li>  <code>distributed-no-ack</code>. Handles transactional conflicts locally, with less coordination between members. This provides the fastest transactions with distributed regions, but it does not work for all situations. This scope is appropriate for:
+
+<ul>
+<li>  Applications with only one writer</li>
+<li>  Applications with multiple writers that write to nonoverlapping data sets</li>
+</ul></li>
+<li>  <code>local</code>. No distribution, handles transactional conflicts locally. Transactions on regions with local scope have no distribution, but they perform conflict checks in the local member. You can have conflict between two threads when their transactions change the same entry.</li>
+</ul>
+
+<p>Transactions on non-replicated regions (regions that use the old API with DataPolicy EMPTY, NORMAL and PRELOADED) are always transaction initiators, and the transaction data host is always a member with a replicated region. This is similar to the way transactions using the PARTITION_PROXY shortcut are forwarded to members with primary bucket.</p>
+
+<p><strong>Note:</strong>
+When you have transactions operating on EMPTY, NORMAL or PARTITION regions, make sure that the Geode property <code>conserve-sockets</code> is set to false to avoid distributed deadlocks. An empty region is a region created with the API <code>RegionShortcut.REPLICATE_PROXY</code> or a region with that uses the old API of <code>DataPolicy</code> set to <code>EMPTY</code>.</p>
+
+<h2 id="conflicting-transactions-in-distributed-ack-regions">Conflicting Transactions in Distributed-Ack Regions</h2>
+
+<p>In this series of figures, even after the commit operation is launched, the transaction continues to exist during the data distribution (step 3). The commit does not complete until the changes are made in the remote caches and M1 receives the acknowledgement that verifies that the tasks are complete.</p>
+
+<p><strong>Step 1:</strong> Before commit, Transactions T1 and T2 each change the same entry in Region B within their local cache. T1 also makes a change to Region A.</p>
+
+<p><img src="../../images_svg/transactions_replicate_1.svg" id="concept_nl5_pk1_wk__image_cj1_zzj_54" class="image" /></p>
+
+<p><strong>Step 2:</strong> Conflict detected and eliminated. The distributed system recognizes the potential conflict from Transactions T1 and T2 using the same entry. T1 started to commit first, so it is allowed to continue. T2&rsquo;s commit fails with a conflict.</p>
+
+<p><img src="../../images_svg/transactions_replicate_2.svg" id="concept_nl5_pk1_wk__image_sbh_21k_54" class="image" /></p>
+
+<p><strong>Step 3:</strong> Changes are in transit. T1 commits and its changes are merged into the local cache. The commit does not complete until Geode distributes the changes to the remote regions and acknowledgment is received.</p>
+
+<p><img src="../../images_svg/transactions_replicate_3.svg" id="concept_nl5_pk1_wk__image_qgl_k1k_54" class="image" /></p>
+
+<p><strong>Step 4:</strong> After commit. Region A in M2 and Region B in M3 reflect the changes from transaction T1 and M1 has received acknowledgment. Results may not be identical in different members if their region attributes (such as expiration) are different.</p>
+
+<p><img src="../../images_svg/transactions_replicate_4.svg" id="concept_nl5_pk1_wk__image_mkm_q1k_54" class="image" /></p>
+
+<h2 id="conflicting-transactions-in-distributed-no-ack-regions">Conflicting Transactions in Distributed-No-Ack Regions</h2>
+
+<p>These figures show how using the no-ack scope can produce unexpected results. These two transactions are operating on the same region B entry. Since they use no-ack scope, the conflicting changes cross paths and leave the data in an inconsistent state.</p>
+
+<p><strong>Step 1:</strong> As in the previous example, Transactions T1 and T2 each change the same entry in Region B within their local cache. T1 also makes a change to Region A. Neither commit fails, and the data becomes inconsistent.</p>
+
+<p><img src="../../images_svg/transactions_replicate_1.svg" id="concept_nl5_pk1_wk__image_jn2_cbk_54" class="image" /></p>
+
+<p><strong>Step 2:</strong> Changes are in transit. Transactions T1 and T2 commit and merge their changes into the local cache. Geode then distributes changes to the remote regions.</p>
+
+<p><img src="../../images_svg/transactions_replicate_no_ack_1.svg" id="concept_nl5_pk1_wk__image_fk1_hbk_54" class="image" /></p>
+
+<p><strong>Step 3:</strong> Distribution is complete. The non-conflicting changes in Region A have been distributed to M2 as expected. For Region B however, T1 and T2 have traded changes, which is not the intended result.</p>
+
+<p><img src="../../images_svg/transactions_replicate_no_ack_2.svg" id="concept_nl5_pk1_wk__image_ijc_4bk_54" class="image" /></p>
+
+<h2 id="conflicting-transactions-with-local-scope"><a id="concept_nl5_pk1_wk__section_760DE9F2226B46AD8A025F562CEA4D40" class="no-quick-link"></a>Conflicting Transactions with Local Scope</h2>
+
+<p>When encountering conflicts with local scope, the first transaction to start the commit process completes, and the other transaction’s commit fails with a conflict.. In the diagram below, the resulting value for entry Y depends on which transaction commits first.
+<img src="../../images_svg/transactions_replicate_local_1.svg" id="concept_nl5_pk1_wk__image_A37172C328404796AE1F318068C18F43" class="image" /></p>
+
+<h2 id="transactions-and-persistent-regions">Transactions and Persistent Regions</h2>
+
+<p><a id="concept_omy_341_wk"></a></p>
+
+<p>By default, Geode does not allow transactions on persistent regions. You can enable the use of transactions on persistent regions by setting the property <code>gemfire.ALLOW_PERSISTENT_TRANSACTIONS</code> to true. This may also be accomplished at server startup using gfsh:</p>
+<pre class="highlight plaintext"><code>gfsh start server --name=server1 --dir=server1_dir \
+--J=-Dgemfire.ALLOW_PERSISTENT_TRANSACTIONS=true 
+</code></pre>
+
+<p>Since Geode does not provide atomic disk persistence guarantees, the default behavior is to disallow disk-persistent regions from participating in transactions. However, when choosing to enable transactions on persistent regions, consider the following:</p>
+
+<ul>
+<li>  Geode does ensure atomicity for in-memory updates.</li>
+<li>  When any failed member is unable to complete the logic triggered by a transaction (including subsequent disk writes), that failed member is removed from the distributed system and, if restarted, must rebuild its state from surviving nodes that successfully complete the updates.</li>
+<li>  The chances of multiple nodes failing to complete the disk writes that result from a transaction commit due to nodes crashing for unrelated reasons are small. The real risk is that the file system buffers holding the persistent updates do not get written to disk in the case of operating system or hardware failure. If only the Geode process crashes, atomicity still exists. The overall risk of losing disk updates can also be mitigated by enabling synchronized disk file mode for the disk stores, but this incurs a high performance penalty.</li>
+</ul>
+
+<p>To mitigate the risk of data not get fully written to disk on all copies of the participating persistent disk stores:</p>
+
+<ul>
+<li>  Make sure you have enough redundant copies of the data. The guarantees of multiple/distributed in-memory copies being (each) atomically updated as part of the Transaction commit sequence can help guard against data corruption.</li>
+<li>  When executing transactions on persistent regions, we recommend using the TransactionWriter to log all transactions along with a time stamp. This will allow you to recover in the event that all nodes fail simultaneously while a transaction is being committed. You can use the log to recover the data manually.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

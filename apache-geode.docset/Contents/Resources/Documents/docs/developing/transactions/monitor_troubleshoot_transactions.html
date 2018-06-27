@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Monitoring and Troubleshooting Transactions |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_transactions docs_developing_transactions_monitor_troubleshoot_transactions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Monitoring and Troubleshooting Transactions
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic covers errors that may occur when running transactions in Geode.</p>
+
+<p><a id="monitor_troubleshoot_transactions__section_881D2FF6761B4D689DDB46C650E2A2E1"></a>
+Unlike database transactions, Geode does not write a transaction log to disk. To get the full details about committed operations, use a transaction listener to monitor the transaction events and their contained cache events for each of your transactions.</p>
+
+<h2 id="statistics-on-cache-transactions"><a id="monitor_troubleshoot_transactions__section_2B66338C851A4FF386B60CC5CF4DCF77" class="no-quick-link"></a>Statistics on Cache Transactions</h2>
+
+<p>During the operation of Geode cache transactions, if statistics are enabled, transaction-related statistics are calculated and accessible from the CachePerfStats statistic resource. Because the transaction’s data scope is the cache, these statistics are collected on a per-cache basis.</p>
+
+<h2 id="commit"><a id="monitor_troubleshoot_transactions__section_EA9277E6CFD7423F95BA4D04955FDE2A" class="no-quick-link"></a>Commit</h2>
+
+<p>In a failed commit, the exception lists the first conflict that caused the failure. Other conflicts can exist, but are not reported.</p>
+
+<h2 id="capacity-limits">Capacity Limits</h2>
+
+<p>A transaction can create data beyond the capacity limit set in the region’s eviction attributes. The capacity limit does not take effect until commit time. Then, any required eviction action takes place as part of the commit.</p>
+
+<h2 id="interaction-with-the-resource-manager"><a id="monitor_troubleshoot_transactions__section_C7588E4F143B4D7FAFAEDCF5AE4FF2C8" class="no-quick-link"></a>Interaction with the Resource Manager</h2>
+
+<p>The Geode resource manager, which controls overall heap use, either allows all transactional operations or blocks the entire transaction. If a cache reaches the critical threshold in the middle of a commit, the commit is allowed to finish before the manager starts blocking operations.</p>
+
+<h2 id="transaction-exceptions"><a id="monitor_troubleshoot_transactions__section_8942ABA6F23C4ED58877C894B13F4F21" class="no-quick-link"></a>Transaction Exceptions</h2>
+
+<p>The following sections list possible transaction exceptions.</p>
+
+<p><strong>Exceptions Indicating Transaction Failure</strong></p>
+
+<ul>
+<li>  <strong><code>TransactionDataNodeHasDepartedException</code></strong>. This exception means the transaction host has departed unexpectedly. Clients and members that run transactions but are not a transaction host can get this exception. You can avoid this by working to ensure your transaction hosts are stable and remain running when transactions are in progress.</li>
+<li>  <strong><code>TransactionDataNotColocatedException</code></strong>. You will get this error if you try to run a transaction on data that is not all located in the same member. Partition your data so that a single member contains all data that will be accessed as part of a single transaction. See <a href="cache_transactions_by_region_type.html#concept_ysk_xj1_wk">Transactions and Partitioned Regions</a> and <a href="../partitioned_regions/custom_partitioning_and_data_colocation.html#custom_partitioning_and_data_colocation">Understanding Custom Partitioning and Data Colocation</a>.</li>
+<li>  <strong><code>TransactionDataRebalancedException</code></strong>. You get this error if your transactional data is moved to another member for rebalancing during the transaction. Manage your partitioned region data to avoid rebalancing during a transaction. See <a href="../partitioned_regions/rebalancing_pr_data.html#rebalancing_pr_data">Rebalancing Partitioned Region Data</a>.</li>
+</ul>
+
+<p><strong>Exceptions Indicating Unknown Transaction Outcome</strong></p>
+
+<ul>
+<li>  <strong><code>TransactionInDoubtException</code></strong>. Some of the transactional operations may have succeeded and some may have failed. This can happen to clients and to any member running a transaction on another data host. To manage this, you may want to install cache listeners in the members running the transaction code. Use the listeners to monitor and record the changes you receive from your transactions so you can recover as needed if you get this exception.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

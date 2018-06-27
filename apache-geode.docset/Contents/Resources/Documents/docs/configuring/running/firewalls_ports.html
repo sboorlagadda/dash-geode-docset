@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Firewalls and Ports |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_firewalls_ports">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Firewalls and Ports
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Make sure your port settings are configured correctly for firewalls.</p>
+
+<p><a id="concept_5ED182BDBFFA4FAB89E3B81366EBC58E__section_F9C1D7419F954DC1A305C34714C8615C"></a>
+There are several different port settings that need to be considered when using firewalls:</p>
+
+<ul>
+<li><p>Port that the cache server listens on. This is configurable using the <code>cache-server</code> element in cache.xml, on the CacheServer class in Java APIs, and as a command line option to the <code>gfsh start server</code> command.</p>
+
+<p>By default, if not otherwise specified, Geode clients and servers discover each other on a pre-defined port (<strong>40404</strong>) on the localhost.</p></li>
+<li><p>Locator port. Geode clients can use the locator to automatically discover cache servers. The locator port is configurable as a command-line option to the <code>gfsh start locator</code> command. Locators are used in the peer-to-peer cache deployments to discover other processes. They can be used by clients to locate servers as an alternative to configuring clients with a collection of server addresses and ports.</p>
+
+<p>By default, if not otherwise specified, Geode locators use the default port <strong>10334</strong>.</p></li>
+<li><p>Since locators start up the distributed system, locators must also have their ephemeral port range and TCP port accessible to other members through the firewall.</p></li>
+<li><p>For clients, you configure the client to connect to servers using the client&rsquo;s pool configuration. The client&rsquo;s pool configuration has two options: you can create a pool with either a list of server elements or a list of locator elements. For each element, you specify the host and port. The ports specified must be made accessible through your firewall.</p></li>
+</ul>
+
+<h2 id="limiting-ephemeral-ports-for-peer-to-peer-membership"><strong>Limiting Ephemeral Ports for Peer-to-Peer Membership</strong></h2>
+
+<p>By default, Geode assigns <em>ephemeral</em> ports, that is, temporary ports assigned from a designated range, which can encompass a large number of possible ports. When a firewall is present, the ephemeral port range usually must be limited to a much smaller number, for example six. If you are configuring P2P communications through a firewall, you must also set the TCP port for each process and ensure that UDP traffic is allowed through the firewall.</p>
+
+<h2 id="properties-for-firewall-and-port-configuration"><strong>Properties for Firewall and Port Configuration</strong></h2>
+
+<p>This table contains properties potentially involved in firewall behavior, with a brief description of each property.</p>
+
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Configuration area</strong></th>
+<th><strong>Property or Setting</strong></th>
+<th><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">conserve-sockets</code></p></td>
+<td><p>Specifies whether sockets are shared by the system member&rsquo;s threads.</p></td>
+</tr>
+<tr class="even">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">locators</code></p></td>
+<td><p>The list of locators used by system members. The list must be configured consistently for every member of the distributed system.</p></td>
+</tr>
+<tr class="odd">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">mcast-address</code></p></td>
+<td><p>Address used to discover other members of the distributed system. Only used if mcast-port is non-zero. This attribute must be consistent across the distributed system.</p></td>
+</tr>
+<tr class="even">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">mcast-port</code></p></td>
+<td><p>Port used, along with the mcast-address, for multicast communication with other members of the distributed system. If zero, multicast is disabled for data distribution.</p></td>
+</tr>
+<tr class="odd">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">membership-port-range</code></p></td>
+<td><p>The range of ephemeral ports available for unicast UDP messaging and for TCP failure detection in the peer-to-peer distributed system.</p></td>
+</tr>
+<tr class="even">
+<td>peer-to-peer config</td>
+<td><p><code class="ph codeph">tcp-port</code></p></td>
+<td><p>The TCP port to listen on for cache communications.</p></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Configuration Area</th>
+<th><strong>Property or Setting</strong></th>
+<th><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cache server config</td>
+<td><p><code class="ph codeph">hostname-for-clients</code></p></td>
+<td><p>Hostname or IP address to pass to the client as the location where the server is listening.</p></td>
+</tr>
+<tr class="even">
+<td>cache server config</td>
+<td><p><code class="ph codeph">max-connections</code></p></td>
+<td><p>Maximum number of client connections for the server. When the maximum is reached, the server refuses additional client connections.</p></td>
+</tr>
+<tr class="odd">
+<td>cache server config</td>
+<td><p><code class="ph codeph">port</code> (cache.xml) or <code class="ph codeph">--port</code> parameter to the <code class="ph codeph">gfsh start server</code> command</p></td>
+<td><p>Port that the server listens on for client communication.</p></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="default-port-configurations">Default Port Configurations</h2>
+
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><p><strong>Port Name</strong></p></th>
+<th>Related Configuration Setting</th>
+<th><p><strong>Default Port</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Cache Server</p></td>
+<td><p><code class="ph codeph">port</code> (cache.xml)</p></td>
+<td>40404</td>
+</tr>
+<tr class="even">
+<td><p>HTTP</p></td>
+<td><code class="ph codeph">http-service-port</code></td>
+<td>7070</td>
+</tr>
+<tr class="odd">
+<td><p>Locator</p></td>
+<td><code class="ph codeph">start-locator</code> (for embedded locators) or <code class="ph codeph">--port</code> parameter to the <code class="ph codeph">gfsh start locator</code> command.</td>
+<td><em>if not specified upon startup or in the start-locator property, uses default port 10334</em></td>
+</tr>
+<tr class="even">
+<td><p>Membership Port Range</p></td>
+<td><code class="ph codeph">membership-port-range</code></td>
+<td>1024 to 65535</td>
+</tr>
+<tr class="odd">
+<td><p>Memcached Port</p></td>
+<td><code class="ph codeph">memcached-port</code></td>
+<td><em>not set</em></td>
+</tr>
+<tr class="even">
+<td><p>Multicast</p></td>
+<td><code class="ph codeph">mcast-port</code></td>
+<td>10334</td>
+</tr>
+<tr class="odd">
+<td><p>RMI</p></td>
+<td><code class="ph codeph">jmx-manager-port</code></td>
+<td>1099</td>
+</tr>
+<tr class="even">
+<td><p>TCP</p></td>
+<td><code class="ph codeph">tcp-port</code></td>
+<td>ephemeral port</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="properties-for-firewall-and-port-configuration-in-multi-site-(wan)-configurations"><strong>Properties for Firewall and Port Configuration in Multi-Site (WAN) Configurations</strong></h2>
+
+<p>Each gateway receiver uses a single port to accept connections from gateway senders in other
+systems. The configuration of a gateway receiver specifies a range of possible port values
+to use. Geode selects an available port from the specified range when the gateway
+receiver starts. Configure your firewall so that the full range of possible port values is
+accessible by gateway senders from across the WAN.</p>
+
+<table><thead>
+<tr>
+<th>Configuration Area</th>
+<th>Property or Setting</th>
+<th>Definition</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>multi-site (WAN) config for gateway sender</td>
+<td><a href="../../reference/topics/cache_xml.html#gateway-receiver">hostname-for-senders</a></td>
+<td>Hostname or IP address of the gateway receiver used by gateway senders to connect.</td>
+</tr>
+<tr>
+<td>multi-site (WAN) config for locator</td>
+<td><a href="../../reference/topics/gemfire_properties.html#gemfire_properties">remote-locators</a></td>
+<td>List of locators (and their ports) that are available on the remote WAN site.</td>
+</tr>
+<tr>
+<td>multi-site (WAN) config for gateway receiver</td>
+<td><a href="../../reference/topics/cache_xml.html#gateway-receiver">start-port</a> and <a href="../../reference/topics/cache_xml.html#gateway-receiver">end-port</a> (cache.xml) or <code class="ph codeph">--start-port</code> and <code class="ph codeph">--end-port</code> parameters to the <code class=" ph codeph">gfsh start gateway receiver</code> command</td>
+<td>Port range that the gateway receiver can use to listen for gateway sender communication.</td>
+</tr>
+</tbody></table>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

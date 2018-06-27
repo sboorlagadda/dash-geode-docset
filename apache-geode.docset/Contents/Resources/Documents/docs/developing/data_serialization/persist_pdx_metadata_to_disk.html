@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Persisting PDX Metadata to Disk |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_persist_pdx_metadata_to_disk">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Persisting PDX Metadata to Disk
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode allows you to persist PDX metadata to disk and specify the disk store to use.</p>
+
+<p><a id="persist_pdx_metadata_to_disk__section_7F357A8E56B54BFB9A5778C0F89E034E"></a>
+<strong>Prerequisites</strong></p>
+
+<ul>
+<li>  Understand generally how to configure the Geode cache. See <a href="../../basic_config/book_intro.html">Basic Configuration and Programming</a>.</li>
+<li>  Understand how Geode disk stores work. See <a href="../../managing/disk_storage/chapter_overview.html">Disk Storage</a>.</li>
+</ul>
+
+<p><strong>Procedure</strong></p>
+
+<ol>
+<li> Set the <code>&lt;pdx&gt;</code> attribute <code>persistent</code> to true in your cache configuration. This is required for caches that use PDX with persistent regions and with regions that use a gateway sender to distribute events across a WAN.. Otherwise, it is optional.</li>
+<li><p>(Optional) If you want to use a disk store that is not the Geode default disk store, set the <code>&lt;pdx&gt;</code> attribute <code>disk-store-name</code> to the name of your non-default disk store.
+<strong>Note:</strong>
+If you are using PDX serialized objects as region entry keys and you are using persistent regions, then you must configure your PDX disk store to be a different one than the disk store used by the persistent regions.</p></li>
+<li><p>(Optional) If you later want to rename the PDX types that are persisted to disk, you can do so on your offline disk-stores by executing the <code>pdx rename</code> command. See <a href="../../tools_modules/gfsh/command-pages/pdx.html">pdx rename</a>.</p></li>
+</ol>
+
+<p><strong>Example cache.xml:</strong></p>
+
+<p>This example <code>cache.xml</code> enables PDX persistence and sets a non-default disk store in a server cache configuration:</p>
+<pre class="highlight plaintext"><code>  &lt;pdx read-serialized="true" 
+       persistent="true" disk-store-name="SerializationDiskStore"&gt;
+    &lt;pdx-serializer&gt;
+      &lt;class-name&gt;pdxSerialization.defaultSerializer&lt;/class-name&gt;
+    &lt;/pdx-serializer&gt;
+  &lt;/pdx&gt;
+  &lt;region ...
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

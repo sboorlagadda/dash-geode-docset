@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      pdx rename |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_pdx">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    pdx rename
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Renames PDX types in an offline disk store.</p>
+
+<p>Any PDX types that are renamed will be listed in the output. If no renames are done or the disk-store is online, then this command will fail.</p>
+
+<p><strong>Availability:</strong> Offline.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>pdx rename --old=value --new=value --disk-store=value --disk-dirs=value(,value)*
+</code></pre>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--old</span></td>
+<td><em>Required.</em> If a PDX type&rsquo;s fully qualified class name has a word that matches this text then it will be renamed. Words are delimited by &rsquo;.&rsquo; and &rsquo;$&rsquo;.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--new</span></td>
+<td><em>Required.</em> The text to replace the word that matched old.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;disk&#8209;store</span></td>
+<td><em>Required.</em> Name of the disk store to operate on.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--disk-dirs</span></td>
+<td><em>Required.</em> Directories which contain the disk store files.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+
+<p>Change all packages that start with &ldquo;com.gemstone&rdquo; to &ldquo;com.pivotal&rdquo;:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=com.gemstone --new=com.pivotal --disk-store=ds1 --disk-dirs=/diskDir1
+</code></pre>
+
+<p>Change a class named “MyClassName” to “YourClassName”:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=MyClassName --new=YourClassName --disk-store=ds1 --disk-dirs=/diskDir1
+</code></pre>
+
+<p>Change the FQCN “com.target.app1.OldClass” to “com.target.app2.NewClass”:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=com.target.app1.OldClass --new=com.target.app2.NewClass --disk-store=ds1 --disk-dirs=/diskDir1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=PortfolioPdx --new=StockPdx --disk-store=DiskStore1 --disk-dirs=/DiskDir1
+Successfully renamed pdx types:
+  com.app.data.StockPdx: id=2
+  com.app.data.StockPdx$Day.Monday
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+
+<p>If no types match, you may receive the following error message:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=gemstone --new=pivotal --disk-store=DiskStore1 --disk-dirs=/DiskDir1
+Could not process command due to GemFire error. No Pdx types found to rename.
+</code></pre>
+
+<p>If the disk-store where the PDX types are stored is online, you will receive the following error message:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;pdx rename --old=StockPdx --new=PortfolioPdx --disk-store=DiskStore1 --disk-dirs=/DiskDir1
+Could not process command due to GemFire error. Error renaming pdx types :
+GemFireCache[id = 484629896; isClosing = false; isShutDownAll = false;
+closingGatewayHubsByShutdownAll = false; created = Wed Jan 07 10:29:45 PST 2015;
+server = false; copyOnRead = false; lockLease = 120; lockTimeout = 60]: An open cache
+already exists.
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

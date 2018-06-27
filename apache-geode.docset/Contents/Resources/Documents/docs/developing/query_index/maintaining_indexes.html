@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Maintaining Indexes (Synchronously or Asynchronously) and Index Storage |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_index docs_developing_query_index_maintaining_indexes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Maintaining Indexes (Synchronously or Asynchronously) and Index Storage
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Indexes are automatically kept current with the region data they reference. The region attribute <code>IndexMaintenanceSynchronous</code> specifies whether the region indexes are updated synchronously when a region is modified or asynchronously in a background thread.</p>
+
+<h2 id="index-maintenance-behavior"><a id="concept_98ED3F38919A490B9AE2553568455C35__section_FF1945F2AAFA4B158067CEE967410616" class="no-quick-link"></a>Index Maintenance Behavior</h2>
+
+<p>Asynchronous index maintenance batches up multiple updates to the same region key. The default mode is synchronous, since this provides the greatest consistency with region data.</p>
+
+<p>See <a href="/releases/latest/javadoc/org/apache/geode/cache/RegionFactory.html">RegionFactory.setIndexMaintenanceSynchronous</a>.</p>
+
+<p>This declarative index creation sets the maintenance mode to asynchronous:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes index-update-type="asynchronous"&gt; 
+&lt;/region-attributes&gt;
+</code></pre>
+
+<h2 id="internal-index-structure-and-storage"><a id="concept_98ED3F38919A490B9AE2553568455C35__section_68308B5597CF4A9EAA8EC0BD83A233E6" class="no-quick-link"></a>Internal Index Structure and Storage</h2>
+
+<p>Indexes are stored either as compact or non-compact data structures based on the indexed expression (even if the index key type is the same.) For example, consider the following Passenger object:</p>
+<pre class="highlight plaintext"><code>Passenger {
+   String name,
+   Date travelDate,
+   int age,
+   Flight flt,
+}
+Flight {
+   int flightId,
+   String origin,
+   String dest,
+}
+</code></pre>
+
+<p>An index on the Passenger name field will have different memory space requirements in the cache than the Flight origin field even though they are both String field types. The internal data structure selected by Geode for index storage will depend on the field&rsquo;s level in the object. In this example, name is a top-level field and an index on name can be stored as a compact index. Since origin is a second-level field, any index that uses origin as the indexed expression will be stored as a non-compact index.</p>
+
+<p><strong>Compact Index</strong></p>
+
+<p>A compact index has simple data structures to minimize its footprint, at the expense of doing extra work at index maintenance. This index does not support the storage of projection attributes.</p>
+
+<p>Currently compact indexes are only selected only supports the creation of an index on a region path. In addition, the following conditions must be met:</p>
+
+<ul>
+<li>  Index maintenance is synchronous.</li>
+<li>  The indexed expression is a path expression.</li>
+<li>  The FROM clause has only one iterator. This implies that there is only one value in the index for each region entry and it is directly on the region values (not supported with keys, entries).</li>
+</ul>
+
+<p><strong>Non-Compact Index</strong></p>
+
+<p>Used whenever a compact index cannot be used.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

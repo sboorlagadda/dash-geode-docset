@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Importing Cache and Region Snapshots |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_cache_snapshots docs_managing_cache_snapshots_importing_a_snapshot">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Importing Cache and Region Snapshots
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To import a Geode cache or region data snapshot that you previously exported into another distributed system or region, use the <code>cache.getSnapshotService.load</code> API, <code>region.getSnapshotService.load</code> API, or the <code>gfsh</code> command-line interface (<code>import data</code>).</p>
+
+<h2 id="import-requirements"><a id="concept_62B1E24DA7F342E9BB16C0818F7A7B70__section_4B2C73CA1A734D9D96693A52BF99D75A" class="no-quick-link"></a>Import Requirements</h2>
+
+<p>Before you import a region snapshot:</p>
+
+<ul>
+<li>  Make sure the cache is configured correctly. Configure all registered PdxSerializers, DataSerializers, and Instantiators; create regions; and ensure the classpath contains any required classes.</li>
+<li>  When you import a snapshot containing PDX types, you must wait until the exported type definitions are imported into the cache before inserting data that causes type conflicts. It is recommended that you wait for the import to complete before inserting data.</li>
+</ul>
+
+<h2 id="import-limitations"><a id="concept_62B1E24DA7F342E9BB16C0818F7A7B70__section_F5FA11694BFC46D4A813A259FE670C69" class="no-quick-link"></a>Import Limitations</h2>
+
+<p>During an import, the <code>CacheWriter</code> and <code>CacheListener</code> callbacks are not invoked.</p>
+
+<p>If an error occurs during import, the import is halted and the region will contain some but not all snapshot data.</p>
+
+<p>The state of a cache client is indeterminate after an import. It is likely that the data in the client&rsquo;s cache is inconsistent with the imported data. Take the client offline during the import and restart it after the import completes.</p>
+
+<h2 id="importing-cache-snapshots"><a id="concept_62B1E24DA7F342E9BB16C0818F7A7B70__section_4F1A3A60FABA49A295CA18FBF572998D" class="no-quick-link"></a>Importing Cache Snapshots</h2>
+
+<p>When you import a cache snapshot, the snapshot file is imported into the same region (match determined by name) that was used during snapshot export. When you import a cache, you import all snapshot files located within a directory into the cache. The API attempts to load all files in the specified directory.</p>
+
+<p><strong>Java API:</strong></p>
+<pre class="highlight plaintext"><code>File mySnapshotDir = ...
+Cache cache = ...
+
+cache.getSnapshotService().load(mySnapshotDir, SnapshotFormat.GEMFIRE);
+</code></pre>
+
+<h2 id="importing-a-region-snapshot"><a id="concept_62B1E24DA7F342E9BB16C0818F7A7B70__section_97054643976345A099A7BDDC63DE30E9" class="no-quick-link"></a>Importing a Region Snapshot</h2>
+
+<p><strong>Java API:</strong></p>
+<pre class="highlight plaintext"><code>File mySnapshot = ...
+Region&lt;String, MyObject&gt; region = ...
+
+region.getSnapshotService().load(mySnapshot, SnapshotFormat.GEMFIRE);
+</code></pre>
+
+<p><strong>gfsh:</strong></p>
+
+<p>Open a gfsh prompt. After connecting to a Geode distributed system, at the prompt type:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;import data --region=Region --file=FileName.gfd --member=MemberName
+</code></pre>
+
+<p>where <em>Region</em> corresponds to the name of the region that you want to import data into; <em>FileName</em> (must end in .gfd) corresponds to the name of the file to be imported; and <em>MemberName</em> corresponds to a member that hosts the region. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;import data --region=region1 --file=region1_2012_10_10.gfd --member=server2
+</code></pre>
+
+<p>The snapshot file must already reside on the specified member at the location specified in the <code>--file</code> argument before import.</p>
+
+<p>For more information on this command, see <a href="../../tools_modules/gfsh/command-pages/import.html#topic_jw2_2ld_2l">import data</a>.
+For an example of how to invoke this command with additional options, see <a href="exporting_a_snapshot.html#export_example_with_options">Export Example with Options</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

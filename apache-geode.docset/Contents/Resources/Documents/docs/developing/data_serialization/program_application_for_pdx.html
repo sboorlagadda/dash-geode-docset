@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Programming Your Application to Use PdxInstances |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_program_application_for_pdx">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Programming Your Application to Use PdxInstances
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>A <code>PdxInstance</code> is a light-weight wrapper around PDX serialized bytes. It provides applications with run-time access to fields of a PDX serialized object.</p>
+
+<p><a id="program_application_for_pdx__section_7F357A8E56B54BFB9A5778C0F89E034E"></a>
+You can configure your cache to return a <code>PdxInstance</code> when a PDX serialized object is deserialized instead of deserializing the object to a domain class. You can then program your application code that reads your entries to handle <code>PdxInstance</code>s fetched from the cache.</p>
+
+<p><strong>Note:</strong>
+This applies only to entry retrieval that you explicitly code using methods like <code>EntryEvent.getNewValue</code> and <code>Region.get</code>, as you do inside functions or in cache listener code. This does not apply to querying because the query engine retrieves the entries and handles object access for you.</p>
+
+<p>If you configure your cache to allow PDX serialized reads, a fetch from the cache returns the data in the form it is found. If the object is not serialized, the fetch returns the domain object. If the object is serialized, the fetch returns the <code>PdxInstance</code> for the object.</p>
+
+<p><strong>Note:</strong>
+If you are using <code>PdxInstance</code>s, you cannot use delta propagation to apply changes to PDX serialized objects.</p>
+
+<p>For example, in client/server applications that are programmed and configured to handle all data activity from the client, PDX serialized reads done on the server side will always return a <code>PdxInstance</code>. This is because all of data is serialized for transfer from the client, and you are not performing any server-side activities that would deserialize the objects in the server cache.</p>
+
+<p>In mixed situations, such as where a server cache is populated from client operations and also from data loads done on the server side, fetches done on the server can return a mix of <code>PdxInstance</code>s and domain objects.</p>
+
+<p>When fetching data in a cache with PDX serialized reads enabled, the safest approach is to code to handle both types, receiving an <code>Object</code> from the fetch operation, checking the type and casting as appropriate. However, if you know that the class is not available in the JVM, then you can avoid performing the type check.</p>
+
+<p><code>PdxInstance</code> overrides any custom implementation you might have coded for your object&rsquo;s <code>equals</code> and <code>hashcode</code> methods. Make sure you have marked at least one identity field when writing PDX serialized objects. If you do not set as least one identity field, then the PdxInstance<code>equals</code> and <code>hashCode</code> methods will use all PDX fields to compare objects and consequently, will not perform as well.</p>
+
+<p><a id="program_application_for_pdx__section_03F8918B4CAD49CCA1823FAAE25D53A8"></a></p>
+
+<p><strong>Prerequisites</strong></p>
+
+<ul>
+<li>  Understand generally how to configure the Geode cache. See <a href="../../basic_config/book_intro.html#basic_config_management">Basic Configuration and Programming</a>.</li>
+</ul>
+
+<p><a id="program_application_for_pdx__section_B3C7C7629DFD4483B32B27F84D64DFCF"></a></p>
+
+<p><strong>Procedure</strong></p>
+
+<p>In your application where you fetch data from the cache, provide the following configuration and code as appropriate:</p>
+
+<ol>
+<li><p>In the cache.xml file of the member where entry fetches are run, set the <code>&lt;pdx&gt;</code> <code>read-serialized</code> attribute to true.
+Data is not necessarily accessed on the member that you have coded for it. For example, if a client application runs a function on a server, the actual data access is done on the server, so you set <code>read-serialized</code> to true on the server.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>// Cache configuration setting PDX read behavior 
+&lt;cache&gt;
+  &lt;pdx read-serialized="true" /&gt;
+  ...
+&lt;/cache&gt;
+
+</code></pre></li>
+<li><p>Write the application code that fetches data from the cache to handle a <code>PdxInstance</code>. If you are sure you will only retrieve <code>PdxInstance</code>s from the cache, you can code only for that. In many cases, a <code>PdxInstance</code> or a domain object may be returned from your cache entry retrieval operation, so you should check the object type and handle each possible type.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>// put/get code with serialized read behavior
+// put is done as normal
+myRegion.put(myKey, myPdxSerializableObject);
+
+// get checks Object type and handles each appropriately
+Object myObject = myRegion.get(myKey);
+if (myObject instanceof PdxInstance) {
+  // get returned PdxInstance instead of domain object    
+  PdxInstance myPdxInstance = (PdxInstance)myObject;
+
+  // PdxInstance.getField deserializes the field, but not the object
+  String fieldValue = myPdxInstance.getField("stringFieldName"); 
+
+  // Update a field and put it back into the cache 
+  // without deserializing the entire object
+  WritablePdxInstance myWritablePdxI = myPdxInstance.createWriter();
+  myWritablePdxI.setField("fieldName", fieldValue);
+  region.put(key, myWritablePdxI);
+
+  // Deserialize the entire object if needed, from the PdxInstance
+  DomainClass myPdxObject = (DomainClass)myPdxInstance.getObject();
+}
+else if (myObject instanceof DomainClass) {
+  // get returned instance of domain object  
+  // code to handle domain object instance  
+  ...  
+}
+...
+</code></pre>
+
+<p><strong>Note:</strong>
+Due to a limitation with PDX, if your PDX-enabled cache contains TreeSet domain objects, you should implement a Comparator that can handle both your domain objects and PdxInstance objects. You will also need to make the domain classes available on the server.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Adding JSON Documents to the Geode Cache |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_jsonformatter_pdxinstances">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Adding JSON Documents to the Geode Cache
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The <code>JSONFormatter</code> API allows you to put JSON formatted documents into regions and retrieve them later by storing the documents internally as PdxInstances.</p>
+
+<p>Geode supports the use of JSON formatted documents natively. When you add a JSON document to a Geode cache, you call the JSONFormatter APIs to transform them into the PDX format (as a <code>PdxInstance</code>), which enables Geode to understand the JSON document at a field level.</p>
+
+<p>In terms of querying and indexing, because the documents are stored internally as PDX, applications can index on any field contained inside the JSON document including any nested field (within JSON objects or JSON arrays.) Any queries run on these stored documents will return PdxInstances as results. To update a JSON document stored in Geode , you can execute a function on the PdxInstance.</p>
+
+<p>You can then use the <code>JSONFormatter</code> to convert the PdxInstance results back into the JSON document.</p>
+
+<p><code>JSONFormatter</code> uses a streaming parser (<a href="http://wiki.fasterxml.com/JacksonHome">Jackson</a>, JSON processor) to turn JSON documents into the optimized PDX format. To use the JSONFormatter, make sure that <code>lib/geode-dependencies.jar</code> is available in your application&rsquo;s CLASSPATH.</p>
+
+<p>The <code>JSONFormatter</code> class has four static methods that are used to convert JSON document into PdxInstances and then to convert those PdxInstances back into JSON document.</p>
+
+<p>You need to call the following methods before putting any JSON document into the Geode region:</p>
+
+<ul>
+<li>  <code>fromJSON</code>. Creates a PdxInstance from a JSON byte array. Returns the PdxInstance.</li>
+<li>  <code>fromJSON</code>. Creates a PdxInstance from a JSON string. Returns the PdxInstance.</li>
+</ul>
+
+<p>After putting the JSON document into a region as a PdxInstance, you can execute standard Geode queries and create indexes on the JSON document in the same manner you would query or index any other Geode PdxInstance.</p>
+
+<p>After executing a Geode query or calling <code>region.get</code>, you can use the following methods to convert a PdxInstance back into the JSON format:</p>
+
+<ul>
+<li>  <code>toJSON</code>. Reads a PdxInstance and returns a JSON string.</li>
+<li>  <code>toJSONByteArray</code>. Reads a PdxInstance and returns a JSON byte array.</li>
+</ul>
+
+<p>For more information on using the JSONFormatter, see the Java API documentation for <code>org.apache.geode.pdx.JSONFormatter</code>.</p>
+
+<h1 id="sorting-behavior-of-serialized-json-fields">Sorting Behavior of Serialized JSON Fields</h1>
+
+<p>By default, Geode serialization creates a unique pdx typeID for each unique JSON document, even if the
+only difference between the JSON documents is the order in which their fields are specified. </p>
+
+<p>If you prefer that JSON documents which differ only in the order in which their fields are specified
+map to the same typeID, set the property <code>gemfire.pdx.mapper.sort-json-field-names</code> to <code>true</code>. This
+tells the system to sort the JSON fields prior to serialization, allowing the system to identify
+matching entries, and helps reduce the number of pdx typeIDs that are generated by the serialization
+mechanism.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

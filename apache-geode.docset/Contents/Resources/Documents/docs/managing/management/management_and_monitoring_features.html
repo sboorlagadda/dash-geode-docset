@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Management and Monitoring Features |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_management docs_managing_management_management_and_monitoring_features">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Management and Monitoring Features
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Apache Geode uses a federated Open MBean strategy to manage and monitor all members of the distributed system. This strategy gives you a consolidated, single-agent view of the distributed system.</p>
+
+<p><a id="concept_F7B9EE348DA744D3BBDFD68E7F48A604__section_37CECE9B26644505A79784EA0CD1FDAE"></a>
+Application and manager development is much easier because you do not have to find the right MBeanServer to make a request on an MBean. Instead, you interact with a single MBeanServer that aggregates MBeans from all other local and remote MBeanServers.</p>
+
+<p>Some other key advantages and features of Geode administration architecture:</p>
+
+<ul>
+<li>  Geode monitoring is tightly integrated into Geode&rsquo;s processes instead of running in a separately installed and configured monitoring agent. You can use the same framework to actually manage Geode and perform administrative operations, not just monitor it.</li>
+<li>  All Geode MBeans are <em>MXBeans</em>. They represent useful and relevant information on the state of the distributed system and all its members. Because MXBeans use the Open MBean model with a predefined set of types, clients and remote management programs no longer require access to model-specific classes representing your MBean types. Using MXBeans adds flexibility to your selection of clients and makes the Geode management and monitoring much easier to use.</li>
+<li>  Each member in the distributed system is manageable through MXBeans, and each member hosts its own MXBeans in a Platform MBeanServer.</li>
+<li>  Any Geode member can be configured to provide a federated view of all the MXBeans for all members in a Geode cluster.</li>
+<li>  Geode has also modified its use of JMX to be industry-standard and friendly to generic JMX clients. You can now easily monitor or manage the distributed system by using any third-party tool that is compliant with JMX. For example, JConsole.</li>
+</ul>
+
+<h2 id="references"><a id="concept_F7B9EE348DA744D3BBDFD68E7F48A604__section_A3166A9657044E088DA0FE2C2B8325BE" class="no-quick-link"></a>References</h2>
+
+<p>For more information on MXBeans and Open MBeans, see:</p>
+
+<ul>
+<li>  <a href="http://docs.oracle.com/javase/8/docs/api/javax/management/MXBean.html">http://docs.oracle.com/javase/8/docs/api/javax/management/MXBean.html</a></li>
+<li>  <a href="http://docs.oracle.com/javase/8/docs/api/javax/management/openmbean/package-summary.html">http://docs.oracle.com/javase/8/docs/api/javax/management/openmbean/package-summary.html</a></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

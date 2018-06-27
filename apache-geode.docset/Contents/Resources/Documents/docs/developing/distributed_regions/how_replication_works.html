@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Replication and Preloading Work |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_distributed_regions docs_developing_distributed_regions_how_replication_works">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Replication and Preloading Work
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To work with replicated and preloaded regions, you should understand how their data is initialized and maintained in the cache.</p>
+
+<p><a id="how_replication_works__section_C75BB463A0584491ABD982A55E5A050F"></a>
+Replicated and preloaded regions are configured by using one of the <code>REPLICATE</code> region shortcut settings, or by setting the region attribute <code>data-policy</code> to <code>replicate</code>, <code>persistent-replicate</code>, or <code>preloaded</code>.</p>
+
+<h2 id="initialization-of-replicated-and-preloaded-regions"><a id="how_replication_works__section_B4E76BBCC6104A27BC0A8ECA6B9CDF91" class="no-quick-link"></a>Initialization of Replicated and Preloaded Regions</h2>
+
+<p>At region creation, the system initializes the preloaded or replicated region with the most complete and up-to-date data set it can find. The system uses these data sources to initialize the new region, following this order of preference:</p>
+
+<ol>
+<li> Another replicated region that is already defined in the distributed system.</li>
+<li> For persistent replicate only. Disk files, followed by a union of all copies of the region in the distributed cache.</li>
+<li> For preloaded region only. Another preloaded region that is already defined in the distributed system.</li>
+<li> The union of all copies of the region in the distributed cache.</li>
+</ol>
+
+<p><img src="../../images_svg/distributed_replica_preload.svg" id="how_replication_works__image_5F50EBA30CE3408091F07A198F821741" class="image" /></p>
+
+<p>While a region is being initialized from a replicated or preloaded region, if the source region crashes, the initialization starts over.</p>
+
+<p>If a union of regions is used for initialization, as in the figure, and one of the individual source regions goes away during the initialization (due to cache closure, member crash, or region destruction), the new region may contain a partial data set from the crashed source region. When this happens, there is no warning logged or exception thrown. The new region still has a complete set of the remaining members&rsquo; regions.</p>
+
+<h2 id="behavior-of-replicated-and-preloaded-regions-after-initialization"><a id="how_replication_works__section_6BE7555A711E4CA490B02E58B5DDE396" class="no-quick-link"></a>Behavior of Replicated and Preloaded Regions After Initialization</h2>
+
+<p>Once initialized, the preloaded region operates like the region with a <code>normal</code> <code>data-policy</code>, receiving distributions only for entries it has defined in the local cache.</p>
+
+<p><img src="../../images_svg/distributed_preload.svg" id="how_replication_works__image_994CA599B1004D3F95E1BB7C4FAC2AEF" class="image" /></p>
+
+<p>If the region is configured as a replicated region, it receives all new creations in the distributed region from the other members. This is the push distribution model. Unlike the preloaded region, the replicated region has a contract that states it will hold all entries that are present anywhere in the distributed region.</p>
+
+<p><img src="../../images_svg/distributed_replica.svg" id="how_replication_works__image_2E7F3EB6213A47FEA3ABE32FD2CB1503" class="image" /></p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Managing Region Attributes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_data_regions docs_basic_config_data_regions_managing_region_attributes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Managing Region Attributes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Use region attributes to fine-tune the region configuration provided by the region shortcut settings.</p>
+
+<p><a id="managing_region_attributes__section_B6363B281A994141B9B9BDD952173330"></a>
+All region attributes have default settings, so you only need to use region attributes to set the ones you want to override. See <a href="../../reference/topics/cache_xml.html#region-attributes">&lt;region-attributes&gt;</a>.</p>
+
+<h2 id="define-region-attributes"><a id="managing_region_attributes__section_DDBF2810ABB54A55B1479AD786ED48DF" class="no-quick-link"></a>Define Region Attributes</h2>
+
+<p>Create region attributes using any of these methods:</p>
+
+<ul>
+<li><p>Declarations inside the <code>cache.xml</code> <code>&lt;region&gt;</code> element:</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+   &lt;region name="exampleRegion" refid="REPLICATE"&gt;
+      &lt;region-attributes statistics-enabled="true"&gt;
+        &lt;entry-idle-time&gt;
+          &lt;expiration-attributes timeout="10" action="destroy"/&gt;
+        &lt;/entry-idle-time&gt;
+        &lt;cache-listener&gt;
+          &lt;class-name&gt;quickstart.SimpleCacheListener&lt;/class-name&gt;
+        &lt;/cache-listener&gt;
+      &lt;/region-attributes&gt;
+    &lt;/region&gt;
+&lt;/cache&gt;
+</code></pre>
+
+<p>When the <code>cache.xml</code> is loaded at startup, declared region attributes are automatically created and applied to the region.</p></li>
+<li><p><code>RegionFactory</code> API <code>set</code>* method calls:</p>
+<pre class="highlight plaintext"><code>// Creating a partitioned region using the RegionFactory
+RegionFactory rf = cache.createRegionFactory(RegionShortcut.PARTITION);
+rf.addCacheListener(new LoggingCacheListener());
+custRegion = rf.create("customer");
+</code></pre>
+<pre class="highlight plaintext"><code>// Creating a partitioned region using the RegionFactory, with attribute modifications
+RegionFactory rf = 
+  cache.createRegionFactory(RegionShortcut.PARTITION);
+rf.setPartitionResolver(new CustomerOrderResolver());
+rf.addCacheListener(new LoggingCacheListener());
+custRegion = rf.create("customer");
+</code></pre>
+<pre class="highlight plaintext"><code>// Creating a client with a Pool Specification Using ClientRegionFactory
+ClientRegionFactory&lt;String,String&gt; cRegionFactory = 
+    cache.createClientRegionFactory(PROXY);
+Region&lt;String, String&gt; region = 
+    cRegionFactory.setPoolName("Pool3").create("DATA");
+</code></pre></li>
+<li><p>By issuing the gfsh <code>create region</code> command.</p></li>
+</ul>
+
+<h2 id="modify-region-attributes"><a id="managing_region_attributes__section_F69A7664F72D47BBA463D81B72C03B4D" class="no-quick-link"></a>Modify Region Attributes</h2>
+
+<p>You can modify a region’s event handlers and expiration and eviction attributes after the region is created.</p>
+
+<p><strong>Note:</strong>
+Do not modify attributes for existing regions unless absolutely necessary. Creating the attributes you need at region creation is more efficient.</p>
+
+<p>Modify attributes in one of these ways:</p>
+
+<ul>
+<li><p>By loading a <code>cache.xml</code> with modified region attribute specifications:</p>
+<pre class="highlight plaintext"><code>&lt;!-- Change the listener for exampleRegion
+...
+    &lt;region name="exampleRegion"&gt;
+      &lt;region-attributes statistics-enabled="true"&gt;
+        &lt;cache-listener&gt;
+          &lt;class-name&gt;quickstart.ComplicatedCacheListener&lt;/class-name&gt;
+        &lt;/cache-listener&gt;
+      &lt;/region-attributes&gt;
+    &lt;/region&gt;
+... 
+</code></pre></li>
+<li><p>Using the <code>AttributesMutator</code> API:</p>
+
+<ol>
+<li> Retrieve the <code>AttributesMutator</code> from the region</li>
+<li> Call the mutator set methods to modify attributes:</li>
+</ol>
+<pre class="highlight plaintext"><code>currRegion = cache.getRegion("root");
+AttributesMutator mutator = this.currRegion.getAttributesMutator();
+mutator.addCacheListener(new LoggingCacheListener()); 
+</code></pre></li>
+<li><p>By issuing the gfsh <code>alter region</code> command. See <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_E74ED23CB60342538B2175C326E7D758">alter region</a>.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

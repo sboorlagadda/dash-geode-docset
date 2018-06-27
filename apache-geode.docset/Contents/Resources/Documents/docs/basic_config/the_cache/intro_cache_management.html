@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Introduction to Cache Management |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_the_cache docs_basic_config_the_cache_intro_cache_management">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Introduction to Cache Management
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The cache provides in-memory storage and management for your data.</p>
+
+<p><a id="concept_F8BA7F2D3B5A40D78461E78BC5FB31FA__section_B364B076EB5843DAAC28EE2805686453"></a>
+You organize your data in the cache into <em>data regions</em>, each with its own configurable behavior. You store your data into your regions in key/value pairs called <em>data entries</em>. The cache also provides features like transactions, data querying, disk storage management, and logging. See the Javadocs for <code>org.apache.geode.cache.Cache</code>.</p>
+
+<p>You generally configure caches using the <code>gfsh</code> command-line utility or a combination of XML declarations and API calls. Geode loads and processes your XML declarations when you first create the cache.</p>
+
+<p>Geode has one cache type for managing server and peer caches and one for managing client caches. The cache server process automatically creates its server cache at startup. In your application process, the cache creation returns an instance of the server/peer or client cache. From that point on, you manage the cache through API calls in your application.</p>
+
+<h2 id="the-caching-apis"><a id="concept_F8BA7F2D3B5A40D78461E78BC5FB31FA__section_20973C59F1C94E35A02CE6582503205A" class="no-quick-link"></a>The Caching APIs</h2>
+
+<p>Geode&rsquo;s caching APIs provide specialized behavior for different system member types and security settings.</p>
+
+<ul>
+<li>  <strong><code>org.apache.geode.cache.RegionService</code></strong>. Generally, you use the <code>RegionService</code> functionality through instances of <code>Cache</code> and <code>ClientCache</code>. You only specifically use instances of <code>RegionService</code> for limited-access users in secure client applications that service many users. The <code>RegionService</code> API provides access to existing cache data regions and to the standard query service for the cache. For client caches, queries are sent to the server tier. For server and peer caches, queries are run in the current cache and any available peers. <code>RegionService</code> is implemented by <code>GemFireCache</code>.</li>
+<li>  <strong><code>org.apache.geode.cache.GemFireCache</code></strong>. You do not specifically use instances of <code>GemFireCache</code>, but you use <code>GemFireCache</code> functionality in your instances of <code>Cache</code> and <code>ClientCache</code>. <code>GemFireCache</code> extends <code>RegionService</code> and adds general caching features like region attributes, disk stores for region persistence and overflow, and access to the underlying distributed system. <code>GemFireCache</code> is implemented by <code>Cache</code> and <code>ClientCache</code>.</li>
+<li>  <strong><code>org.apache.geode.cache.Cache</code></strong>. Use the <code>Cache</code> interface to manage server and peer caches. You have one <code>Cache</code> per server or peer process. The <code>Cache</code> extends <code>GemFireCache</code> and adds server/peer caching features like communication within the distributed system, region creation, transactions and querying, and cache server functionality.</li>
+<li>  <strong><code>org.apache.geode≈setting_cache_initializer.cache.ClientCache</code></strong>. Use the <code>ClientCache</code> interface to manage the cache in your clients. You have one <code>ClientCache</code> per client process. The <code>ClientCache</code> extends <code>GemFireCache</code> and adds client-specific caching features like client region creation, subscription keep-alive management for durable clients, querying on server and client tiers, and RegionService creation for secure access by multiple users within the client.</li>
+</ul>
+
+<h2 id="the-cache-xml"><a id="concept_F8BA7F2D3B5A40D78461E78BC5FB31FA__section_6486BDAF06EC4B91A548872066F3EC8C" class="no-quick-link"></a>The Cache XML</h2>
+
+<p>Your <code>cache.xml</code> must be formatted according to the product XML schema definition <code>cache-1.0.xsd</code>. The schema definition file is available at
+<a href="http://geode.apache.org/schema/cache/cache-1.0.xsd">http://geode.apache.org/schema/cache/cache-1.0.xsd</a>.</p>
+
+<p>You use one format for peer and server caches and another for client caches.</p>
+
+<p><code>cache.xml</code> for Peer/Server:</p>
+<pre class="highlight plaintext"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;cache xmlns="http://geode.apache.org/schema/cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"
+    version="1.0”&gt;
+...
+&lt;/cache&gt;
+</code></pre>
+
+<p><code>cache.xml</code> for Client:</p>
+<pre class="highlight plaintext"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;client-cache
+    xmlns="http://geode.apache.org/schema/cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"
+    version="1.0”&gt;
+...
+&lt;/client-cache&gt;
+</code></pre>
+
+<p>For more information on the <code>cache.xml</code> file, see <a href="../../reference/topics/chapter_overview_cache_xml.html#cache_xml">cache.xml</a>.</p>
+
+<h2 id="create-and-close-a-cache"><a id="concept_F8BA7F2D3B5A40D78461E78BC5FB31FA__section_B113BC6921DA434C947D4326DDB4526E" class="no-quick-link"></a>Create and Close a Cache</h2>
+
+<p>Your system configuration and cache configuration are initialized when you start your member processes and create each member’s Geode cache. If you are using the cluster configuration service, member processes can pick up its cache configuration from the cluster or group&rsquo;s current configuration. See <a href="../../configuring/cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<p>The steps in this section use <code>gemfire.properties</code> and <code>cache.xml</code> file examples, except where API is required. You can configure your distributed system properties and cache through the API as well, and you can use a combination of file configuration and API configuration.</p>
+
+<p>The XML examples may not include the full <code>cache.xml</code> file listing. All of your declarative cache configuration must conform to the cache XSD at
+<a href="http://geode.apache.org/schema/cache/cache-1.0.xsd">http://geode.apache.org/schema/cache/cache-1.0.xsd</a>.</p>
+
+<p>For all of your Geode applications:</p>
+
+<ol>
+<li> Create your <code>Cache</code>, for peer/server applications, or <code>ClientCache</code>, for client applications. This connects to the Geode system you have configured and initializes any configured data regions. Use your cache instance to access your regions and perform your application work.</li>
+<li> Close your cache when you are done. This frees up resources and disconnects your application from the distributed system in an orderly manner.</li>
+</ol>
+
+<p>Follow the instructions in the subtopics under <a href="chapter_overview.html#the_cache">Cache Management</a> to customize your cache creation and closure for your application needs. You may need to combine more than one of the sets of instructions. For example, to create a client cache in a system with security, you would follow the instructions for creating and closing a client cache and for creating and closing a cache in a secure system.</p>
+
+<h2 id="export-and-import-a-cache-snapshot"><a id="concept_F8BA7F2D3B5A40D78461E78BC5FB31FA__section_E8781B263D434F6A9104194AE7BE1647" class="no-quick-link"></a>Export and Import a Cache Snapshot</h2>
+
+<p>To aid in the administration of cache data and speed the setup of new environments, you can export a snapshot of the entire cache (all regions) and then import the snapshot into a new cache. For example, you could take a snapshot of the production environment cache in order to import the cache&rsquo;s data into a testing environment.</p>
+
+<p>For more details on exporting and importing snapshots of a cache, see <a href="../../managing/cache_snapshots/chapter_overview.html#concept_E6AC3E25404D4D7788F2D52D83EE3071">Cache and Region Snapshots</a>.</p>
+
+<h2 id="cache-management-with-gfsh-and-the-cluster-configuration-service">Cache Management with gfsh and the Cluster Configuration Service</h2>
+
+<p>You can use gfsh commands to mange a server cache. There are gfsh commands to create regions, start servers, and to create queues and other objects. As you issue these commands, the Cluster Configuration Service saves cache.xml and gemfire.properties files on the locators and distributes those configurations to any new members that join the cluster. See <a href="../../configuring/cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Deploying Configuration Files without the Cluster Configuration Service |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_running docs_configuring_running_deploying_config_files">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Deploying Configuration Files without the Cluster Configuration Service
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can deploy your Apache Geode configuration files in your system directory structure or in jar files. You determine how you want to deploy your configuration files and set them up accordingly.</p>
+
+<p><strong>Note:</strong>
+If you use the cluster configuration service to create and manage your Apache Geode cluster configuration, the procedures described in this section are not needed because Geode automatically manages the distribution of the configuration files and jar files to members of the cluster. See <a href="../cluster_config/gfsh_persist.html">Overview of the Cluster Configuration Service</a>.</p>
+
+<p>You can use the procedures described in this section to distribute configurations that are member-specific, or for situations where you do not want to use the cluster configuration service.</p>
+
+<ul>
+<li><p><strong><a href="deploy_config_files_intro.html">Main Steps to Deploying Configuration Files</a></strong></p>
+
+<p>These are the basic steps for deploying configuration files, with related detail in sections that follow.</p></li>
+<li><p><strong><a href="default_file_specs.html">Default File Specifications and Search Locations</a></strong></p>
+
+<p>Each file has a default name, a set of file search locations, and a system property you can use to override the defaults.</p></li>
+<li><p><strong><a href="change_file_spec.html">Changing the File Specifications</a></strong></p>
+
+<p>You can change all file specifications in the <code>gemfire.properties</code> file and at the command line.</p></li>
+<li><p><strong><a href="deploying_config_jar_files.html">Deploying Configuration Files in JAR Files</a></strong></p>
+
+<p>This section provides a procedure and an example for deploying configuration files in JAR files.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

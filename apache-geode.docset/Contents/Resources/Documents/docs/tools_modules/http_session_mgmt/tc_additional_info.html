@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      General Information on HTTP Session Management |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_tc_additional_info">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    General Information on HTTP Session Management
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section provides information on sticky load balancers, session expiration, additional Geode property changes, serialization and more.</p>
+
+<h2 id="sticky-load-balancers"><a id="tc_additional_info__section_78F53B3F4301466EA0E5DF277CF33A71" class="no-quick-link"></a>Sticky Load Balancers</h2>
+
+<p>Typically, session replication will be used in conjunction with a load balancer enabled for sticky sessions. 
+Sessions should be unique across application servers. With Tomcat, this can be accomplished by setting a JVM route (<code>JVMRoute=value</code>). Refer to <a href="http://static.springsource.com/projects/ers/4.0/getting-started/htmlsingle/getting-started.html">SpringSource ERS</a>
+as a possible <a href="http://static.springsource.com/projects/ers/4.0/getting-started/htmlsingle/getting-started.html#load-balancing">load balancing</a> solution.</p>
+
+<h2 id="session-expiration"><a id="tc_additional_info__section_C7C4365EA2D84636AE1586F187007EC4" class="no-quick-link"></a>Session Expiration</h2>
+
+<p>To set the session expiration value, you must change the <code>session-timeout</code> value specified in your application server&rsquo;s <code>WEB-INF/web.xml</code> file. 
+This value will override the Geode inactive interval, which is specified in Tomcat, for example, by <code>maxInactiveInterval</code> within <code>context.xml</code>.</p>
+
+<p>When a session expires, it gets removed from the application server and from all Geode servers when running in client-server mode.</p>
+
+<h2 id="making-additional-geode-property-changes"><a id="tc_additional_info__section_5CE5FF6F55DB462E8B2A336A0AF7515E" class="no-quick-link"></a>Making Additional Geode Property Changes</h2>
+
+<p>If you want to change additional Geode property values, refer to instructions on manually changing property values as specified in the Geode module documentation for Tomcat (<a href="tomcat_changing_gf_default_cfg.html#tomcat_changing_gf_default_cfg">Changing the Default Geode Configuration in the Tomcat Module</a>) and Application Servers (<a href="weblogic_changing_gf_default_cfg.html#weblogic_changing_gf_default_cfg">Changing the Default Geode Configuration in the AppServers Module</a>).</p>
+
+<h2 id="module-version-information"><a id="tc_additional_info__section_0013BDC875A44344B7B062F46AFA073C" class="no-quick-link"></a>Module Version Information</h2>
+
+<p>To acquire Geode module version information, look in the web server&rsquo;s log file for a message similar to:</p>
+<pre class="highlight plaintext"><code>INFO: Initializing Geode Modules
+Java version:   1.0.0 user1 041216 2016-11-12 11:18:37 -0700
+          javac 1.8.0_121
+Native version: native code unavailable
+Source revision: 857bb75916640a066eb832b43b3c805f0dd7ed0b
+Source repository: develop
+Running on: /192.0.2.0, 8 cpu(s), x86_64 Mac OS X 10.11.4
+</code></pre>
+
+<h2 id="object-serialization">Object Serialization</h2>
+
+<p>Objects managed by the HTTP Session Management Module must be serializable since the session&rsquo;s objects are serialized before being stored in the region.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

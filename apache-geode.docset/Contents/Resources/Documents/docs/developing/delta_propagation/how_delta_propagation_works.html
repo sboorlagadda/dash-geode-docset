@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Delta Propagation Works |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_delta_propagation docs_developing_delta_propagation_how_delta_propagation_works">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Delta Propagation Works
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Delta propagation reduces the amount of data you send over the network. You do this by only sending the change, or delta, information about an object, instead of sending the entire changed object. If you do not use cloning when applying the deltas, you can also expect to generate less garbage in your receiving JVMs.</p>
+
+<p><a id="how_delta_propagation_works__section_78D584B3FFD04D1D9BA83203FF2B55A9"></a>
+In most distributed data management systems, the data stored in the system tends to be created once and then updated frequently. These updates are sent to other members for event propagation, redundancy management, and cache consistency in general. Tracking only the changes in an updated object and sending only the deltas mean lower network transmission costs and lower object serialization/deserialization costs. Performance improvements can be significant, especially when changes to an object are small relative to its overall size.</p>
+
+<p><a id="how_delta_propagation_works__section_ABE3589920D6477BBB2223A583AF169A"></a></p>
+
+<p>Geode propagates object deltas using methods that you program. The methods are in the <code>Delta</code> interface, which you implement in your cached objects&rsquo; classes. If any of your classes are plain old Java objects, you need to wrap them for this implementation.</p>
+
+<p>This figure shows delta propagation for a change to an entry with key, k, and value object, v.</p>
+
+<p><img src="../../images/delta-propagation.png" class="image" /></p>
+
+<ol>
+<li> <strong><code>get</code> operation</strong>. The <code>get</code> works as usual: the cache returns the full entry object from the local cache or, if it isn&rsquo;t available there, from a remote cache or from a loader.</li>
+<li> <strong>update methods</strong>. You need to add code to the object&rsquo;s update methods so that they save delta information for object updates, in addition to the work they were already doing.</li>
+<li> <strong><code>put</code> operation</strong>. The <code>put</code> works as usual in the local cache, using the full value, then calls <code>hasDelta</code> to see if there are deltas and <code>toDelta</code> to serialize the information. Distribution is the same as for full values, according to member and region configuration.</li>
+<li> <strong>receipt of delta at remote member</strong>. <code>fromDelta</code> extracts the delta information that was serialized by <code>toDelta</code> and applies it to the object in the local cache. The delta is applied directly to the existing value or to a clone, depending on how you configure it for the region.</li>
+<li> <strong>additional distributions</strong>. As with full distributions, receiving members forward the delta according to their configurations and connections to other members. For example, if VM1 is a client and VM2 is a server, VM2 forwards the delta to its peers and its other clients as needed. Receiving members do not recreate the delta; <code>toDelta</code> is only called in the originating member.</li>
+</ol>
+
+<h2 id="general-characteristics-of-delta-propagation"><a id="how_delta_propagation_works__section_25EC5BE960F0402DAEDBE0A5A6589ACA" class="no-quick-link"></a>General Characteristics of Delta Propagation</h2>
+
+<p>To use the delta propagation feature, all updates on a key in a region must have value types that implement the <code>Delta</code> interface. You cannot mix object types for an entry key where some of the types implement delta and some do not. This is because, when a type implementing the delta interface is received for an update, the existing value for the key is cast to a <code>Delta</code> type to apply the received delta. If the existing type does not also implement the <code>Delta</code> interface, the operation throws a <code>ClassCastException</code>.</p>
+
+<p><strong>Note:</strong> Only the object itself being placed in the cache can implement the <code>Delta</code> interface and propagate changes. Any sub-objects of the cache object do not propagate their changes.</p>
+
+<p>Sometimes <code>fromDelta</code> cannot be invoked because there is no object to apply the delta to in the receiving cache. When this happens, the system automatically does a full value distribution to the receiver. These are the possible scenarios:
+1.  If the system can determine beforehand that the receiver does not have a local copy, it sends the initial message with the full value. This is possible when regions are configured with no local data storage, such as with the region shortcut settings <code>PARTITION_PROXY</code> and <code>REPLICATE_PROXY</code>. These configurations are used to accomplish things like provide data update information to listeners and to pass updates forward to clients.
+2.  In less obvious cases, such as when an entry has been locally deleted, first the delta is sent, then the receiver requests a full value and that is sent. Whenever the full value is received, any further distributions to the receiver&rsquo;s peers or clients uses the full value.</p>
+
+<p>Geode also does not propagate deltas for:</p>
+
+<ul>
+<li>  Transactional commit</li>
+<li>  The <code>putAll</code> operation</li>
+<li>  JVMs running Geode versions that do not support delta propagation (6.0 and earlier)</li>
+</ul>
+
+<h2 id="supported-topologies-and-limitations"><a id="how_delta_propagation_works__section_F4A102A74530429F87BEA53C90D5CCFB" class="no-quick-link"></a>Supported Topologies and Limitations</h2>
+
+<p>The following topologies support delta propagation (with some limitations):</p>
+
+<ul>
+<li>  <strong>Peer-to-peer</strong>. Geode system members distribute and receive entry changes using delta propagation, with these requirements and caveats:
+
+<ul>
+<li>  Regions must be partitioned or have their scope set to <code>distributed-ack</code> or <code>global</code>. The region shortcut settings for distributed regions use <code>distributed-ack</code> <code>scope</code>. Delta propagation does not work for regions with <code>distributed-no-ack</code> <code>scope</code> because the receiver could not recover if an exception occurred while applying the delta.</li>
+<li>  For partitioned regions, if a receiving peer does not hold the primary or a secondary copy of the entry, but still requires a value, the system automatically sends the full value.</li>
+<li>  To receive deltas, a region must be non-empty. The system automatically sends the full value to empty regions. Empty regions can send deltas.</li>
+</ul></li>
+<li>  <strong>Client/server</strong>. Geode clients can always send deltas to the servers, and servers can usually sent deltas to clients. These configurations require the servers to send full values to the clients, instead of deltas:
+
+<ul>
+<li>  When the client&rsquo;s <code>gemfire.properties</code> setting <code>conflate-events</code> is set to true, the servers send full values for all regions.</li>
+<li>  When the server region attribute <code>enable-subscription-conflation</code> is set to true and the client <code>gemfire.properties</code> setting <code>conflate-events</code> is set to <code>server</code>, the servers send full values for the region.</li>
+<li>  When the client region is configured with the <code>PROXY</code> client region shortcut setting (empty client region), servers send full values.</li>
+</ul></li>
+<li>  <strong>Multi-site (WAN)</strong>. Gateway senders do not send Deltas. The full value is always sent.</li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

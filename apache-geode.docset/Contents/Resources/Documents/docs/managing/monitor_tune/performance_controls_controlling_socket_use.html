@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Controlling Socket Use |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_performance_controls_controlling_socket_use">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Controlling Socket Use
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>For peer-to-peer communication, you can manage socket use at the system member level and at the thread level.</p>
+
+<p>The conserve-sockets setting indicates whether application threads share sockets with other threads or use their own sockets for distributed system member communication. This setting has no effect on communication between a server and its clients, but it does control the server’s communication with its peers or a gateway sender&rsquo;s communication with a gateway receiver. In client/server settings in particular, where there can be a large number of clients for each server, controlling peer-to-peer socket use is an important part of tuning server performance.</p>
+
+<p>You configure conserve-sockets for the member as a whole in <code>gemfire.properties</code>. Additionally, you can change the sockets conservation policy for the individual thread through the API.</p>
+
+<p>When conserve-sockets is set to false, each application thread uses a dedicated thread to send to each of its peers and a dedicated thread to receive from each peer. Disabling socket conservation requires more system resources, but can potentially improve performance by removing socket contention between threads and optimizing distributed ACK operations. For distributed regions, the put operation, and destroy and invalidate for regions and entries, can all be optimized with conserve-sockets set to false. For partitioned regions, setting conserve-sockets to false can improve general throughput.</p>
+
+<p><strong>Note:</strong>
+When you have transactions operating on EMPTY, NORMAL or PARTITION regions, make sure that <code>conserve-sockets</code> is set to false to avoid distributed deadlocks.</p>
+
+<p>You can override the <code>conserve-sockets</code> setting for individual threads. These methods are in <code>org.apache.geode.distributed.DistributedSystem</code>:</p>
+
+<ul>
+<li>  <code>setThreadsSocketPolicy</code>. Sets the calling thread’s individual socket policy, overriding the policy set for the application as a whole. If set to true, the calling thread shares socket connections with other threads. If false, the calling thread has its own sockets.</li>
+<li>  <code>releaseThreadsSockets</code>. Frees any sockets held by the calling thread. Threads hold their own sockets only when conserve-sockets is false. Threads holding their own sockets can call this method to avoid holding the sockets until the socket-lease-time has expired.</li>
+</ul>
+
+<p>A typical implementation might set conserve-sockets to true at the application level and then override the setting for the specific application threads that perform the bulk of the distributed operations. The example below shows an implementation of the two API calls in a thread that performs benchmark tests. The example assumes the class implements Runnable. Note that the invocation, setThreadsSocketPolicy(false), is only meaningful if conserve-sockets is set to true at the application level.</p>
+<pre class="highlight plaintext"><code>public void run() {
+    DistributedSystem.setThreadsSocketPolicy(false);
+    try {
+        // do your benchmark work
+    } finally {
+        DistributedSystem.releaseThreadsSockets();
+    }
+}
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

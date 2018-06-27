@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Creating Key Indexes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_query_index docs_developing_query_index_creating_key_indexes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Creating Key Indexes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Creating a key index is a good way to improve query performance when data is partitioned using a key or a field value. You can create key indexes by using the <code>createKeyIndex</code> method of the QueryService or by defining the index in <code>cache.xml</code>. Creating a key index makes the query service aware of the relationship between the values in the region and the keys in the region.</p>
+
+<p>The FROM clause for a primary key index must be just a region path. The indexed expression is an expression that, when applied to an entry value, produces the key. For example, if a region has Portfolios as the values and the keys are the id field of the Portfolios region, the indexed expression is id.</p>
+
+<p>You can then use the FunctionService (using the partitioned key as a filter passed to the function and as part of the query equality condition) to execute the query against the indexed data. See <a href="../query_additional/partitioned_region_key_or_field_value.html#concept_3010014DFBC9479783B2B45982014454">Optimizing Queries on Data Partitioned by a Key or Field Value</a> for more details.</p>
+
+<p>There are two issues to note with key indexes:</p>
+
+<ul>
+<li>  The key index is not sorted. Without sorting, you can only do equality tests. Other comparisons are not possible. To obtain a sorted index on your primary keys, create a functional index on the attribute used as the primary key.</li>
+<li>  The query service is not automatically aware of the relationship between the region values and keys. For this, you must create the key index.</li>
+</ul>
+
+<p><strong>Note:</strong>
+Using a key-index with an explicit type=&lsquo;range&rsquo; in the cache.xml will lead to an exception. Key indexes will not be used in &#39;range&rsquo; queries.</p>
+
+<h2 id="examples-of-creating-a-key-index"><a id="concept_09E29507AF0D42CF81D261B030D0B7C8__section_8F1B7893F6D44D9CB36679222927031C" class="no-quick-link"></a>Examples of Creating a Key Index</h2>
+
+<p><strong>Using Java API:</strong></p>
+<pre class="highlight plaintext"><code>QueryService qs = cache.getQueryService();
+ qs.createKeyIndex("myKeyIndex", "id", "/exampleRegion");
+
+</code></pre>
+
+<p><strong>Using gfsh:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt; create index --name=myKeyIndex --expression=id --region=/exampleRegion
+</code></pre>
+
+<p><strong>Using cache.xml:</strong></p>
+<pre class="highlight plaintext"><code>&lt;region name=exampleRegion&gt;
+ &lt;region-attributes . . . &gt;
+ &lt;/region-attributes&gt;
+ &lt;index name="myKeyIndex" from-clause="/exampleRegion" expression="id" key-index="true"/&gt;
+ ...
+&lt;/region&gt;
+</code></pre>
+
+<p><strong>Note:</strong>
+If you do not specify the type of index when defining indexes using cache.xml, the type defaults to &ldquo;range&rdquo;.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

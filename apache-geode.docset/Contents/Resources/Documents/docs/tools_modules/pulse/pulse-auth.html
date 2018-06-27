@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Pulse Authentication |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_pulse docs_tools_modules_pulse_pulse-auth">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Pulse Authentication
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Pulse requires all users to authenticate themselves before they can use the Pulse Web application.</p>
+
+<p>If you run Pulse in embedded mode, the Pulse application runs on the JMX Manager node and no JMX authentication is required. You do not need to specify valid JMX credentials to start an embedded Pulse application.</p>
+
+<p>If you host Pulse on a Web Application server (non-embedded mode) and you configure JMX authentication on the Geode manager node, then the Pulse Web application must authenticate itself with the manager node when it starts. Specify the credentials of a valid JMX user account in the <code>pulse.properties</code> file, as described in <a href="pulse-hosted.html">Hosting Pulse on a Web Application Server</a>.</p>
+
+<p><strong>Note:</strong>
+The credentials that you specify must have both read and write privileges in the JMX Manager node. See <a href="../../managing/management/jmx_manager_operations.html#topic_263072624B8D4CDBAD18B82E07AA44B6">Configuring a JMX Manager</a>.</p>
+
+<h1 id="configuring-pulse-to-use-https">Configuring Pulse to Use HTTPS</h1>
+
+<p>You can configure Pulse to use HTTPS in either embedded or non-embedded mode.</p>
+
+<p>In non-embedded mode where you are running Pulse on a standalone Web application server, you must use the Web server&rsquo;s SSL configuration to make the HTTP requests secure.</p>
+
+<p>In embedded mode, Geode uses an embedded Jetty server to host the
+Pulse Web application. To make the embedded server use HTTPS, you must
+enable the <code>http</code> SSL component in
+<code>gemfire.properties</code> or <code>gfsecurity-properties</code>.
+See <a href="../../managing/security/ssl_overview.html">SSL</a> for details on configuring these parameters.</p>
+
+<p>These SSL parameters apply to all HTTP services hosted on the JMX Manager, which includes the following:</p>
+
+<ul>
+<li>  Developer REST API service</li>
+<li>  Management REST API service (for remote cluster management)</li>
+<li>  Pulse monitoring tool</li>
+</ul>
+
+<p>When the <code>http</code> SSL component is enabled, all HTTP services become
+SSL-enabled and you must configure your client applications
+accordingly. For SSL-enabled Pulse, you will need to configure your
+browsers with proper certificates.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

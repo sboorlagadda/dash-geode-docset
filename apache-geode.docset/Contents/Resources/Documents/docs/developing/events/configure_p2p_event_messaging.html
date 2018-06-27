@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Peer-to-Peer Event Messaging |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_configure_p2p_event_messaging">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Peer-to-Peer Event Messaging
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can receive events from distributed system peers for any region that is not a local region. Local regions receive only local cache events.</p>
+
+<p><a id="configuring_event_distribution__section_7D5B1F0C0EF24E58BB3C335CB4EA9A3C"></a>
+Peer distribution is done according to the region&rsquo;s configuration.</p>
+
+<ul>
+<li>  Replicated regions always receive all events from peers and require no further configuration. Replicated regions are configured using the <code>REPLICATE</code> region shortcut settings.</li>
+<li><p>For non-replicated regions, decide whether you want to receive all entry events from the distributed cache or only events for the data you have stored locally. To configure:</p>
+
+<ul>
+<li><p>To receive all events, set the <code>subscription-attributes</code> <code>interest-policy</code> to <code>all</code>:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes&gt; 
+    &lt;subscription-attributes interest-policy="all"/&gt; 
+&lt;/region-attributes&gt;
+</code></pre></li>
+<li><p>To receive events just for the data you have stored locally, set the <code>subscription-attributes</code> <code>interest-policy</code> to <code>cache-content</code> or do not set it (<code>cache-content</code> is the default):</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes&gt; 
+    &lt;subscription-attributes interest-policy="cache-content"/&gt; 
+&lt;/region-attributes&gt;
+</code></pre></li>
+</ul>
+
+<p>For partitioned regions, this only affects the receipt of events, as the data is stored according to the region partitioning. Partitioned regions with interest policy of <code>all</code> can create network bottlenecks, so if you can, run listeners in every member that hosts the partitioned region data and use the <code>cache-content</code> interest policy.</p></li>
+</ul>
+
+<p><strong>Note:</strong>
+You can also configure Regions using the gfsh command-line interface. See <a href="../../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_EF03119A40EE492984F3B6248596E1DD">Region Commands</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring the gfsh Environment |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_configuring_gfsh">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring the gfsh Environment
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>The <code>gfsh.bat</code> and <code>gfsh</code> bash script automatically append the required Apache Geode and JDK .jar libraries to your existing CLASSPATH. There are user-configurable properties you can set for security, environment variables, logging, and troubleshooting.</p>
+
+<h2 id="jar-libraries-in-classpath"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_0D2EEA7A9ED54DFDB2E1EE955E47921E" class="no-quick-link"></a>JAR Libraries in CLASSPATH</h2>
+
+<p>When you start up <code>gfsh</code>, it will automatically load required JAR files that have been packaged in the <code>gfsh-dependencies.jar</code> file. You do not need to modify your CLASSPATH to run <code>gfsh</code>.</p>
+
+<p>The JAR files are packaged within your installation directory in the <code>lib</code> directory.</p>
+
+<h2 id="machine-hostname"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_02EEF9A519094EAD9D6B5C8E896EBA27" class="no-quick-link"></a>Machine Hostname</h2>
+
+<p>On some operating systems, you may need to ensure that the hostname of your machine is configured in your system hosts file. For example, on macOS you may need to map your machine&rsquo;s hostname to your IP address in the <code>/etc/hosts</code> file in order for <code>gfsh</code> and Pulse to operate correctly.</p>
+
+<h2 id="configuring-gfsh-security"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_3FA4CD2B451B4A30A12D30DDE8DF8619" class="no-quick-link"></a>Configuring gfsh Security</h2>
+
+<p>Since <code>gfsh</code> must connect to a JMX Manager member to run certain commands (namely those commands that manage and monitor other members), JMX Manager configuration properties can affect <code>gfsh</code> security. In <code>gemfire.properties</code>, the following Geode properties can affect <code>gfsh</code> connection settings to the JMX Manager:</p>
+
+<ul>
+<li>  <code>jmx-manager-ssl</code></li>
+<li>  <code>jmx-manager-port</code></li>
+<li>  <code>jmx-manager-password-file</code></li>
+<li>  <code>jmx-manager-access-file</code></li>
+</ul>
+
+<p>You may also need to verify that the ports are available and open to client connections. See <a href="../../managing/management/jmx_manager_operations.html#topic_263072624B8D4CDBAD18B82E07AA44B6">Configuring a JMX Manager</a> for details on these security properties.</p>
+
+<h2 id="configuring-gfsh-environment-variables"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_C69A2711A7664A9091A5E634221053CB" class="no-quick-link"></a>Configuring gfsh Environment Variables</h2>
+
+<p>In addition, you can set gfsh-specific preset SHELL variables by using the <code>set variable</code> command. For example, you can set <code>gfsh</code> to run in quiet mode.
+Not all <code>gfsh</code> variables are modifiable.
+User-configurable variables include:</p>
+
+<ul>
+<li>  APP_FETCH_SIZE</li>
+<li>  APP_QUIET_EXECUTION</li>
+</ul>
+
+<p>See <a href="useful_gfsh_shell_variables.html#concept_731ECA5E40E943CBA5C1198A0745D8EE">Useful gfsh Shell Variables</a> for more information.</p>
+
+<h2 id="configuring-gfsh-session-logging"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_BE7FB8B355E748FA8BEFE75B2C3CB86E" class="no-quick-link"></a>Configuring gfsh Session Logging</h2>
+
+<p>By default, <code>gfsh</code> session logging is disabled. To enable gfsh logging, you must set the Java system property <code>-Dgfsh.log-level=desired_log_level</code> where <em>desired_log _level</em> is one of the following values: severe, warning, info, config, fine, finer, finest. For example, in Linux:</p>
+<pre class="highlight plaintext"><code>export JAVA_ARGS=-Dgfsh.log-level=info
+</code></pre>
+
+<p>Then, start <code>gfsh</code>.</p>
+
+<p>gfsh produces a log file named <strong>gfsh-<em>%u</em>_<em>%g</em>.log</strong>. This log file records the events of an individual gfsh session. It includes environment information, such as Java and system information, and detailed command execution. The variables are replaced as follows:</p>
+
+<ul>
+<li>  <strong>%u</strong> - a unique number to resolve conflicts</li>
+<li>  <strong>%g</strong> - the generation number to distinguish rotated logs</li>
+</ul>
+
+<p>gfsh uses the JDK Logger to generate gfsh session log files. See <a href="http://docs.oracle.com/javase/7/docs/api/java/util/logging/FileHandler.html">http://docs.oracle.com/javase/7/docs/api/java/util/logging/FileHandler.html</a> for a description of how the variables are used in naming the log file. The default name of the generated gfsh log file cannot be changed.</p>
+
+<p>By default, the log file is written to the current working directory where you have executed the <code>gfsh</code> or <code>gfsh.bat</code> script. To modify the directory location where log files are written, use the <code>gfsh.log-dir</code> Java system property. For example:</p>
+<pre class="highlight plaintext"><code>export JAVA_ARGS="-Dgfsh.log-level=info -Dgfsh.log-dir=/machinename/logs"
+</code></pre>
+
+<p>Then, start <code>gfsh</code>.</p>
+
+<p>In addition, <code>gfsh</code> records a history of commands in the <code>${SYS_USER_HOME}/.geode/.gfsh.history</code> file, which you can use to create scripts or review past commands.</p>
+
+<h2 id="member-log-files">Member Log Files</h2>
+
+<p>gfsh writes several log files for any members that are started via gfsh. Useful member log files include:</p>
+
+<ul>
+<li>  <strong>&lt;locator_name&gt;.log</strong>. Details a locator&rsquo;s configuration (including all gemfire.properties) and all activity that occurs on the locator after startup. This log file is written to a directory that is named after the locator. For example, if you start a locator named locator1, the file is written as <code>locator1.log</code> in the <code>&lt;product_dir&gt;/locator1</code> directory.</li>
+<li>  <strong>vf.gf.locator.pid</strong>. Contains the process ID of the locator. You can use the PID to stop or view the status of this locator. This file is written to the same directory location as the locator&rsquo;s log file .</li>
+<li>  <strong>&lt;server_name&gt;.log</strong>. Details a server&rsquo;s configuration (including all gemfire.properties) and all activity that occurs on the server after startup. This log file is written to a directory that is named after the server. For example, if you start a server named server1, the file is written as <code>server1.log</code> in the <code>&lt;product_dir&gt;/server1</code> directory. If you stop and start the server with an identical name, the older log files are kept in the same directory but renamed for versioning purposes.</li>
+<li>  <strong>vf.gf.server.pid</strong>. Contains the process ID of the server. You can use the PID to stop or view the status of this server. This file is written to the same location as the server log file.</li>
+</ul>
+
+<h2 id="viewing-standard-output-and-standard-error">Viewing Standard Output and Standard Error</h2>
+
+<p>By default, Geode does not show messages written by the application to standard output and
+standard error. To allow these messages to be written to the locator and server log files, respectively,
+specify the <code>--redirect-output</code> option with the gfsh <code>start locator</code> or <code>start server</code> commands. For
+example, the following command causes <code>stdout</code> and <code>stderr</code> messages to be written to the
+<code>locator1.log</code> file:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start locator --name=locator1 --redirect-output
+</code></pre>
+
+<h2 id="tab-completion"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_jcs_ltx_n4" class="no-quick-link"></a>Tab Completion</h2>
+
+<p><em>This section applies only to UNIX installations.</em></p>
+
+<p>When you run gfsh commands from a UNIX bash shell, you can enable automatic tab-completion in the shell by running the following command:</p>
+<pre class="highlight plaintext"><code>source &lt;gemfire-install-directory&gt;/bin/gfsh-completion.bash
+</code></pre>
+
+<p>After running this command, you can use auto completion when running gfsh commands from the bash shell.</p>
+
+<p>See <a href="getting_started_gfsh.html#concept_45D28CC9710C4EAFB6EECFA0D651D439__p_sb2_ttx_n4">Using Tab Completion</a>.</p>
+
+<h2 id="command-history-and-gfsh.history"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_72323A45E0064FD2982663F7AC2A2E07" class="no-quick-link"></a>Command History and gfsh.history</h2>
+
+<p>A history of commands that have been executed successfully is logged in <code>.gfsh.history</code> file in a <code>.gemfire</code> directory under the home directory of the user running gfsh. You can also export a history file by using the <code>history --file=your_file_name</code> command.</p>
+
+<h2 id="jmx-manager-update-rate-and-system-monitoring"><a id="concept_3B9C6CE2F64841E98C33D9F6441DF487__section_C84414FF16AB4279A43A41C6C8B61A7E" class="no-quick-link"></a>JMX Manager Update Rate and System Monitoring</h2>
+
+<p>When you perform data operations (such as put) and then monitor the state of the system (such as using the gfsh <code>show metrics</code> command or Geode Pulse), the monitored system may not immediately reflect the most recent operations. For example, if you perform a put operation and then immediately execute the <code>show metrics</code> gfsh command, you may not see the correct number of entries in the region. The management layer updates every 2 seconds. Wait a few seconds after performing operational activity to see the most accurate results.</p>
+
+<p>You can modify the <code>jmx-manager-update-rate</code> property in <code>gemfire.properties</code> to increase or decrease the rate (specified in milliseconds) at which updates are pushed to the JMX Manager. This property setting should be greater than or equal to the <code>statistic-sample-rate</code>. You may want to increase this rate if you are experiencing performance issues; however, setting this value too high will cause stale values to be seen in <code>gfsh</code> and Geode Pulse.</p>
+
+<h2 id="formatting-of-results">Formatting of Results</h2>
+
+<p><em>This section applies only to UNIX installations.</em></p>
+
+<p>gfsh commands such as <code>query</code> produce output with wide columns that may become misaligned and require manual reformatting to view the output. If the output cannot fit in the available width of the terminal, gfsh automatically trims the columns widths to fit. You can disable this behavior by setting the gfsh environment variable <code>GFSH.TRIMSCRWIDTH</code> to <code>false</code>.</p>
+
+<p>You can set the <code>APP_RESULT_VIEWER</code> variable to <code>external</code> to enable viewing of the output using the UNIX <code>less</code> command.</p>
+
+<p>See <a href="#concept_3B9C6CE2F64841E98C33D9F6441DF487__section_C69A2711A7664A9091A5E634221053CB">Configuring gfsh Environment Variables</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

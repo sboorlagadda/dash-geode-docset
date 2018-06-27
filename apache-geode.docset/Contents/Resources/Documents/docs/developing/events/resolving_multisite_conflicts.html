@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Resolving Conflicting Events |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_resolving_multisite_conflicts">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Resolving Conflicting Events
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can optionally create a <code>GatewayConflictResolver</code> cache plug-in to decide whether a potentially conflicting event that was delivered from another site should be applied to the local cache.</p>
+
+<p>By default, all regions perform consistency checks when a member applies an update received either from another cluster member or from a remote cluster over the WAN. The default consistency checking for WAN events is described in <a href="../distributed_regions/how_region_versioning_works_wan.html#topic_fpy_z3h_j5">How Consistency Is Achieved in WAN Deployments</a>.</p>
+
+<p>You can override the default consistency checking behavior by writing and configuring a custom <code>GatewayConflictResolver</code>. The <code>GatewayConflictResolver</code> implementation can use the timestamp and distributed system ID included in a WAN update event to determine whether or not to apply the update. For example, you may decide that updates from a particular cluster should always &ldquo;win&rdquo; a conflict when the timestamp difference between updates is less than some fixed period of time.</p>
+
+<h2 id="implementing-a-gatewayconflictresolver"><a id="topic_E97BB68748F14987916CD1A50E4B4542__section_E20B4A8A98FD4EDAAA8C14B8059AA7F7" class="no-quick-link"></a>Implementing a GatewayConflictResolver</h2>
+
+<p><strong>Note:</strong>
+A <code>GatewayConflictResolver</code> implementation is called only for update events that could cause a conflict in the region. This corresponds to update events that have a different distributed system ID than the distributed system that last updated the region entry. If the same distributed system ID makes consecutive updates to a region entry, no conflict is possible, and the <code>GatewayConflictResolver</code> is not called.</p>
+
+<p><strong>Procedure</strong></p>
+
+<ol>
+<li><p>Program the event handler:</p>
+
+<ol>
+<li> Create a class that implements the <code>GatewayConflictResolver</code> interface.</li>
+<li> If you want to declare the handler in <code>cache.xml</code>, implement the <code>org.apache.geode.cache.Declarable</code> interface as well.</li>
+<li><p>Implement the handler&rsquo;s <code>onEvent()</code> method to determine whether the WAN event should be allowed. <code>onEvent()</code> receives both a <code>TimestampedEntryEvent</code> and a <code>GatewayConflictHelper</code> instance. <code>TimestampedEntryEvent</code> has methods for obtaining the timestamp and distributed system ID of both the update event and the current region entry. Use methods in the <code>GatewayConflictHelper</code> to either disallow the update event (retaining the existing region entry value) or provide an alternate value.</p>
+
+<p><strong>Example:</strong></p>
+<pre class="highlight plaintext"><code> public void onEvent(TimestampedEntryEvent event, GatewayConflictHelper helper) {
+    if (event.getOperation().isUpdate()) {
+      ShoppingCart oldCart = (ShoppingCart)event.getOldValue();
+      ShoppingCart newCart = (ShoppingCart)event.getNewValue();
+      oldCart.updateFromConflictingState(newCart);
+      helper.changeEventValue(oldCart);
+    }
+  }
+</code></pre>
+
+<p><strong>Note:</strong>
+In order to maintain consistency in the region, your conflict resolver must always resolve two events in the same way regardless of which event it receives first.</p></li>
+</ol></li>
+<li><p>Install the conflict resolver for the cache, using either the <code>cache.xml</code> file or the Java API.</p>
+
+<p><strong>cache.xml</strong></p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+     ... 
+    &lt;gateway-conflict-resolver&gt;
+      &lt;class-name&gt;myPackage.MyConflictResolver&lt;/class-name&gt;
+    &lt;/gateway-conflict-resolver&gt;
+    ...
+&lt;/cache&gt;
+</code></pre>
+
+<p><strong>Java API</strong></p>
+<pre class="highlight plaintext"><code>// Create or obtain the cache
+Cache cache = new CacheFactory().create();
+
+// Create and add a conflict resolver
+cache.setGatewayConflictResolver(new MyConflictResolver);
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Disk Free Space Monitoring |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_disk_free_space_monitoring">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Disk Free Space Monitoring
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To modify <code>disk-usage-warning-percentage</code> and <code>disk-usage-critical-percentage</code> thresholds, specify the parameters when executing the <code>gfsh create disk-store</code> command.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create disk-store --name=serverOverflow --dir=c:\overflow_data#20480 \
+--compaction-threshold=40 --auto-compact=false --allow-force-compaction=true \
+--max-oplog-size=512 --queue-size=10000 --time-interval=15 --write-buffer-size=65536 \
+--disk-usage-warning-percentage=80 --disk-usage-critical-percentage=98
+</code></pre>
+
+<p>By default, disk usage above 80% triggers a warning message. Disk usage above 99% generates an error and shuts down the member cache that accesses that disk store. To disable disk store monitoring, set the parameters to 0.</p>
+
+<p>To view the current threshold values set for an existing disk store, use the <code>gfsh                 describe</code> disk-store command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe disk-store --member=server1 --name=DiskStore1
+</code></pre>
+
+<p>You can also use the following <code>DiskStoreMXBean</code> method APIs to configure and obtain these thresholds programmatically.</p>
+
+<ul>
+<li>  <code>getDiskUsageCriticalPercentage</code></li>
+<li>  <code>getDiskUsageWarningPercentage</code></li>
+<li>  <code>setDiskUsageCriticalPercentage</code></li>
+<li>  <code>setDiskUsageWarningPercentage</code></li>
+</ul>
+
+<p>You can obtain statistics on disk space usage and the performance of disk space monitoring by accessing the following statistics:</p>
+
+<ul>
+<li>  <code>diskSpace</code></li>
+<li>  <code>maximumSpace</code></li>
+<li>  <code>volumeSize</code></li>
+<li>  <code>volumeFreeSpace</code></li>
+<li>  <code>volumeFreeSpaceChecks</code></li>
+<li>  <code>volumeFreeSpaceTime</code></li>
+</ul>
+
+<p>See <a href="../../reference/statistics_list.html#section_6C2BECC63A83456190B029DEDB8F4BE3">Disk Space Usage (DiskDirStatistics)</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

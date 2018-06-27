@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Setting Up the HTTP Module for AppServers |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_weblogic_setting_up_the_module">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Setting Up the HTTP Module for AppServers
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To use the module, you need to modify your application&rsquo;s <code>web.xml</code> files. Configuration is slightly different depending on the topology you are setting up.</p>
+
+<p>Refer to <a href="common_gemfire_topologies.html#common_gemfire_topologies">Common Topologies for HTTP Session Management</a> for more information. Modifying the war file can be done manually or with the <code>modify_war</code> script. To see the command line options for the <code>modify_war</code> script, invoke:</p>
+<pre class="highlight plaintext"><code>$ modify_war -h
+</code></pre>
+
+<h2 id="manual-configuration"><a id="weblogic_setting_up_the_module__section_9D330F0A9E934B209D77C5A5D79B741C" class="no-quick-link"></a>Manual Configuration</h2>
+
+<p>To modify your war or ear file manually, make the following updates:</p>
+
+<ul>
+<li><p><strong>web.xml</strong> needs a filter added as follows. If you have your own filters, the Geode Module filter <strong>must</strong> be the first one.</p>
+<pre class="highlight plaintext"><code>&lt;filter&gt;
+    &lt;filter-name&gt;gemfire-session-filter&lt;/filter-name&gt;
+    &lt;filter-class&gt;
+      org.apache.geode.modules.session.filter.SessionCachingFilter
+    &lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;cache-type&lt;/param-name&gt;
+        &lt;param-value&gt;peer-to-peer&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;gemfire.property.locators&lt;/param-name&gt;
+        &lt;param-value&gt;localhost[10334]&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;gemfire-session-filter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+</code></pre></li>
+<li><p>Add the following jar files from the AppServer.zip to the <code>WEB-INF/lib</code> directory of the war:</p>
+
+<ul>
+<li>  geode-modules jar</li>
+<li>  geode-modules-session-internal jar</li>
+<li>  geode-modules-session jar</li>
+<li>  slf4j-api jar</li>
+<li>  slf4j-jdk14 jar</li>
+</ul></li>
+<li><p>Add the following jar files from the <code>$GEODE/lib</code> directory to the <code>WEB-INF/lib</code> directory of the war, where <code>$GEODE</code> is set to the Geode product installation:</p>
+
+<ul>
+<li>  antlr jar</li>
+<li>  fastutil jar</li>
+<li>  geode-core jar</li>
+<li>  geode-json jar</li>
+<li>  javax.transaction-api jar</li>
+<li>  jgroups jar</li>
+<li>  log4j-api jar</li>
+<li>  log4j-core jar</li>
+<li>  log4j-jul jar</li>
+</ul></li>
+</ul>
+
+<p>If you are deploying an ear file:</p>
+
+<ul>
+<li>  Copy all the dependent files, given above, to the <code>lib</code> directory of the ear.</li>
+<li><p>Modify each embedded war file&rsquo;s manifest by adding a Class-Path entry which references the shared jars added in the previous step. For example:</p>
+<pre class="highlight plaintext"><code>Manifest-Version: 1.0
+Built-By: joe
+Build-Jdk: 1.8.0_77
+Created-By: Apache Maven
+Archiver-Version: Plexus Archiver
+Class-Path: lib/geode-modules-1.0.0.jar
+lib/geode-modules-session-internal-1.0.0.jar
+lib/geode-modules-session-1.0.0.jar
+lib/slf4j-api-1.7.7.jar
+lib/slf4j-jdk14-1.7.7.jar
+lib/antlr-2.7.7.jar
+lib/fastutil-7.0.2.jar
+lib/geode-core-1.0.0.jar
+lib/geode-json-1.0.0.jar
+lib/javax.transaction-api-1.2.jar
+lib/jgroups-3.6.8.Final.jar
+lib/log4j-api-2.5.jar
+lib/log4j-core-2.5.jar
+lib/log4j-jul-2.5.jar
+</code></pre></li>
+</ul>
+
+<h2 id="peer-to-peer-setup"><a id="weblogic_setting_up_the_module__section_20294A39368D4402AEFB3D074E8D5887" class="no-quick-link"></a>Peer-to-Peer Setup</h2>
+
+<p><img src="../../images_svg/http_module_p2p_with_locator.svg" id="weblogic_setting_up_the_module__image_86E949E0F1AD4E9EB67605EFA4E97E13" class="image" /></p>
+
+<p>To run Geode in a peer-to-peer configuration, use the <code>modify_war</code> script with options
+<code>-t peer-to-peer</code>,  <code>-p gemfire.property.locators=localhost[10334]</code>, and <code>-p gemfire.propery.cache-xml-file=&lt;moduleDir&gt;/conf/cache-peer.xml</code>
+to result in the following <code>web.xml</code> content:</p>
+<pre class="highlight plaintext"><code>&lt;filter&gt;
+    &lt;filter-name&gt;gemfire-session-filter&lt;/filter-name&gt;
+    &lt;filter-class&gt;
+        org.apache.geode.modules.session.filter.SessionCachingFilter
+    &lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;cache-type&lt;/param-name&gt;
+        &lt;param-value&gt;peer-to-peer&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;gemfire.property.locators&lt;/param-name&gt;
+        &lt;param-value&gt;localhost[10334]&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+</code></pre>
+
+<h2 id="client/server-setup"><a id="weblogic_setting_up_the_module__section_B0CEBE93564540DBA165E0F7A10FDC0B" class="no-quick-link"></a>Client/Server Setup</h2>
+
+<p><img src="../../images_svg/http_module_cs_with_locator.svg" id="weblogic_setting_up_the_module__image_BDF2273487EA4FEB9895D02A6F6FD445" class="image" /></p>
+
+<p>To run Geode in a client/server configuration, you make the application server operate as a Geode client. Use the <code>-t client-server</code> option to the <code>modify_war</code> script. This adds the following filter to application server&rsquo;s <code>web.xml</code> file:</p>
+
+<p>To run Geode in a client/server configuration, you make the application server operate as a Geode client. Use the <code>modify_war</code> script with options
+<code>-t client-server</code> and <code>-p gemfire.property.cache-xml-file=&lt;module dir&gt;/conf/cache-client.xml</code>
+to result in the following <code>web.xml</code> content:</p>
+<pre class="highlight plaintext"><code>&lt;filter&gt;
+    &lt;filter-name&gt;gemfire-session-filter&lt;/filter-name&gt;
+    &lt;filter-class&gt;
+        org.apache.geode.modules.session.filter.SessionCachingFileter
+    &lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;cache-type&lt;/param-name&gt;
+        &lt;param-value&gt;client-server&lt;/param-value&gt;
+    &lt;/init-param&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;gemfire.property.cache-xml-file&lt;/param-name&gt;
+        &lt;param-value&gt;module dir/conf/cache-client.xml&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;
+</code></pre>
+
+<p>The <code>cache-client.xml</code> file contains a &lt;pool&gt; element pointing at the locator. Its default value is localhost[10334].</p>
+
+<h2 id="starting-the-application-server"><a id="weblogic_setting_up_the_module__section_2B97047AB30A4C549D91AD258657FBA6" class="no-quick-link"></a>Starting the Application Server</h2>
+
+<p>After you update the configuration, you are now ready to start your application server instance. Instantiate the locator first:</p>
+<pre class="highlight plaintext"><code>$ gfsh start locator --name=locator1
+</code></pre>
+
+<p>Then start the server:</p>
+<pre class="highlight plaintext"><code>$ gfsh start server \
+    --name=server1 \
+    --server-port=0 \
+    --locators=localhost[10334] \
+    --classpath=&lt;moduleDir&gt;/lib/geode-modules-1.0.0.jar:\
+&lt;moduleDir&gt;/lib/geode-modules-session-internal-1.0.0.jar
+</code></pre>
+
+<p>Once the application server is started, the Geode client will automatically launch within the application server process.</p>
+
+<h2 id="verifying-that-geode-started"><a id="weblogic_setting_up_the_module__section_3E186713737E4D5383E23B41CDFED59B" class="no-quick-link"></a>Verifying that Geode Started</h2>
+
+<p>You can verify that Geode has successfully started by inspecting the application server log file. For example:</p>
+<pre class="highlight plaintext"><code>info 2016/04/18 10:04:18.685 PDT &lt;localhost-startStop-2&gt; tid=0x1a]
+Initializing Geode Modules
+Java version:   1.0.0 user1 041816 2016-11-18 08:46:17 -0700
+javac 1.8.0_121
+Native version: native code unavailable
+Source revision: 19dd8eb1907e0beb2aa3e0a17d5f12c6cbec6968
+Source repository: develop
+Running on: /192.0.2.0, 8 cpu(s), x86_64 Mac OS X 10.11.4
+</code></pre>
+
+<p>Information is also logged within the Geode log file, which by default is named <code>gemfire_modules.&lt;date&gt;.log</code>.</p>
+
+<h2 id="configuring-non-sticky-session-replication"><a id="weblogic_setting_up_the_module__section_E0E0E5A1C9484D4AA13878273F16A920" class="no-quick-link"></a>Configuring Non-Sticky Session Replication</h2>
+
+<p>Some situations require sessions to be &lsquo;non-sticky&rsquo;, which means that client requests can be directed to any server in a cluster of application servers instead of the same server each time. To achieve this, you must configure your deployment as described for the following topologies.</p>
+
+<p><strong>Peer-to-Peer</strong></p>
+
+<p>No additional configuration is required.</p>
+
+<p><strong>Client-Server</strong></p>
+
+<p>For client-server topologies, the local client cache must be empty. Ensure that the filter property <code>gemfire.cache.enable_local_cache=false</code> is set. This effectively sets the local client cache to be a <strong>PROXY</strong> cache.</p>
+
+<p><strong>Note:</strong>
+Non-sticky sessions affect performance because sessions need to be re-created every time a request hits a different server. This may not be noticeable when the session attributes are small, but may become more evident as the session attributes increase in size and/or number.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

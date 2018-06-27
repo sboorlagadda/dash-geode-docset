@@ -1,0 +1,1733 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Region Shortcuts Reference |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_reference docs_reference_topics docs_reference_topics_region_shortcuts_reference">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Region Shortcuts Reference
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic describes the various region shortcuts you can use to configure Geode regions.</p>
+
+<h2 id="local"><a id="reference_w2h_3cd_lk" class="no-quick-link"></a>LOCAL</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">LOCAL</span> region shortcut is scoped only to its JVM and is not visible to other peer members. The region does not distribute data and operations to other caches.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>local</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>NORMAL</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myLOCALregion --type=LOCAL
+</code></pre>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=myLOCALregion
+..........................................................
+Name            : myLOCALregion
+Data Policy     : normal
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+ Type  |    Name     | Value
+------ | ----------- | ------
+Region | data-policy | NORMAL
+       | size        | 0
+</code></pre>
+
+<h3 id="xml-definition-of-local">XML Definition of <span class="keyword parmname">LOCAL</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myLOCALregion"&gt;
+   &lt;region-attributes scope="local"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="local_heap_lru"><a id="reference_wd5_lpy_lk" class="no-quick-link"></a>LOCAL_HEAP_LRU</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">LOCAL_HEAP_LRU</span> region shortcut is scoped to its JVM and is not visible to other peer members. The region does not distribute data and operations to other caches. The region destroys the least recently used entries when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>local</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>NORMAL</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>local-destroy</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myLHLregion --type=LOCAL_HEAP_LRU
+</code></pre>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=myLHLregion
+...........................................................
+Name            : myLHLregion
+Data Policy     : normal
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | data-policy        | NORMAL
+         | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | local-destroy
+</code></pre>
+
+<h3 id="xml-definition-of-local_heap_lru">XML Definition of <span class="keyword parmname">LOCAL_HEAP_LRU</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myLHLregion"&gt;
+   &lt;region-attributes 
+        scope="local"&gt;
+      &lt;eviction-attributes&gt;
+        &lt;lru-heap-percentage 
+           action="local-destroy"&gt;
+          &lt;class-name&gt;
+           org.apache.geode.internal.size.SizeClassOnceObjectSizer
+          &lt;/class-name&gt;
+        &lt;/lru-heap-percentage&gt;
+      &lt;/eviction-attributes&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="local_overflow"><a id="reference_adk_y4y_lk" class="no-quick-link"></a>LOCAL_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">LOCAL_OVERFLOW</span> region shortcut is scoped only to its JVM and is not visible to other peer members. The region does not distribute data and operations to other caches. The region moves the values of entries to disk when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>local</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>NORMAL</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myLOregion --type=LOCAL_OVERFLOW
+</code></pre>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=myLOregion
+...........................................................
+Name            : myLOregion
+Data Policy     : normal
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | data-policy        | NORMAL
+         | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-local_overflow">XML Definition of <span class="keyword parmname">LOCAL_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myLOregion"&gt;
+    &lt;region-attributes 
+        scope="local"&gt;
+      &lt;eviction-attributes&gt;
+        &lt;lru-heap-percentage 
+           action="overflow-to-disk"/&gt;
+      &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="local_persistent"><a id="reference_l5r_y4y_lk" class="no-quick-link"></a>LOCAL_PERSISTENT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">LOCAL_PERSISTENT</span> region shortcut is scoped to its JVM and is not visible to other peer members. The region does not distribute data and operations to other caches. The region writes its state to disk and can recover that state when the member restarts.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>local</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_REPLICATE</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myLPregion --type=LOCAL_PERSISTENT
+Member  | Status
+------- | -----------------------------------------
+server2 | Region "/myLPregion" created on "server2"
+server1 | Region "/myLPregion" created on "server1"
+
+gfsh&gt;describe region --name=myLPregion
+..........................................................
+Name            : myLPregion
+Data Policy     : persistent replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre>
+
+<h3 id="xml-definition-of-local_persistent">XML Definition of <span class="keyword parmname">LOCAL_PERSISTENT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myLPregion"&gt;
+    &lt;region-attributes 
+      scope="local" 
+      data-policy="persistent-replicate"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="local_persistent_overflow"><a id="reference_a45_y4y_lk" class="no-quick-link"></a>LOCAL_PERSISTENT_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">LOCAL_PERSISTENT_OVERFLOW</span> region shortcut is scoped to its JVM and is not visible to other peer members. The region does not distribute data and operations to other caches. The region writes its state to disk and can recover that state when the member restarts. The region also removes the values of entries from memory when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>local</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_REPLICATE</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myLPOregion --type=LOCAL_PERSISTENT_OVERFLOW
+Member  | Status
+------- | ------------------------------------------
+server1 | Region "/myLPOregion" created on "server1"
+server2 | Region "/myLPOregion" created on "server2"
+
+gfsh&gt;describe region --name=myLPOregion
+...........................................................
+Name            : myLPOregion
+Data Policy     : persistent replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-local_persistent_overflow">XML Definition of <span class="keyword parmname">LOCAL_PERSISTENT_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myLPOregion"&gt;
+   &lt;region-attributes 
+        scope="local" 
+        data-policy="persistent-replicate"&gt;
+      &lt;eviction-attributes&gt;
+        &lt;lru-heap-percentage 
+          action="overflow-to-disk"/&gt;
+      &lt;/eviction-attributes&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition"><a id="reference_ow5_4qy_lk" class="no-quick-link"></a>PARTITION</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION</span> region shortcut is partitioned across each peer member that created the region.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPregion --type=PARTITION
+Member  | Status
+------- | ----------------------------------------
+server1 | Region "/myPregion" created on "server1"
+server2 | Region "/myPregion" created on "server2"
+
+gfsh&gt;describe region --name=myPregion
+..........................................................
+Name            : myPregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre>
+
+<h3 id="xml-definition-of-partition">XML Definition of PARTITION</h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPregion"&gt;
+    &lt;region-attributes 
+      data-policy="partition"/&gt;
+  &lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_heap_lru"><a id="reference_twx_y4y_lk" class="no-quick-link"></a>PARTITION_HEAP_LRU</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with <span class="keyword parmname">PARTITION_HEAP_LRU</span> is partitioned across each peer member that created the region. The region destroys entries when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>local-destroy</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPHLregion --type=PARTITION_HEAP_LRU
+Member  | Status
+------- | ------------------------------------------
+server1 | Region "/myPHLregion" created on "server1"
+server2 | Region "/myPHLregion" created on "server2"
+
+gfsh&gt;describe region --name=myPHLregion
+...........................................................
+Name            : myPHLregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | local-destroy
+</code></pre>
+
+<h3 id="xml-definition-of-partition_heap_lru">XML Definition of <span class="keyword parmname">PARTITION_HEAP_LRU</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPHLregion"&gt;
+  &lt;region-attributes 
+      data-policy="partition"&gt;
+      &lt;eviction-attributes&gt;
+        &lt;lru-heap-percentage 
+            action="local-destroy"&gt;
+            &lt;class-name&gt;org.apache.geode.internal.size.SizeClassOnceObjectSizer&lt;/class-name&gt;
+        &lt;/lru-heap-percentage&gt;
+      &lt;/eviction-attributes&gt;
+  &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_overflow"><a id="reference_js1_z4y_lk" class="no-quick-link"></a>PARTITION_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_OVERFLOW</span> region shortcut has state that is partitioned across each peer member that creates the region. The region moves the values of entries to disk when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPOregion --type=PARTITION_OVERFLOW
+Member  | Status
+------- | -----------------------------------------
+server1 | Region "/myPOregion" created on "server1"
+server2 | Region "/myPOregion" created on "server2"
+
+gfsh&gt;describe region --name=myPOregion
+...........................................................
+Name            : myPOregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-partition_overflow">XML Definition of <span class="keyword parmname">PARTITION_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPOregion"&gt;
+    &lt;region-attributes 
+        data-policy="partition"&gt;
+        &lt;eviction-attributes&gt;
+           &lt;lru-heap-percentage 
+             action="overflow-to-disk"/&gt;
+        &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_persistent"><a id="reference_d4k_jpy_lk" class="no-quick-link"></a>PARTITION_PERSISTENT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_PERSISTENT</span> region shortcut has state that is partitioned across each peer member that creates the region. The region writes its state to disk and can recover that state when the member restarts.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_PARTITION</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPPregion --type=PARTITION_PERSISTENT
+Member  | Status
+------- | -----------------------------------------
+server1 | Region "/myPPregion" created on "server1"
+server2 | Region "/myPPregion" created on "server2"
+
+gfsh&gt;describe region --name=myPPregion
+..........................................................
+Name            : myPPregion
+Data Policy     : persistent partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre>
+
+<h3 id="xml-definition-of-partition_persistent">XML Definition of <span class="keyword parmname">PARTITION_PERSISTENT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPPregion"&gt;
+    &lt;region-attributes 
+     data-policy="persistent-partition"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_persistent_overflow"><a id="reference_v5l_jpy_lk" class="no-quick-link"></a>PARTITION_PERSISTENT_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_PERSISTENT_OVERFLOW</span> region shortcut has state that is partitioned across each peer member that creates the region. The region writes its state to disk and can recover that state when the member restarts. The region removes the values of entries from memory when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPPOregion --type=PARTITION_PERSISTENT_OVERFLOW
+Member  | Status
+------- | ------------------------------------------
+server2 | Region "/myPPOregion" created on "server2"
+server1 | Region "/myPPOregion" created on "server1"
+
+gfsh&gt;describe region --name=myPPOregion
+...........................................................
+Name            : myPPOregion
+Data Policy     : persistent partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-partition_persistent_overflow">XML Definition of <span class="keyword parmname">PARTITION_PERSISTENT_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPPOregion"&gt;
+   &lt;region-attributes 
+        data-policy="persistent-partition"&gt;
+        &lt;eviction-attributes&gt;
+          &lt;lru-heap-percentage 
+             action="overflow-to-disk"/&gt;
+        &lt;/eviction-attributes&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_proxy"><a id="reference_v4m_jpy_lk" class="no-quick-link"></a>PARTITION_PROXY</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_PROXY</span> region shortcut has no local state and forwards all operations to a peer region configured with the <span class="keyword parmname">PARTITION</span> shortcut or a peer region configured with the <span class="keyword parmname">PARTITION_PERSISTENT</span> shortcut.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>local-max-memory:</td>
+<td>0</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPPXYregion --type=PARTITION_PROXY
+Member  | Status
+------- | -------------------------------------------
+server1 | Region "/myPPXYregion" created on "server1"
+server2 | Region "/myPPXYregion" created on "server2"
+
+gfsh&gt;describe region --name=myPPXYregion
+...........................................................
+Name             : myPPXYregion
+Data Policy      : partition
+Accessor Members : server1
+                   server2
+
+Non-Default Attributes Shared By Accessor Members  
+
+  Type    |       Name       | Value
+--------- | ---------------- | -----
+Region    | size             | 0
+Partition | local-max-memory | 0
+</code></pre>
+
+<h3 id="xml-definition-of-partition_proxy">XML Definition of <span class="keyword parmname">PARTITION_PROXY</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPPXYregion"&gt;
+    &lt;region-attributes 
+        data-policy="partition"&gt;
+        &lt;partition-attributes 
+           local-max-memory="0"/&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_proxy_redundant"><a id="reference_c1n_jpy_lk" class="no-quick-link"></a>PARTITION_PROXY_REDUNDANT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_PROXY_REDUNDANT</span> region shortcut has no local state and forwards all operations to a peer region configured with the <span class="keyword parmname">PARTITION_REDUNDANT</span> shortcut or a peer region configured with the <span class="keyword parmname">PARTITION_REDUNDANT_PERSISTENT</span> shortcut.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+<tr>
+<td>local-max-memory</td>
+<td>0</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPPRregion --type=PARTITION_PROXY_REDUNDANT
+Member  | Status
+------- | ------------------------------------------
+server1 | Region "/myPPRregion" created on "server1"
+server2 | Region "/myPPRregion" created on "server2"
+
+gfsh&gt;describe region --name=myPPRregion
+...........................................................
+Name             : myPPRregion
+Data Policy      : partition
+Accessor Members : server1
+                   server2
+
+Non-Default Attributes Shared By Accessor Members  
+
+  Type    |       Name       | Value
+--------- | ---------------- | -----
+Region    | size             | 0
+Partition | redundant-copies | 1
+          | local-max-memory | 0
+</code></pre>
+
+<h3 id="xml-definition-of-partition_proxy_redundant">XML Definition of <span class="keyword parmname">PARTITION_PROXY_REDUNDANT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPPRregion"&gt;
+    &lt;region-attributes 
+       data-policy="partition"&gt;
+       &lt;partition-attributes 
+        redundant-copies="1" 
+        local-max-memory="0"/&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_redundant"><a id="reference_shn_jpy_lk" class="no-quick-link"></a>PARTITION_REDUNDANT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_REDUNDANT</span> region shortcut has state that is partitioned across each peer member that creates the region. The region maintains an extra copy of the data in memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPRregion --type=PARTITION_REDUNDANT
+Member  | Status
+------- | -----------------------------------------
+server1 | Region "/myPRregion" created on "server1"
+server2 | Region "/myPRregion" created on "server2"
+
+gfsh&gt;describe region --name=myPRregion
+..........................................................
+Name            : myPRregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type    |       Name       | Value
+--------- | ---------------- | -----
+Region    | size             | 0
+Partition | redundant-copies | 1
+</code></pre>
+
+<h3 id="xml-definition-of-partition_redundant">XML Definition of <span class="keyword parmname">PARTITION_REDUNDANT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPRregion"&gt;
+   &lt;region-attributes 
+       data-policy="partition"&gt;
+       &lt;partition-attributes 
+          redundant-copies="1"/&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_redundant_heap_lru"><a id="reference_m4n_jpy_lk" class="no-quick-link"></a>PARTITION_REDUNDANT_HEAP_LRU</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_REDUNDANT_HEAP_LRU</span> region shortcut has state that is partitioned across each peer member that creates the region. The region keeps an extra copy of the data in memory. The region destroys entries when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>local-destroy</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPRHLregion --type=PARTITION_REDUNDANT_HEAP_LRU
+Member  | Status
+------- | -------------------------------------------
+server1 | Region "/myPRHLregion" created on "server1"
+server2 | Region "/myPRHLregion" created on "server2"
+
+gfsh&gt;describe region --name=myPRHLregion
+...........................................................
+Name            : myPRHLregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type    |        Name        | Value
+--------- | ------------------ | -------------------
+Region    | size               | 0
+Eviction  | eviction-algorithm | lru-heap-percentage
+          | eviction-action    | local-destroy
+Partition | redundant-copies   | 1
+</code></pre>
+
+<h3 id="xml-definition-of-partition_redundant_heap_lru">XML Definition of <span class="keyword parmname">PARTITION_REDUNDANT_HEAP_LRU</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPRHLregion"&gt;
+    &lt;region-attributes 
+        data-policy="partition"&gt;
+        &lt;partition-attributes redundant-copies="1"/&gt;
+        &lt;eviction-attributes&gt;
+          &lt;lru-heap-percentage action="local-destroy"&gt;
+           &lt;class-name&gt;
+            org.apache.geode.internal.size.SizeClassOnceObjectSizer
+           &lt;/class-name&gt;
+          &lt;/lru-heap-percentage&gt;
+      &lt;/eviction-attributes&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_redundant_overflow"><a id="reference_own_jpy_lk" class="no-quick-link"></a>PARTITION_REDUNDANT_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_REDUNDANT_OVERFLOW</span> region shortcut has state that is partitioned across each peer member that creates the region. The region keeps an extra copy of the data in memory. The region moves the values of entries to disk when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPROregion --type=PARTITION_REDUNDANT_OVERFLOW
+Member  | Status
+------- | ------------------------------------------
+server2 | Region "/myPROregion" created on "server2"
+server1 | Region "/myPROregion" created on "server1"
+
+gfsh&gt;describe region --name=myPROregion
+...........................................................
+Name            : myPROregion
+Data Policy     : partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type    |        Name        | Value
+--------- | ------------------ | -------------------
+Region    | size               | 0
+Eviction  | eviction-algorithm | lru-heap-percentage
+          | eviction-action    | overflow-to-disk
+Partition | redundant-copies   | 1
+</code></pre>
+
+<h3 id="xml-definition-of-partition_redundant_overflow">XML Definition of <span class="keyword parmname">PARTITION_REDUNDANT_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPROregion"&gt;
+   &lt;region-attributes 
+       data-policy="partition"&gt;
+       &lt;partition-attributes 
+          redundant-copies="1"/&gt;
+       &lt;eviction-attributes&gt;
+         &lt;lru-heap-percentage 
+           action="overflow-to-disk"/&gt;
+       &lt;/eviction-attributes&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_redundant_persistent"><a id="reference_bd4_jpy_lk" class="no-quick-link"></a>PARTITION_REDUNDANT_PERSISTENT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_REDUNDANT_PERSISTENT</span> region shortcut has state that is partitioned across each peer member that creates the region. The region writes its state to disk and recovers its state from disk when the region is created. The region maintains an extra copy of the data in memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myPRPregion --type=PARTITION_REDUNDANT_PERSISTENT
+Member  | Status
+------- | ------------------------------------------
+server2 | Region "/myPRPregion" created on "server2"
+server1 | Region "/myPRPregion" created on "server1"
+
+gfsh&gt;describe region --name=myPRPregion
+..........................................................
+Name            : myPRPregion
+Data Policy     : persistent partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type    |       Name       | Value
+--------- | ---------------- | -----
+Region    | size             | 0
+Partition | redundant-copies | 1
+</code></pre>
+
+<h3 id="xml-definition-of-partition_redundant_persistent">XML Definition of <span class="keyword parmname">PARTITION_REDUNDANT_PERSISTENT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPRPregion"&gt;
+   &lt;region-attributes 
+       data-policy="persistent-partition"&gt;
+       &lt;partition-attributes 
+        redundant-copies="1"/&gt;
+   &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="partition_redundant_persistent_overflow"><a id="reference_xqq_tvc_lk" class="no-quick-link"></a>PARTITION_REDUNDANT_PERSISTENT_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">PARTITION_REDUNDANT_PERSISTENT_OVERFLOW</span> region shortcut has state that is partitioned across each peer member that creates the region. The region writes its state to disk and recovers its state from disk when the region is created. The region maintains an extra copy of the data in memory. The region removes the values of entries from memory when it detects that the JVM is running out of memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_PARTITION</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Partition Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>redundant-copies:</td>
+<td>1</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>create region --name=myPRPOregion --type=PARTITION_REDUNDANT_PERSISTENT_OVERFLOW
+</code></pre>
+<pre class="highlight plaintext"><code>describe region --name=myPRPOregion
+...........................................................
+Name            : myPRPOregion
+Data Policy     : persistent partition
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type    |        Name        | Value
+--------- | ------------------ | -------------------
+Region    | size               | 0
+Eviction  | eviction-algorithm | lru-heap-percentage
+          | eviction-action    | overflow-to-disk
+Partition | redundant-copies   | 1
+</code></pre>
+
+<h3 id="xml-definition-of-partition_redundant_persistent_overflow">XML Definition of <span class="keyword parmname">PARTITION_REDUNDANT_PERSISTENT_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myPRPOregion"&gt;
+    &lt;region-attributes 
+       data-policy="persistent-partition"&gt;
+       &lt;partition-attributes 
+           redundant-copies="1"/&gt;
+       &lt;eviction-attributes&gt;
+         &lt;lru-heap-percentage 
+            action="overflow-to-disk"/&gt;
+      &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate"><a id="reference_wq4_jpy_lk" class="no-quick-link"></a>REPLICATE</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE</span> region shortcut has local state that is kept in sync with all other peer regions configured with a REPLICATE data policy.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>REPLICATE</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRregion --type=REPLICATE
+
+REPLICATE                       REPLICATE_PERSISTENT            REPLICATE_OVERFLOW              
+REPLICATE_PERSISTENT_OVERFLOW   REPLICATE_HEAP_LRU              REPLICATE_PROXY                 
+
+gfsh&gt;create region --name=myRregion --type=REPLICATE
+Member  | Status
+------- | ----------------------------------------
+server1 | Region "/myRregion" created on "server1"
+server2 | Region "/myRregion" created on "server2"
+</code></pre>
+
+<h3 id="xml-definition-of-replicate">XML Definition of <span class="keyword parmname">REPLICATE</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myRregion"&gt;
+    &lt;region-attributes 
+       scope="distributed-ack" 
+       data-policy="replicate"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate_heap_lru"><a id="reference_xx4_jpy_lk" class="no-quick-link"></a>REPLICATE_HEAP_LRU</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE_HEAP_LRU</span> region shortcut has local state that is kept in sync with all other peer regions configured with a REPLICATE data policy. The region destroys entries when it detects that the JVM is running low on memory.</p>
+
+<p><strong>Note:</strong>
+Normally, you cannot have a <code>local-destroy</code> eviction policy on replicated regions. However, the REPLICATE_HEAP_LRU region is not the same as other replicated regions. This region is preloaded and remains in synch by registering interest in the keys of its peer&rsquo;s replicated regions.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>PRELOADED</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr class="even">
+<td>eviction-action:</td>
+<td>local-destroy
+<div class="note note">
+<b>Note:</b>
+<p>Normally, you cannot have a <code class="ph codeph">local-destroy</code> eviction policy on replicated regions. However, the REPLICATE_HEAP_LRU region is not the same as other replicated regions. This region is preloaded and remains in synch by registering interest in the keys of its peer&rsquo;s replicated regions.</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>interest-policy:</td>
+<td>all</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRHLregion --type=REPLICATE_HEAP_LRU
+Member  | Status
+------- | -------------------------------------------
+server1 | Region "/myRHLregion2" created on "server1"
+server2 | Region "/myRHLregion2" created on "server2"
+
+gfsh&gt;describe region --name=myRHLregion
+...........................................................
+Name            : myRHLregion
+Data Policy     : preloaded
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | local-destroy
+</code></pre>
+
+<h3 id="xml-definition-of-replicate_heap_lru">XML Definition of <span class="keyword parmname">REPLICATE_HEAP_LRU</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myRHLregion"&gt;
+    &lt;region-attributes 
+       scope="distributed-ack" 
+       data-policy="preloaded"&gt;
+       &lt;subscription-attributes 
+          interest-policy="all"/&gt;
+       &lt;eviction-attributes&gt;
+         &lt;lru-heap-percentage 
+            action="local-destroy"&gt;
+            &lt;class-name&gt;org.apache.geode.internal.size.SizeClassOnceObjectSizer&lt;/class-name&gt;
+         &lt;/lru-heap-percentage&gt;
+       &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate_overflow"><a id="reference_t2p_jpy_lk" class="no-quick-link"></a>REPLICATE_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE_OVERFLOW</span> region shortcut has local state that is kept in sync with all other peer regions configured with a <span class="keyword parmname">REPLICATE</span> data policy.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>REPLICATE</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myROregion --type=REPLICATE_OVERFLOW
+Member  | Status
+------- | -----------------------------------------
+server2 | Region "/myROregion" created on "server2"
+server1 | Region "/myROregion" created on "server1"
+
+gfsh&gt;describe region --name=myROregion
+...........................................................
+Name            : myROregion
+Data Policy     : replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-replicate_overflow">XML Definition of <span class="keyword parmname">REPLICATE_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myROregion"&gt;
+    &lt;region-attributes 
+       scope="distributed-ack" 
+       data-policy="replicate"&gt;
+       &lt;eviction-attributes&gt;
+          &lt;lru-heap-percentage 
+           action="overflow-to-disk"/&gt;
+       &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate_persistent"><a id="reference_emp_jpy_lk" class="no-quick-link"></a>REPLICATE_PERSISTENT</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE_PERSISTENT</span> region shortcut has local state that is kept in sync with all other peer regions that are configured with a <span class="keyword parmname">REPLICATE</span> data policy. The region writes its state to disk and recovers that state when the member restarts.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_REPLICATE</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRPregion --type=REPLICATE_PERSISTENT
+Member  | Status
+------- | -----------------------------------------
+server2 | Region "/myRPregion" created on "server2"
+server1 | Region "/myRPregion" created on "server1"
+
+gfsh&gt;describe region --name=myRPregion
+..........................................................
+Name            : myRPregion
+Data Policy     : persistent replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre>
+
+<h3 id="xml-definition-of-replicate_persistent">XML Definition of <span class="keyword parmname">REPLICATE_PERSISTENT</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myRPregion"&gt;
+    &lt;region-attributes 
+        scope="distributed-ack" 
+        data-policy="empty"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate_persistent_overflow"><a id="reference_tsp_jpy_lk" class="no-quick-link"></a>REPLICATE_PERSISTENT_OVERFLOW</h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE_PERSISTENT_OVERFLOW</span> region shortcut has local state that is kept in sync with all other peer regions configured with a <span class="keyword parmname">REPLICATE</span> data policy. The region writes its state to disk and recovers that state when the member restarts. The region removes the values of entries from memory when it detects that the JVM is running low on memory.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>PERSISTENT_REPLICATE</td>
+</tr>
+</tbody></table>
+
+<p><span class="keyword parmname">Eviction Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>eviction-algorithm:</td>
+<td>lru-heap-percentage</td>
+</tr>
+<tr>
+<td>eviction-action:</td>
+<td>overflow-to-disk</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRPOregion --type=REPLICATE_PERSISTENT
+
+REPLICATE_PERSISTENT            REPLICATE_PERSISTENT_OVERFLOW   
+
+gfsh&gt;create region --name=myRPOregion --type=REPLICATE_PERSISTENT_OVERFLOW
+Member  | Status
+------- | ------------------------------------------
+server1 | Region "/myRPOregion" created on "server1"
+server2 | Region "/myRPOregion" created on "server2"
+
+gfsh&gt;describe region --name=myRPOregion
+...........................................................
+Name            : myRPOregion
+Data Policy     : persistent replicate
+Hosting Members : server1
+                  server2
+
+Non-Default Attributes Shared By Hosting Members  
+
+  Type   |        Name        | Value
+-------- | ------------------ | -------------------
+Region   | size               | 0
+Eviction | eviction-algorithm | lru-heap-percentage
+         | eviction-action    | overflow-to-disk
+</code></pre>
+
+<h3 id="xml-definition-of-replicate_persistent_overflow">XML Definition of <span class="keyword parmname">REPLICATE_PERSISTENT_OVERFLOW</span></h3>
+<pre class="highlight plaintext"><code> &lt;region name="myRPOregion"&gt;
+    &lt;region-attributes 
+       scope="distributed-ack" 
+       data-policy="persistent-replicate"&gt;
+       &lt;eviction-attributes&gt;
+         &lt;lru-heap-percentage 
+             action="overflow-to-disk"/&gt;
+      &lt;/eviction-attributes&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<h2 id="replicate_proxy"><a id="reference_n1q_jpy_lk" class="no-quick-link"></a>REPLICATE_PROXY</span></h2>
+
+<h3 id="description">Description</h3>
+
+<p>A region configured with the <span class="keyword parmname">REPLICATE_PROXY</span> region shortcut has no local state and forwards all operations to a peer region configured with the <a href="#reference_wq4_jpy_lk">REPLICATE</a> or <a href="#reference_emp_jpy_lk">REPLICATE_PERSISTENT</a> region shortcut.</p>
+
+<h3 id="default-attributes">Default Attributes</h3>
+
+<p><span class="keyword parmname">Region Attributes</span></p>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td>scope:</td>
+<td>distributed-ack</td>
+</tr>
+<tr>
+<td>data-policy:</td>
+<td>EMPTY</td>
+</tr>
+</tbody></table>
+
+<h3 id="gfsh-command-example">gfsh Command Example</h3>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRPXYregion --type=REPLICATE_PROXY
+Member  | Status
+------- | -------------------------------------------
+server1 | Region "/myRPXYregion" created on "server1"
+server2 | Region "/myRPXYregion" created on "server2"
+
+gfsh&gt;describe region --name=myRPXYregion
+...........................................................
+Name             : myRPXYregion
+Data Policy      : empty
+Accessor Members : server1
+                   server2
+
+Non-Default Attributes Shared By Accessor Members  
+
+ Type  | Name | Value
+------ | ---- | -----
+Region | size | 0
+</code></pre>
+
+<h3 id="xml-definition-of-replicate_proxy">XML Definition of <span class="keyword parmname">REPLICATE_PROXY</span></h3>
+<pre class="highlight plaintext"><code>&lt;region name="myRPXYregion"&gt;
+    &lt;region-attributes 
+        scope="distributed-ack" 
+        data-policy="empty"/&gt;
+&lt;/region&gt;
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

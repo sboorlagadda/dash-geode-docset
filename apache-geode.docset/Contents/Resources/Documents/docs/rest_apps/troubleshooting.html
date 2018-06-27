@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Troubleshooting and FAQ |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_rest_apps docs_rest_apps_troubleshooting">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Troubleshooting and FAQ
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_r5z_lj5_m4"></a></p>
+
+<p>This section provides troubleshooting guidance and frequently asked questions about Geode Developer REST APIs.</p>
+
+<h2 id="checking-if-the-rest-api-service-is-up-and-running">Checking if the REST API Service is Up and Running</h2>
+
+<p>Use the ping endpoint to verify whether the REST API server is available.</p>
+
+<p>Use the <code>/gemfire-api/v1/ping</code> endpoint to check REST API server availability:</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>curl -i http://localhost:7070/gemfire-api/v1/ping 
+</code></pre>
+
+<p>Example success response:</p>
+<pre class="highlight plaintext"><code>200 OK
+</code></pre>
+
+<p>If the server is not available, your client will receive an HTTP error code and message.</p>
+
+<h2 id="key-types-and-json-support">Key Types and JSON Support</h2>
+
+<p>When defining regions (your REST resources), you must only use scalar values for keys and also set value constraints in order to avoid producing JSON that cannot be parsed by Geode.</p>
+
+<p>If Geode regions are not defined with scalar values as keys and value constraints, then you may receive the following error message (even though the JSON is technically valid) in your REST client applications:</p>
+<pre class="highlight plaintext"><code>Json doc specified in request body is malformed..!!'
+</code></pre>
+
+<p>For example, the following JSON documents are not supported by Geode:</p>
+
+<h2 id="unsupported-json-example-1">Unsupported JSON Example 1</h2>
+<pre class="highlight plaintext"><code>[
+     1,
+     [],
+     [
+         4,
+         "hello",
+         {}
+     ],
+     {
+         "array": []
+     }
+]
+</code></pre>
+
+<h2 id="unsupported-json-example-2">Unsupported JSON Example 2</h2>
+<pre class="highlight plaintext"><code>[[[[[[[[[[[[[[[[[[["Not too deep"]]]]]]]]]]]]]]]]]]]
+</code></pre>
+
+<h2 id="unsupported-json-example-3">Unsupported JSON Example 3</h2>
+<pre class="highlight plaintext"><code>[1,2,3,"hello"]
+</code></pre>
+
+<h2 id="unsupported-json-example-4">Unsupported JSON Example 4</h2>
+<pre class="highlight plaintext"><code>[
+    "JSON Test Pattern pass1",
+    {
+        "object with 1 member": [
+            "array with 1 element"
+        ]
+    },
+    {},
+    [],
+    -42,
+    true,
+    false,
+    null,
+    {
+        "integer": 1234567890,
+        "real": -9876.54321,
+        "e": 1.23456789e-13,
+        "E": 1.23456789e+34,
+        "": 2.3456789012e+76,
+        "zero": 0,
+        "one": 1,
+        "space": " ",
+        "quote": "\"",
+        "backslash": "\\",
+        "controls": "\b\f\n\r\t",
+        "slash": "/ &amp; /",
+        "alpha": "abcdefghijklmnopqrstuvwyz",
+        "ALPHA": "ABCDEFGHIJKLMNOPQRSTUVWYZ",
+        "digit": "0123456789",
+        "0123456789": "digit",
+        "special": "`1~!@#$%^&amp;*()_+-={':[,]}|;.&lt;/&gt;?",
+        "true": true,
+        "false": false,
+        "null": null,
+        "array": [],
+        "object": {},
+        "address": "50 St. James Street",
+        "url": "http://www.JSON.org/",
+        "comment": "// /* &lt;!-- --",
+        "# -- --&gt; */": " ",
+        " s p a c e d ": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "compact": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+        ],
+        "jsontext": "{\"object with 1 member\":[\"array with 1 element\"]}",
+        "quotes": "&amp;#34; \" %22 0x22 034 &amp;#x22;",
+        "/\\\"\b\f\n\r\t`1~!@#$%^&amp;*()_+-=[]{}|;:',./&lt;&gt;?": "A key can be any string"
+    },
+    0.5,
+    98.6,
+    99.44,
+    1066,
+    10,
+    1,
+    0.1,
+    1,
+    2,
+    2,
+    "rosebud"
+]
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

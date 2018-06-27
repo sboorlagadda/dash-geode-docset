@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configuring Dispatcher Threads and Order Policy for Event Distribution |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_events docs_developing_events_configuring_gateway_concurrency_levels">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configuring Dispatcher Threads and Order Policy for Event Distribution
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>By default, Geode uses multiple dispatcher threads to process region events simultaneously in a gateway sender queue for distribution between sites, or in an asynchronous event queue for distributing events for write-behind caching. With serial queues, you can also configure the ordering policy for dispatching those events.</p>
+
+<p>By default, a gateway sender queue or asynchronous event queue uses 5 dispatcher threads per queue. This provides support for applications that have the ability to process queued events concurrently for distribution to another Geode site or listener. If your application does not require concurrent distribution, or if you do not have enough resources to support the requirements of multiple dispatcher threads, then you can configure a single dispatcher thread to process a queue.</p>
+
+<ul>
+<li>  <a href="configuring_gateway_concurrency_levels.html#concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_20E8EFCE89EB4DC7AA822D03C8E0F470">Using Multiple Dispatcher Threads to Process a Queue</a></li>
+<li>  <a href="configuring_gateway_concurrency_levels.html#concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_C4C83B5C0FDD4913BA128365EE7E4E35">Performance and Memory Considerations</a></li>
+<li>  <a href="configuring_gateway_concurrency_levels.html#concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_4835BA30CDFD4B658BD2576F6BC2E23F">Configuring the Ordering Policy for Serial Queues</a></li>
+<li>  <a href="configuring_gateway_concurrency_levels.html#concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_752F08F9064B4F67A80DA0A994671EA0">Examples—Configuring Dispatcher Threads and Ordering Policy for a Serial Gateway Sender Queue</a></li>
+</ul>
+
+<h2 id="using-multiple-dispatcher-threads-to-process-a-queue"><a id="concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_20E8EFCE89EB4DC7AA822D03C8E0F470" class="no-quick-link"></a>Using Multiple Dispatcher Threads to Process a Queue</h2>
+
+<p>When multiple dispatcher threads are configured for a parallel queue, Geode simply uses multiple threads to process the contents of each individual queue. The total number of queues that are created is still determined by the number of Geode members that host the region.</p>
+
+<p>When multiple dispatcher threads are configured for a serial queue, Geode creates an additional copy of the queue for each thread on each member that hosts the queue. To obtain the maximum throughput, increase the number of dispatcher threads until your network is saturated.</p>
+
+<p>The following diagram illustrates a serial gateway sender queue that is configured with multiple dispatcher threads.
+<img src="../../images/MultisiteConcurrency_WAN_Gateway.png" id="concept_6C52A037E39E4FD6AE4C6A982A4A1A85__image_093DAC58EBEE456485562C92CA79899F" class="image" width="624" /></p>
+
+<h2 id="performance-and-memory-considerations"><a id="concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_C4C83B5C0FDD4913BA128365EE7E4E35" class="no-quick-link"></a>Performance and Memory Considerations</h2>
+
+<p>When a serial gateway sender or an asynchronous event queue uses multiple dispatcher threads, consider the following:</p>
+
+<ul>
+<li>  Queue attributes are repeated for each copy of the queue that is created for a dispatcher thread. That is, each concurrent queue points to the same disk store, so the same disk directories are used. If persistence is enabled and overflow occurs, the threads that insert entries into the queues compete for the disk. This applies to application threads and dispatcher threads, so it can affect application performance.</li>
+<li>  The <code>maximum-queue-memory</code> setting applies to each copy of the serial queue. If you configure 10 dispatcher threads and the maximum queue memory is set to 100MB, then the total maximum queue memory for the queue is 1000MB on each member that hosts the queue.</li>
+</ul>
+
+<h2 id="configuring-the-ordering-policy-for-serial-queues"><a id="concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_4835BA30CDFD4B658BD2576F6BC2E23F" class="no-quick-link"></a>Configuring the Ordering Policy for Serial Queues</h2>
+
+<p>When using multiple <code>dispatcher-threads</code> (greater than 1) with a serial event queue, you can also configure the <code>order-policy</code> that those threads use to distribute events from the queue. The valid order policy values are:</p>
+
+<ul>
+<li>  <strong>key (default)</strong>. All updates to the same key are distributed in order. Geode preserves key ordering by placing all updates to the same key in the same dispatcher thread queue. You typically use key ordering when updates to entries have no relationship to each other, such as for an application that uses a single feeder to distribute stock updates to several other systems.</li>
+<li>  <strong>thread</strong>. All region updates from a given thread are distributed in order. Geode preserves thread ordering by placing all region updates from the same thread into the same dispatcher thread queue. In general, use thread ordering when updates to one region entry affect updates to another region entry.</li>
+<li>  <strong>partition</strong>. All region events that share the same partitioning key are distributed in order. Specify partition ordering when applications use a <a href="/releases/latest/javadoc/org/apache/geode/cache/PartitionResolver.html">PartitionResolver</a> to implement <a href="../partitioned_regions/using_custom_partition_resolvers.html">custom partitioning</a>. With partition ordering, all entries that share the same &ldquo;partitioning key&rdquo; (RoutingObject) are placed into the same dispatcher thread queue.</li>
+</ul>
+
+<p>You cannot configure the <code>order-policy</code> for a parallel event queue, because parallel queues cannot preserve event ordering for regions. Only the ordering of events for a given partition (or in a given queue of a distributed region) can be preserved.</p>
+
+<h2 id="examples—configuring-dispatcher-threads-and-ordering-policy-for-a-serial-gateway-sender-queue"><a id="concept_6C52A037E39E4FD6AE4C6A982A4A1A85__section_752F08F9064B4F67A80DA0A994671EA0" class="no-quick-link"></a>Examples—Configuring Dispatcher Threads and Ordering Policy for a Serial Gateway Sender Queue</h2>
+
+<p>To increase the number of dispatcher threads and set the ordering policy for a serial gateway sender, use one of the following mechanisms.</p>
+
+<ul>
+<li><p><strong>cache.xml configuration</strong></p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+  &lt;gateway-sender id="NY" parallel="false" 
+   remote-distributed-system-id="1"
+   enable-persistence="true"
+   disk-store-name="gateway-disk-store"
+   maximum-queue-memory="200"
+   dispatcher-threads=7 order-policy="key"/&gt; 
+   ... 
+&lt;/cache&gt;
+</code></pre></li>
+<li><p><strong>Java API configuration</strong></p>
+<pre class="highlight plaintext"><code>Cache cache = new CacheFactory().create();
+
+GatewaySenderFactory gateway = cache.createGatewaySenderFactory();
+gateway.setParallel(false);
+gateway.setPersistenceEnabled(true);
+gateway.setDiskStoreName("gateway-disk-store");
+gateway.setMaximumQueueMemory(200);
+gateway.setDispatcherThreads(7);
+gateway.setOrderPolicy(OrderPolicy.KEY);
+GatewaySender sender = gateway.create("NY", "1");
+sender.start();
+</code></pre></li>
+<li><p><strong>gfsh:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;create gateway-sender -d="NY" 
+   --parallel=false 
+   --remote-distributed-system-id="1"
+   --enable-persistence=true
+   --disk-store-name="gateway-disk-store"
+   --maximum-queue-memory=200
+   --dispatcher-threads=7 
+   --order-policy="key"
+</code></pre></li>
+</ul>
+
+<p>The following examples show how to set dispatcher threads and ordering policy for an asynchronous event queue:</p>
+
+<ul>
+<li><p><strong>cache.xml configuration</strong></p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+   &lt;async-event-queue id="sampleQueue" persistent="true"
+    disk-store-name="async-disk-store" parallel="false"
+    dispatcher-threads=7 order-policy="key"&gt;
+      &lt;async-event-listener&gt;
+         &lt;class-name&gt;MyAsyncEventListener&lt;/class-name&gt;
+         &lt;parameter name="url"&gt; 
+           &lt;string&gt;jdbc:db2:SAMPLE&lt;/string&gt; 
+         &lt;/parameter&gt; 
+         &lt;parameter name="username"&gt; 
+           &lt;string&gt;gfeadmin&lt;/string&gt; 
+         &lt;/parameter&gt; 
+         &lt;parameter name="password"&gt; 
+           &lt;string&gt;admin1&lt;/string&gt; 
+         &lt;/parameter&gt; 
+    &lt;/async-event-listener&gt;
+    &lt;/async-event-queue&gt;
+...
+&lt;/cache&gt;
+</code></pre></li>
+<li><p><strong>Java API configuration</strong></p>
+<pre class="highlight plaintext"><code>Cache cache = new CacheFactory().create();
+AsyncEventQueueFactory factory = cache.createAsyncEventQueueFactory();
+factory.setPersistent(true);
+factory.setDiskStoreName("async-disk-store");
+factory.setParallel(false);
+factory.setDispatcherThreads(7);
+factory.setOrderPolicy(OrderPolicy.KEY);
+AsyncEventListener listener = new MyAsyncEventListener();
+AsyncEventQueue sampleQueue = factory.create("customerWB", listener);
+</code></pre>
+
+<p>Entry updates in the current, in-process batch are not eligible for conflation.</p></li>
+<li><p><strong>gfsh:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;create async-event-queue --id="sampleQueue" --persistent=true
+--disk-store="async-disk-store" --parallel=false
+--dispatcher-threads=7 order-policy="key"
+--listener=myAsycEventListener 
+--listener-param=url#jdbc:db2:SAMPLE 
+--listener-param=username#gfeadmin 
+--listener-param=password#admin1
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Client/Server Example Configurations |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_topologies_and_comm docs_topologies_and_comm_cs_configuration docs_topologies_and_comm_cs_configuration_client_server_example_configurations">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Client/Server Example Configurations
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>For easy configuration, you can start with these example client/server configurations and modify for your systems.</p>
+
+<h2 id="examples-of-standard-client/server-configuration"><a id="client_server_example_configurations__section_556E0D3D72624AD9B27C636BA628ADC0" class="no-quick-link"></a>Examples of Standard Client/Server Configuration</h2>
+
+<p>Generally, locators and servers use the same distributed system properties file, which lists locators as the discovery mechanism for peer members and for connecting clients. For example:</p>
+<pre class="highlight plaintext"><code>mcast-port=0
+locators=localhost[41111]
+</code></pre>
+
+<p>On the machine where you wish to run the locator (in this example, &lsquo;localhost&rsquo;), you can start the locator from a gfsh prompt:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=locator_name --port=41111
+</code></pre>
+
+<p>Or directly from a command line:</p>
+<pre class="highlight plaintext"><code>prompt# gfsh start locator --name=locator_name --port=41111 
+</code></pre>
+
+<p>Specify a name for the locator that you wish to start on the localhost. If you do not specify the member name, gfsh will automatically pick a random name. This is useful for automation.</p>
+
+<p>The server’s <code>cache.xml</code> declares a <code>cache-server</code> element, which identifies the JVM as a server in the distributed system.</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt; 
+  &lt;cache-server port="40404" ... /&gt; 
+  &lt;region . . . 
+</code></pre>
+
+<p>Once the locator and server are started, the locator tracks the server as a peer in its distributed system and as a server listening for client connections at port 40404.</p>
+
+<p>You can also configure a cache server using the <code>gfsh</code> command-line utility. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --server-port=40404
+</code></pre>
+
+<p>See <code>start server</code>.</p>
+
+<p>The client’s <code>cache.xml</code> <code>&lt;client-cache&gt;</code> declaration automatically configures it as a standalone Geode application.</p>
+
+<p>The client&rsquo;s <code>cache.xml</code>:</p>
+
+<ul>
+<li>  Declares a single connection pool with the locator as the reference for obtaining server connection information.</li>
+<li>  Creates <code>cs_region</code> with the client region shortcut configuration, <code>CACHING_PROXY</code>. This configures it as a client region that stores data in the client cache.</li>
+</ul>
+
+<p>There is only one pool defined for the client, so the pool is automatically assigned to all client regions.</p>
+<pre class="highlight plaintext"><code>&lt;client-cache&gt;
+    &lt;pool name="publisher" subscription-enabled="true"&gt;
+       &lt;locator host="localhost" port="41111"/&gt;
+    &lt;/pool&gt;
+    &lt;region name="cs_region" refid="CACHING_PROXY"&gt;
+    &lt;/region&gt;
+&lt;/client-cache&gt; 
+</code></pre>
+
+<p>With this, the client is configured to go to the locator for the server connection location. Then any cache miss or put in the client region is automatically forwarded to the server.</p>
+
+<h2 id="example—standalone-publisher-client,-client-pool,-and-region"><strong>Example—Standalone Publisher Client, Client Pool, and Region</strong></h2>
+
+<p>The following API example walks through the creation of a standalone publisher client and the client pool and region.</p>
+<pre class="highlight plaintext"><code>public static ClientCacheFactory connectStandalone(String name) {
+    return new ClientCacheFactory()
+        .set("log-file", name + ".log")
+        .set("statistic-archive-file", name + ".gfs")
+        .set("statistic-sampling-enabled", "true")
+        .set("cache-xml-file", "")
+        .addPoolLocator("localhost", LOCATOR_PORT);
+}
+
+private static void runPublisher() {
+    ClientCacheFactory ccf = connectStandalone("publisher");
+    ClientCache cache = ccf.create();
+    ClientRegionFactory&lt;String,String&gt; regionFactory = 
+        cache.createClientRegionFactory(PROXY);
+    Region&lt;String, Strini&gt; region = regionFactory.create("DATA");
+
+    //... do work ...
+
+    cache.close();
+} 
+</code></pre>
+
+<h2 id="example—standalone-subscriber-client"><strong>Example—Standalone Subscriber Client</strong></h2>
+
+<p>This API example creates a standalone subscriber client using the same <code>connectStandalone</code> method as the previous example.</p>
+<pre class="highlight plaintext"><code>private static void runSubscriber() throws InterruptedException {
+    ClientCacheFactory ccf = connectStandalone("subscriber");
+    ccf.setPoolSubscriptionEnabled(true);
+    ClientCache cache = ccf.create();
+    ClientRegionFactory&lt;String,String&gt; regionFactory = 
+        cache.createClientRegionFactory(PROXY);
+    Region&lt;String, String&gt; region = regionFactory
+        .addCacheListener(new SubscriberListener())
+        .create("DATA");
+    region.registerInterestRegex(".*", // everything
+        InterestResultPolicy.NONE,
+        false/*isDurable*/);
+    SubscriberListener myListener = 
+        (SubscriberListener)region.getAttributes().getCacheListeners()[0];
+    System.out.println("waiting for publisher to do " + NUM_PUTS + " puts...");
+    myListener.waitForPuts(NUM_PUTS);
+    System.out.println("done waiting for publisher.");
+
+    cache.close();
+} 
+</code></pre>
+
+<h2 id="example-of-a-static-server-list-in-client/server-configuration"><a id="client_server_example_configurations__section_A7759DCB9BFE47448B8E8D72DDCDE058" class="no-quick-link"></a>Example of a Static Server List in Client/Server Configuration</h2>
+
+<p>You can specify a static server list instead of a locator list in the client configuration. With this configuration, the client’s server information does not change for the life of the client member. You do not get dynamic server discovery, server load conditioning, or the option of logical server grouping. This model is useful for very small deployments, such as test systems, where your server pool is stable. It avoids the administrative overhead of running locators.</p>
+
+<p>This model is also suitable if you must use hardware load balancers. You can put the addresses of the load balancers in your server list and allow the balancers to redirect your client connections.</p>
+
+<p>The client&rsquo;s server specification must match the addresses where the servers are listening. In the server cache configuration file, here are the pertinent settings.</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+    &lt;cache-server port="40404" ... /&gt; 
+      &lt;region . . .
+</code></pre>
+
+<p>The client&rsquo;s <code>cache.xml</code> file declares a connection pool with the server explicitly listed and names the pool in the attributes for the client region. This XML file uses a region attributes template to initialize the region attributes configuration.</p>
+<pre class="highlight plaintext"><code>&lt;client-cache&gt;
+    &lt;pool name="publisher" subscription-enabled="true"&gt;
+        &lt;server host="localhost" port="40404"/&gt;
+    &lt;/pool&gt;
+    &lt;region name="cs_region" refid="CACHING_PROXY"&gt;
+    &lt;/region&gt;
+&lt;/client-cache&gt;
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      How Function Execution Works |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_function_exec docs_developing_function_exec_how_function_execution_works">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    How Function Execution Works
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="where-functions-are-executed"><a id="how_function_execution_works__section_881D2FF6761B4D689DDB46C650E2A2E1" class="no-quick-link"></a>Where Functions Are Executed</h2>
+
+<p>You can execute data-independent functions or data-dependent functions in Geode in the following places:</p>
+
+<p><strong>For Data-independent Functions</strong></p>
+
+<ul>
+<li>  <strong>On a specific member or members—</strong>Execute the function within a peer-to-peer distributed system, specifying the member or members where you want to run the function by using <code>FunctionService</code> methods <code>onMember()</code> and <code>onMembers()</code>.</li>
+<li>  <strong>On a specific server or set of servers—</strong>If you are connected to a distributed system as a client, you can execute the function on a server or servers configured for a specific connection pool, or on a server or servers connected to a given cache using the default connection pool. For data-independent functions on client/server architectures, a client invokes <code>FunctionService</code> methods <code>onServer()</code> or <code>onServers()</code>. (See <a href="../../topologies_and_comm/topology_concepts/how_the_pool_manages_connections.html">How Client/Server Connections Work</a> for details regarding pool connections.)</li>
+<li>  <strong>On member groups or on a single member within each member group—</strong>You can organize members into logical member groups. (See <a href="../../configuring/chapter_overview.html#concept_lrh_gyq_s4">Configuring and Running a Cluster</a> for more information about using member groups.) You can invoke a data independent function on all members in a specified member group or member groups, or execute the function on only one member of each specified member group.</li>
+</ul>
+
+<p><strong>For Data-dependent Functions</strong></p>
+
+<ul>
+<li>  <strong>On a region—</strong>If you are executing a data-dependent function, specify a region and, optionally, a set of keys on which to run the function. The method <code>FunctionService.onRegion()</code> directs a data-dependent function to execute on a specific region.</li>
+</ul>
+
+<p>See the <code>org.apache.geode.cache.execute.FunctionService</code> Java API documentation for more details.</p>
+
+<h2 id="how-functions-are-executed"><a id="how_function_execution_works__section_E0C4B7D2E4414F099788A5A441FF0E03" class="no-quick-link"></a>How Functions Are Executed</h2>
+
+<p>The following things occur when executing a function:</p>
+
+<ol>
+<li> For security-enabled clusters, prior to executing the function,
+a check is made to see that that caller is authorized to execute
+the function.
+The required permissions for authorization are provided by
+the function&rsquo;s <code>Function.getRequiredPermissions()</code> method.
+See <a href="../../managing/security/implementing_authorization.html#AuthorizeFcnExecution">Authorization of Function Execution</a> for a discussion of this method.</li>
+<li> Given successful authorization,
+Geode invokes the function on all members where it
+needs to run. The locations are determined by the <code>FunctionService</code> <code>on*</code>
+method calls, region configuration, and any filters.</li>
+<li> If the function has results, they are returned to the <code>addResult</code> method call in a <code>ResultCollector</code> object.</li>
+<li> The originating member collects results using <code>ResultCollector.getResult</code>.</li>
+</ol>
+
+<h2 id="highly-available-functions"><a id="how_function_execution_works__section_14FF9932C7134C5584A14246BB4D4FF6" class="no-quick-link"></a>Highly Available Functions</h2>
+
+<p>Generally, function execution errors are returned to the calling application. You can code for high availability for <code>onRegion</code> functions that return a result, so Geode automatically retries a function if it does not execute successfully. You must code and configure the function to be highly available, and the calling application must invoke the function using the results collector <code>getResult</code> method.</p>
+
+<p>When a failure (such as an execution error or member crash while executing) occurs, the system responds by:</p>
+
+<ol>
+<li> Waiting for all calls to return</li>
+<li> Setting a boolean indicating a re-execution</li>
+<li> Calling the result collector’s <code>clearResults</code> method</li>
+<li> Executing the function</li>
+</ol>
+
+<p>For client regions, the system retries the execution according to <code>org.apache.geode.cache.client.Pool</code> <code>retryAttempts</code>. If the function fails to run every time, the final exception is returned to the <code>getResult</code> method.</p>
+
+<p>For member calls, the system retries until either it succeeds or no data remains in the system for the function to operate on.</p>
+
+<h2 id="function-execution-scenarios"><a id="how_function_execution_works__section_A0FD54B73E9A453AA38FC4A4D5282351" class="no-quick-link"></a>Function Execution Scenarios</h2>
+
+<p><a href="#how_function_execution_works__fig_server_distributed_system">Server-distributed System</a> shows the sequence of events for a data-independent function invoked from a client on all available servers.</p>
+
+<p><a id="how_function_execution_works__fig_server_distributed_system"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Server-distributed System</p>
+
+<p><img src="../../images/FuncExecOnServers.png" alt="A diagram showing the sequence of events for a data-independent function invoked from a client on all available servers" id="how_function_execution_works__image_993D1FD7705E40EA801CF0656C4E91E5" class="image" /></p>
+
+<p>The client contacts a locator to obtain host and port identifiers for each server in the distributed system and issues calls to each server. As the instigator of the calls, the client also receives the call results.</p>
+
+<p><a href="#how_function_execution_works__fig_peer_distributed_system">Peer-to-peer Distributed System</a> shows the sequence of events for a data-independent function executed against members in a peer-to-peer distributed system.</p>
+
+<p><a id="how_function_execution_works__fig_peer_distributed_system"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Peer-to-peer Distributed System</p>
+
+<p><img src="../../images/FuncExecOnMembers.png" alt="The sequence of events for a data-independent function executed against members in a peer-to-peer distributed system." id="how_function_execution_works__image_041832B370AA4241980B8C2632DD1DC8" class="image" /></p>
+
+<p>You can think of <code>onMembers()</code> as the peer-to-peer counterpart of a client-server call to <code>onServers()</code>. Because it is called from a peer of other members in the distributed system, an <code>onMembers()</code> function invocation has access to detailed metadata and does not require the services of a locator. The caller invokes the function on itself, if appropriate, as well as other members in the distributed system and collects the results of all of the function executions.</p>
+
+<p><a href="#how_function_execution_works__fig_data_dependent_function_region">Data-dependent Function on a Region</a> shows a data-dependent function run on a region.</p>
+
+<p><a id="how_function_execution_works__fig_data_dependent_function_region"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Data-dependent Function on a Region</p>
+
+<p><img src="../../images/FuncExecOnRegionNoMetadata.png" alt="The path followed when the client lacks detailed metadata regarding target locations" id="how_function_execution_works__image_68742923936F4EEC8E50819F5CEECBCC" class="image" /></p>
+
+<p>An <code>onRegion()</code> call requires more detailed metadata than a locator provides in its host:port identifier. This diagram shows the path followed when the client lacks detailed metadata regarding target locations, as on the first call or when previously obtained metadata is no longer up to date.</p>
+
+<p>The first time a client invokes a function to be executed on a particular region of a distributed system, the client&rsquo;s knowledge of target locations is limited to the host and port information provided by the locator. Given only this limited information, the client sends its execution request to whichever server is next in line to be called according to the pool allocation algorithm. Because it is a participant in the distributed system, that server has access to detailed metadata and can dispatch the function call to the appropriate target locations. When the server returns results to the client, it sets a flag indicating whether a request to a different server would have provided a more direct path to the intended target. To improve efficiency, the client requests a copy of the metadata. With additional details regarding the bucket layout for the region, the client can act as its own dispatcher on subsequent calls and identify multiple targets for itself, eliminating at least one hop.</p>
+
+<p>After it has obtained current metadata, the client can act as its own dispatcher on subsequent calls, identifying multiple targets for itself and eliminating one hop, as shown in <a href="#how_function_execution_works__fig_data_dependent_function_obtaining_current_metadata">Data-dependent function after obtaining current metadata</a>.</p>
+
+<p><a id="how_function_execution_works__fig_data_dependent_function_obtaining_current_metadata"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Data-dependent function after obtaining current metadata</p>
+
+<p><img src="../../images/FuncExecOnRegionWithMetadata.png" alt="A diagram showing the client acting as its own dispatcher after having obtained current metadata." class="image" /></p>
+
+<p><a href="#how_function_execution_works__fig_data_dependent_function_region_keys">Data-dependent Function on a Region with Keys</a> shows the same data-dependent function with the added specification of a set of keys on which to run.</p>
+
+<p><a id="how_function_execution_works__fig_data_dependent_function_region_keys"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Data-dependent Function on a Region with Keys</p>
+
+<p><img src="../../images/FuncExecOnRegionWithFilter.png" alt="A data-dependent function on a region with specification of keys on which to run" id="how_function_execution_works__image_7FA8BE5D02F24CF8B49186C6FEB786BD" class="image" /></p>
+
+<p>Servers that do not hold any keys are left out of the function execution.</p>
+
+<p><a href="#how_function_execution_works__fig_peer_data_dependent_function">Peer-to-peer Data-dependent Function</a> shows a peer-to-peer data-dependent call.</p>
+
+<p><a id="how_function_execution_works__fig_peer_data_dependent_function"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Peer-to-peer Data-dependent Function</p>
+
+<p><img src="../../images/FuncExecOnRegionPeersWithFilter.png" alt="A data-dependent function where the caller is not an external client" id="how_function_execution_works__image_9B8E914BA80E4BBA99856E9603A9BDA0" class="image" /></p>
+
+<p>The caller is a member of the distributed system, not an external client, so the function runs in the caller’s distributed system. Note the similarities between this diagram and the preceding figure (<a href="#how_function_execution_works__fig_data_dependent_function_region_keys">Data-dependent Function on a Region with Keys</a>), which shows a client-server model where the client has up-to-date metadata regarding target locations within the distributed system.</p>
+
+<p><a href="#how_function_execution_works__fig_client_server_system_target_metadata">Client-server system with Up-to-date Target Metadata</a> demonstrates a sequence of steps in a call to a highly available function in a client-server system in which the client has up-to-date metadata regarding target locations.</p>
+
+<p><a id="how_function_execution_works__fig_client_server_system_target_metadata"></a></p>
+
+<p><span class="figtitleprefix">Figure: </span>Client-server system with Up-to-date Target Metadata</p>
+
+<p><img src="../../images/FuncExecOnRegionHAWithFilter.png" alt="A sequence of steps in a call to a highly available function in a client-server system in which the client has up-to-date metadata regarding target locations" id="how_function_execution_works__image_05E94BB0EBF349FF8822158F2001F313" class="image" /></p>
+
+<p>In this example, three primary keys (X, Y, Z) and their secondary copies (X&rsquo;, Y&rsquo;, Z&rsquo;) are distributed among three servers. Because <code>optimizeForWrite</code> is <code>true</code>, the system first attempts to invoke the function where the primary keys reside: Server 1 and Server 2. Suppose, however, that Server 2 is off-line for some reason, so the call targeted for key Y fails. Because <code>isHA</code> is set to <code>true</code>, the call is retried on Server 1 (which succeeded the first time, so likely will do so again) and Server 3, where key Y&rsquo; resides. This time, the function call returns successfully. Calls to highly available functions retry until they obtain a successful result or they reach a retry limit.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

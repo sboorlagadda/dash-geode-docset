@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Managing Off-Heap Memory |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_heap_use docs_managing_heap_use_off_heap_management">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Managing Off-Heap Memory
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="managing-off-heap-memory"></a></p>
+
+<p>Geode can be configured to store region values in off-heap memory, which is memory within the JVM that is not subject to Java garbage collection.</p>
+
+<p>Garbage collection (GC) within a JVM can prove to be a performance impediment. A server cannot exert control over when garbage collection within the JVM heap memory takes place, and the server has little control over the triggers for invocation. Off-heap memory offloads values to a storage area that is not subject to Java GC. By taking advantage of off-heap storage, an application can reduce the amount of heap storage that is subject to GC overhead.</p>
+
+<p>Off-heap memory works in conjunction with the heap, it does not replace it. The keys are stored in heap memory space. Geode&rsquo;s own memory manager handles the off-heap memory with better performance than the Java garbage collector would for certain sets of region data.</p>
+
+<p>The resource manager monitors the contents of off-heap memory and invokes memory management operations in accordance with two thresholds similar to those used for monitoring the JVM heap: <code>eviction-off-heap-percentage</code> and <code>critical-off-heap-percentage</code>.</p>
+
+<h2 id="on-heap-and-off-heap-objects">On-heap and Off-heap Objects</h2>
+
+<p>The following objects are always stored in the JVM heap:</p>
+
+<ul>
+<li>  Region metadata</li>
+<li>  Entry metadata</li>
+<li>  Keys</li>
+<li>  Indexes</li>
+<li>  Subscription queue elements</li>
+</ul>
+
+<p>The following objects can be stored in off-heap memory:</p>
+
+<ul>
+<li>  Values - maximum value size is 2GB</li>
+<li>  Reference counts</li>
+<li>  List of free memory blocks</li>
+<li>  WAN queue elements</li>
+</ul>
+
+<p><strong>Note:</strong>
+Do not use functional range indexes with off-heap data, as they are not supported. An attempt to do so generates an exception.</p>
+
+<h2 id="off-heap-recommendations">Off-heap Recommendations</h2>
+
+<p>Off-heap storage is best suited to data patterns where:</p>
+
+<ul>
+<li>  Stored values are relatively uniform in size</li>
+<li>  Stored values are mostly less than 128K in size</li>
+<li>  The usage patterns involve cycles of many creates followed by destroys or clear</li>
+<li>  The values do not need to be frequently deserialized</li>
+<li>  Many of the values are long-lived reference data</li>
+</ul>
+
+<p>Be aware that Geode has to perform extra work to access the data stored in off-heap memory since it is stored in serialized form. This extra work may cause some use cases to run slower in an off-heap configuration, even though they use less memory and avoid garbage collection overhead. However, even with the extra deserialization, off-heap storage may give you the best performance. Features that may increase overhead include</p>
+
+<ul>
+<li>  frequent updates</li>
+<li>  stored values of widely varying sizes</li>
+<li>  deltas</li>
+<li>  queries</li>
+</ul>
+
+<h2 id="implementation-details">Implementation Details</h2>
+
+<p>The off-heap memory manager is efficient at handling region data values that are all the same size or are of fixed sizes. With fixed and same-sized data values allocated within the off-heap memory, freed chunks can often be re-used, and there is little or no need to devote cycles to defragmentation.</p>
+
+<p>Region values that are less than or equal to eight bytes in size will not reside in off-heap memory, even if the region is configured to use off-heap memory. These very small size region values reside in the JVM heap in place of a reference to an off-heap location. This performance enhancement saves space and load time.</p>
+
+<h2 id="controlling-off-heap-use-with-the-resource-manager">Controlling Off-heap Use with the Resource Manager</h2>
+
+<p>The Geode resource manager controls off-heap memory by means of two thresholds, in much the same way as it does JVM heap memory. See <a href="heap_management.html#how_the_resource_manager_works">Using the Geode Resource Manager</a>. The resource manager prevents the cache from consuming too much off-heap memory by evicting old data. If the off-heap memory manager is unable to keep up, the resource manager refuses additions to the cache until the off-heap memory manager has freed an adequate amount of memory.</p>
+
+<p>The resource manager has two threshold settings, each expressed as a percentage of the total off-heap memory. Both are disabled by default.</p>
+
+<ol>
+<li><p><strong>Eviction Threshold</strong>. The percentage of off-heap memory at which eviction should begin. Evictions continue until the resource manager determines that off-heap memory use is again below the eviction threshold. Set the eviction threshold with the <code>eviction-off-heap-percentage</code> region attribute. The resource manager enforces an eviction threshold only on regions with the HEAP_LRU characteristic. If critical threshold is non-zero, the default eviction threshold is 5% below the critical threshold. If critical threshold is zero, the default eviction threshold is 80% of total off-heap memory.</p>
+
+<p>The resource manager enforces eviction thresholds only on regions whose LRU eviction policies are based on heap percentage. Regions whose eviction policies based on entry count or memory size use other mechanisms to manage evictions. See <a href="../../developing/eviction/chapter_overview.html">Eviction</a> for more detail regarding eviction policies.</p></li>
+<li><p><strong>Critical Threshold</strong>. The percentage of off-heap memory at which the cache is at risk of becoming inoperable. When cache use exceeds the critical threshold, all activity that might add data to the cache is refused. Any operation that would increase consumption of off-heap memory throws a <code>LowMemoryException</code> instead of completing its operation. Set the critical threshold with the <code>critical-off-heap-percentage</code> region attribute.</p>
+
+<p>Critical threshold is enforced on all regions, regardless of LRU eviction policy, though it can be set to zero to disable its effect.</p></li>
+</ol>
+
+<h2 id="specifying-off-heap-memory">Specifying Off-heap Memory</h2>
+
+<p>To use off-heap memory, specify the following options when setting up servers and regions:</p>
+
+<ul>
+<li>  Start the JVM as described in <a href="heap_management.html#section_590DA955523246ED980E4E351FF81F71">Tuning the JVM&rsquo;s Garbage Collection Parameters</a>. In particular, set the initial and maximum heap sizes to the same value. Sizes less than 32GB are optimal when you plan to use off-heap memory.</li>
+<li><p>From gfsh, start each server that will support off-heap memory with a non-zero <code>off-heap-memory-size</code> value, specified in megabytes (m) or gigabytes (g). If you plan to use the resource manager, specify critical threshold, eviction threshold, or (in most cases) both.</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start server --name=server1 -–initial-heap=10G -–max-heap=10G -–off-heap-memory-size=200G \
+-–lock-memory=true -–critical-off-heap-percentage=90 -–eviction-off-heap-percentage=80
+</code></pre></li>
+<li><p>Mark regions whose entry values should be stored off-heap by setting the <code>off-heap</code> region attribute to <code>true</code> Configure other region attributes uniformly for all members that host data for the same region. .</p>
+
+<p>Example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=region1 --type=PARTITION_HEAP_LRU --off-heap=true
+</code></pre></li>
+</ul>
+
+<h2 id="gfsh-off-heap-support">gfsh Off-heap Support</h2>
+
+<p>gfsh supports off-heap memory in server and region creation operations and in reporting functions:</p>
+
+<p>alter disk-store<br>
+<code>--off-heap=(true | false)</code> resets the off-heap attribute for the specified region. See <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_99BCAD98BDB5470189662D2F308B68EB">alter disk-store</a> for details.</p>
+
+<p>create region<br>
+<code>--off-heap=(true | false)</code>sets the off-heap attribute for the specified region. See <a href="../../tools_modules/gfsh/command-pages/create.html#topic_54B0985FEC5241CA9D26B0CE0A5EA863">create region</a> for details.</p>
+
+<p>describe member<br>
+displays off-heap size</p>
+
+<p>describe offline-disk-store<br>
+shows if an off-line region is off-heap</p>
+
+<p>describe region<br>
+displays the value of a region&rsquo;s off-heap attribute</p>
+
+<p>show metrics<br>
+includes off-heap metrics <code>maxMemory</code>, <code>freeMemory</code>, <code>usedMemory</code>, <code>objects</code>, <code>fragmentation</code> and <code>defragmentationTime</code></p>
+
+<p>start server<br>
+supports off-heap options <code>--lock-memory</code>, <code>‑‑off-heap-memory-size</code>, <code>‑‑critical-off-heap-percentage</code>, and <code>‑‑eviction-off-heap-percentage</code> See <a href="../../tools_modules/gfsh/command-pages/start.html#topic_3764EE2DB18B4AE4A625E0354471738A">start server</a> for details.</p>
+
+<h2 id="resourcemanager-api">ResourceManager API</h2>
+
+<p>The <code>org.apache.geode.cache.control.ResourceManager</code> interface defines methods that support off-heap use:</p>
+
+<ul>
+<li>  <code>public void setCriticalOffHeapPercentage(float Percentage)</code></li>
+<li>  <code>public float getCriticalOffHeapPercentage()</code></li>
+<li>  <code>public void setEvictionOffHeapPercentage(float Percentage)</code></li>
+<li>  <code>public float getEvictionOffHeapPercentage()</code></li>
+</ul>
+
+<p>The gemfire.properties file supports one off-heap property:</p>
+
+<p><code>off-heap-memory-size</code><br>
+Specifies the size of off-heap memory in megabytes (m) or gigabytes (g). For example:</p>
+<pre class="highlight plaintext"><code>off-heap-memory-size=4096m
+off-heap-memory-size=120g
+</code></pre>
+
+<p>See <a href="../../reference/topics/gemfire_properties.html">gemfire.properties and gfsecurity.properties (Geode Properties)</a> for details.</p>
+
+<p>The cache.xml file supports one region attribute:</p>
+
+<p><code>off-heap(=true | false)</code><br>
+Specifies that the region uses off-heap memory; defaults to <code>false</code>. For example:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes
+  off-heap="true"&gt;
+&lt;/region-attributes&gt;
+</code></pre>
+
+<p>See <a href="../../reference/topics/cache_xml.html#region-attributes">&lt;region-attributes&gt;</a> for details.</p>
+
+<p>The cache.xml file supports two resource manager attributes:</p>
+
+<p><code>critical-off-heap-percentage=value</code><br>
+Specifies the percentage of off-heap memory at or above which the cache is considered in danger of becoming inoperable due to out of memory exceptions. See <a href="../../reference/topics/cache_xml.html#resource-manager">&lt;resource-manager&gt;</a> for details.</p>
+
+<p><code>eviction-off-heap-percentage=value</code><br>
+Specifies the percentage of off-heap memory at or above which eviction should begin. Can be set for any region, but actively operates only in regions configured for HEAP_LRU eviction. See <a href="../../reference/topics/cache_xml.html#resource-manager">&lt;resource-manager&gt;</a> for details.</p>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>&lt;cache&gt;
+...
+   &lt;resource-manager 
+      critical-off-heap-percentage="99.9" 
+      eviction-off-heap=-percentage="85"/&gt;
+...
+&lt;/cache&gt;
+</code></pre>
+
+<h2 id="tuning-off-heap-memory-usage"><a id="managing-off-heap-memory__section_o4s_tg5_gv" class="no-quick-link"></a>Tuning Off-heap Memory Usage</h2>
+
+<p>Geode collects statistics on off-heap memory usage which you can view with the gfsh <code>show metrics</code> command. See <a href="../../reference/statistics_list.html#topic_ohc_tjk_w5">Off-Heap (OffHeapMemoryStats)</a> for a description of available off-heap statistics.</p>
+
+<p>Off-heap memory is optimized, by default, for storing values of 128 KB in size. This figure is known as the &ldquo;maximum optimized stored value size,&rdquo; which we will denote here by <em>maxOptStoredValSize</em>. If your data typically runs larger, you can enhance performance by increasing the OFF_HEAP_FREE_LIST_COUNT system parameter to a number larger than <code>maxOptStoredValSize/8</code>, where <em>maxOptStoredValSize</em> is expressed in KB (1024 bytes). So, the default values correspond to:</p>
+<pre class="highlight plaintext"><code>128 KB / 8 = (128 * 1024) / 8 = 131,072 / 8 = 16,384
+-Dgemfire.OFF_HEAP_FREE_LIST_COUNT=16384
+</code></pre>
+
+<p>To optimize for a maximum optimized stored value size that is twice the default, or 256 KB, the free list count should be doubled:</p>
+<pre class="highlight plaintext"><code>-Dgemfire.OFF_HEAP_FREE_LIST_COUNT=32768
+</code></pre>
+
+<p>During the tuning process, you can toggle the <code>off-heap</code> region attribute on and off, leaving other off-heap settings and parameters in place, in order to compare your application&rsquo;s on-heap and off-heap performance.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

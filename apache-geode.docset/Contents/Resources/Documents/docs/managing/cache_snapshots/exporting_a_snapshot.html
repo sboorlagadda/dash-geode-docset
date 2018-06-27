@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Exporting Cache and Region Snapshots |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_cache_snapshots docs_managing_cache_snapshots_exporting_a_snapshot">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Exporting Cache and Region Snapshots
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To save Geode cache or region data to a snapshot that you can later load into another distributed system or region, use the <code>cache.getSnapshotService.save</code> API, <code>region.getSnapshotService.save</code> API, or the <code>gfsh</code> command-line interface (<code>export data</code>).</p>
+
+<p>If an error occurs during export, the export halts and the snapshot operation is canceled. Typical errors that halt an export include scenarios such as full disk, problems with file permissions, and network partitioning.</p>
+
+<h2 id="exporting-cache-snapshots"><a id="concept_D1A4D9677F4146078F65C73BF436C19D__section_98B33450FD95450EAC027384EE82E00C" class="no-quick-link"></a>Exporting Cache Snapshots</h2>
+
+<p>When you export an entire cache, it exports all regions in the cache as individual snapshot files into a directory. If no directory is specified, the default is the current directory. A snapshot file is created for each region, and the export operation automatically names each snapshot filename using the following convention:</p>
+
+<p><code>snapshot-&lt;region&gt;[-&lt;subregion&gt;]*</code></p>
+
+<p>When the export operation writes the snapshot filename, it replaces each forward slash (&rsquo;/&rsquo;) in the region path with a dash (&rsquo;-&rsquo;).</p>
+
+<p><strong>Using Java API:</strong></p>
+<pre class="highlight plaintext"><code>File mySnapshotDir = ...
+Cache cache = ...
+
+cache.getSnapshotService().save(mySnapshotDir, SnapshotFormat.GEMFIRE);
+</code></pre>
+
+<p>Optionally, you can set a filter on the snapshot entries during the export. See <a href="filtering_snapshot_entries.html">Filtering Entries During Import or Export</a> for an example.</p>
+
+<h2 id="exporting-a-region-snapshot"><a id="concept_D1A4D9677F4146078F65C73BF436C19D__section_30C1BBB41C194825A46E49E5756369D6" class="no-quick-link"></a>Exporting a Region Snapshot</h2>
+
+<p>You can also export a specific region using the following API or gfsh commands:</p>
+
+<p><strong>Java API:</strong></p>
+<pre class="highlight plaintext"><code>File mySnapshot = ...
+Region&lt;String, MyObject&gt; region = ... 
+
+region.getSnapshotService().save(mySnapshot, SnapshotFormat.GEMFIRE);
+</code></pre>
+
+<p><strong>gfsh:</strong></p>
+
+<p>Open a gfsh prompt. After connecting to a Geode distributed system, at the prompt type:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;export data --region=Region --file=FileName.gfd --member=MemberName
+</code></pre>
+
+<p>where <em>Region</em> corresponds to the name of the region that you want to export, <em>FileName</em> (must end in .gfd) corresponds to the name of the export file and <em>MemberName</em> corresponds to a member that hosts the region. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;export data --region=region1 --file=region1_2012_10_10.gfd --member=server1
+</code></pre>
+
+<p>The snapshot file will be written on the remote member at the location specified by the <code>--file</code> argument. For example, in the example command above, the <code>region1_2012_10_10.gfd</code> file will be written in the working directory of <code>server1</code>. For more information on this command, see <a href="../../tools_modules/gfsh/command-pages/export.html#topic_263B70069BFC4A7185F86B3272011734">export data</a>.</p>
+
+<h3 id="export-example-with-options"><a id="export_example_with_options" class="no-quick-link"></a>Export Example with Options</h3>
+
+<p>These examples show how to include the <code>parallel</code> option for exporting partitioned regions. 
+Note that the <code>parallel</code> option takes a directory rather than a file; see <a href="../../tools_modules/gfsh/command-pages/export.html#topic_263B70069BFC4A7185F86B3272011734">export data</a> for details.</p>
+
+<p><strong>Java API:</strong></p>
+<pre class="highlight plaintext"><code>File mySnapshotDir = ...
+Region&lt;String, MyObject&gt; region = ... 
+
+SnapshotOptions&lt;Integer, MyObject&gt; options = 
+ region.getSnapshotServive.createOptions().setParallelMode(true);
+region.getSnapshotService().save(mySnapshotDir, SnapshotFormat.GEMFIRE, options);
+</code></pre>
+
+<p><strong>gfsh:</strong></p>
+
+<p>The Java API example, above, accomplishes the same purpose as the following gfsh command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;export data --parallel --region=region1 --dir=region1_2012_10_10 --member=server1
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

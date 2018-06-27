@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Application-Defined and Custom Statistics |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_statistics docs_managing_statistics_application_defined_statistics">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Application-Defined and Custom Statistics
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode includes interfaces for defining and maintaining your own statistics.</p>
+
+<p><a id="application_defined_statistics__section_88C31FA62A194947BF71AD54B5F9BAB3"></a>
+The Geode package, <code>org.apache.geode</code>, includes the following interfaces for defining and maintaining your own statistics:</p>
+
+<ul>
+<li>  <strong>StatisticDescriptor</strong>. Describes an individual statistic. Each statistic has a name and information on the statistic it holds, such as its class type (long, int, etc.) and whether it is a counter that always increments, or a gauge that can vary in any manner.</li>
+<li>  <strong>StatisticsType</strong>. Logical type that holds a list of <code>StatisticDescriptors</code> and provides access methods to them. The <code>StatisticDescriptors</code> contained by a <code>StatisticsType</code> are each assigned a unique ID within the list. <code>StatisticsType</code> is used to create a <code>Statistics</code> instance.</li>
+<li>  <strong>Statistics</strong>. Instantiation of an existing <code>StatisticsType</code> object with methods for setting, incrementing, getting individual <code>StatisticDescriptor</code> values, and setting a callback which will recompute the statistic&rsquo;s value at configured sampling intervals.</li>
+<li>  <strong>StatisticsFactory</strong>. Creates instances of <code>Statistics</code>. You can also use it to create instances of <code>StatisticDescriptor</code> and <code>StatisticsType</code>, because it implements <code>StatisticsTypeFactory</code>. <code>DistributedSystem</code> is an instance of <code>StatisticsFactory</code>.</li>
+<li>  <strong>StatisticsTypeFactory</strong>. Creates instances of <code>StatisticDescriptor</code> and <code>StatisticsType</code>.</li>
+</ul>
+
+<p>The statistics interfaces are instantiated using statistics factory methods that are included in the package. For coding examples, see the online Java API documentation for <code>StatisticsFactory</code> and <code>StatisticsTypeFactory</code>.</p>
+
+<p>As an example, an application server might collect statistics on each client session in order to
+gauge whether client requests are being processed in a satisfactory manner. Long request queues or
+long server response times could prompt some capacity-management action such as starting additional
+application servers. To set this up, each session-state data point is identified and defined in a
+<code>StatisticDescriptor</code> instance. One instance might be a <code>RequestsInQueue</code> gauge, a non-negative
+integer that increments and decrements. Another could be a <code>RequestCount</code> counter, an integer that
+always increments. A list of these descriptors is used to instantiate a <code>SessionStateStats</code>
+<code>StatisticsType</code>. When a client connects, the application server uses the <code>StatisticsType</code> object to
+create a session-specific <code>Statistics</code> object. The server then uses the <code>Statistics</code> methods to
+modify and retrieve the client’s statistics. The figures below illustrate the relationships between the
+statistics interfaces and show the implementation of this use case.</p>
+
+<p><img src="../../images/Statistics-interfaces.png" class="image" /></p>
+
+<p><em>The Statistics Interfaces</em></p>
+
+<p>Each <code>StatisticDescriptor</code> contains one piece of statistical information. <code>StatisticalDesriptor</code> objects
+are collected into a <code>StatisticsType</code>. The <code>StatisticsType</code> is instantiated to create a <code>Statistics</code>
+object.</p>
+
+<p><img src="../../images/Statistics-implementation.png" class="image" /></p>
+
+<p><em>Statistics Implementation</em></p>
+
+<p>The <code>StatisticDescriptor</code> objects shown here hold three pieces of statistical information about client
+session state. These are collected into a <code>SessionStateStats StatisticsType</code>. With this type, the
+server creates a <code>Statistics</code> object for each client that connects.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

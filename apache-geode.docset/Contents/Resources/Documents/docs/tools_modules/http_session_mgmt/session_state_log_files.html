@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Session State Log Files |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_http_session_mgmt docs_tools_modules_http_session_mgmt_session_state_log_files">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Session State Log Files
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Several log files are written by the various parts of the session management code.</p>
+
+<ul>
+<li>  <code>catalina.log</code>. Log file written by the tc server</li>
+<li>  <code>cacheserver.log</code>. Log file written by the Geode server process.</li>
+<li>  <code>gemfire_modules.log</code>. Log file written by the Geode cache client.</li>
+</ul>
+
+<h2 id="adding-fine-debug-logging-to-catalina.log"><a id="concept_33F73F78783D4994B721486243827E15__section_A547F9C7AA4541ED9B99CF0DEAC1417A" class="no-quick-link"></a>Adding FINE Debug Logging to catalina.log</h2>
+
+<p>To add Geode-specific FINE logging to the <code>catalina.log</code> file, add the following lines to your <code>&lt;instance&gt;/conf/logging.properties</code> file:</p>
+<pre class="highlight plaintext"><code>org.apache.geode.modules.session.catalina.DeltaSessionManager.level = FINE
+org.apache.geode.modules.session.catalina.DeltaSession.level = FINE
+</code></pre>
+
+<p>These configurations will add FINE logging to the <code>catalina.DATE.log</code> file. The following is an example of FINE logging:</p>
+<pre class="highlight plaintext"><code>06-Sep-2011 15:59:47.250 FINE org.apache.geode.modules.session.catalina.DeltaSessionManager.start 
+DeltaSessionManager[container=StandardEngine[Catalina].StandardHost[localhost].StandardContext[/manager]; 
+regionName=gemfire_modules_sessions; regionAttributesId=PARTITION_REDUNDANT]: Starting
+
+06-Sep-2011 15:59:47.254 FINE org.apache.geode.modules.session.catalina.DeltaSessionManager.registerJvmRouteBinderValve 
+DeltaSessionManager[container=StandardEngine[Catalina].StandardHost[localhost].StandardContext[/manager]; 
+regionName=gemfire_modules_sessions; regionAttributesId=PARTITION_REDUNDANT]: Registering JVM route binder valve
+
+06-Sep-2011 15:59:47.351 FINE org.apache.geode.modules.session.catalina.ClientServerSessionCache.createOrRetrieveRegion 
+Created session region: org.apache.geode.internal.cache.LocalRegion[path='/gemfire_modules_sessions';
+scope=LOCAL';dataPolicy=EMPTY; gatewayEnabled=false]
+</code></pre>
+
+<h2 id="add-session-state-logging-to-the-geode-server-log"><a id="concept_33F73F78783D4994B721486243827E15__section_CF950FC81CC046838F42A3E6783985BD" class="no-quick-link"></a>Add Session State Logging to the Geode Server Log</h2>
+
+<p>To add session-state-specific logging to the Geode server log file, add the following property to the <code>catalina.properties</code> file for the tc Server instance:</p>
+<pre class="highlight plaintext"><code>geode-cs.enable.debug.listener=true
+</code></pre>
+
+<p>Adding this configuration will print logging in the server log such as the following:</p>
+<pre class="highlight plaintext"><code>[info 2011/09/06 15:18:27.749 PDT  &lt;ServerConnection on port 40404 Thread 3&gt; tid=0x32] DebugCacheListener: Received 
+CREATE for key=5782ED83A3D9F101BBF8D851CE4E798E; value=DeltaSession[id=5782ED83A3D9F101BBF8D851CE4E798E; 
+sessionRegionName=gemfire_modules_sessions; operatingRegionName=unset]
+
+[info 2011/09/06 15:18:27.769 PDT  &lt;ServerConnection on port 40404 Thread 3&gt; tid=0x32] DebugCacheListener: Received UPDATE 
+for key=5782ED83A3D9F101BBF8D851CE4E798E; value=DeltaSession[id=5782ED83A3D9F101BBF8D851CE4E798E; 
+sessionRegionName=gemfire_modules_sessions; operatingRegionName=unset]
+
+[info 2011/09/06 15:19:36.729 PDT  &lt;Timer-2&gt; tid=0x24] DebugCacheListener: Received EXPIRE_DESTROY for 
+key=5782ED83A3D9F101BBF8D851CE4E798E
+</code></pre>
+
+<h2 id="adding-additional-debug-logging-to-the-geode-server-log"><a id="concept_33F73F78783D4994B721486243827E15__section_B446063292F0447CA178DB67245B72C1" class="no-quick-link"></a>Adding Additional Debug Logging to the Geode Server Log</h2>
+
+<p>To add fine-level logging to the Geode cache server, add the &lsquo;log-level&rsquo; property to the server process. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt; start server --name=server1 --cache-xml-file=../conf/cache-server.xml 
+              --log-level=fine
+</code></pre>
+
+<p>This will add fine-level logging to the <code>server.log</code> file.</p>
+
+<p><strong>Note:</strong>
+This will help debug Geode server issues, but it adds a lot of logging to the file.</p>
+
+<h2 id="add-debug-logging-to-gemfire_modules.log"><a id="concept_33F73F78783D4994B721486243827E15__section_D36A81360D904450B8BE7334897C5685" class="no-quick-link"></a>Add Debug Logging to gemfire_modules.log</h2>
+
+<p>To add fine-level logging to the Geode Cache Client, add the &#39;log-level&rsquo; property to the Listener element in the tc Server or Tomcat <code>server.xml</code> file. For example:</p>
+<pre class="highlight plaintext"><code>&lt;Listener log-level="fine" 
+cache-xml-file="${geode-cs.cache.configuration.file}" 
+className="org.apache.geode.modules.session.catalina.ClientServerCacheLifecycleListener"
+criticalHeapPercentage="${geode-cs.critical.heap.percentage}"
+evictionHeapPercentage="${geode-cs.eviction.heap.percentage}"
+log-file="${geode-cs.log.file}"
+statistic-archive-file="${geode-cs.statistic.archive.file}"
+statistic-sampling-enabled="${geode-cs.statistic.sampling.enabled}"/&gt;
+
+</code></pre>
+
+<p>This will add fine-level logging to the file defined by the <code>${geode-cs.log.file}</code> property. The default log file name is <code>gemfire_modules.log</code>.</p>
+
+<p><strong>Note:</strong>
+This will help debug Geode client issues, but it adds a lot of logging to the file.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Using Member Groups |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_using_member_groups">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Using Member Groups
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Apache Geode allows you to organize your distributed system members into logical member groups.</p>
+
+<p>The use of member groups in Apache Geode is optional. The benefit of using member groups is the ability to coordinate certain operations on members based on logical group membership. For example, by defining and using member groups you can:</p>
+
+<ul>
+<li>  Alter a subset of configuration properties for a specific member or members. See <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_7E6B7E1B972D4F418CB45354D1089C2B">alter runtime</a> in <code>gfsh</code>.</li>
+<li>  Perform certain disk operations like disk-store compaction across a member group. See <a href="../../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_1ACC91B493EE446E89EC7DBFBBAE00EA">Disk Store Commands</a> for a list of commands.</li>
+<li>  Manage specific indexes or regions across all members of a group.</li>
+<li>  Start and stop multi-site (WAN) services such as gateway senders and gateway receivers across a member group.</li>
+<li>  Deploy or undeploy JAR applications on all members in a group.</li>
+<li>  Execute functions on all members of a specific group.</li>
+</ul>
+
+<p>You define group names in the <code>groups</code> property of your member&rsquo;s <code>gemfire.properties</code> file or upon member startup in <code>gfsh</code>.</p>
+
+<p><strong>Note:</strong>
+Any roles defined in the currently existing <code>roles</code> property will now be considered a group. If you wish to add membership roles to your distributed system, you should add them as member groups in the <code>groups</code> property. The <code>roles</code> property has been deprecated in favor of using the <code>groups</code> property.</p>
+
+<p>To add a member to a group, add the name of a member group to the <code>gemfire.properties</code> file of the member prior to startup or you can start up a member in <code>gfsh</code> and pass in the <code>--groups</code> argument at startup time.</p>
+
+<p>A single member can belong to more than one group.</p>
+
+<p>Member groups can also be used to organize members from either a client&rsquo;s perspective or from a peer member&rsquo;s perspective. See <a href="../../topologies_and_comm/p2p_configuration/configuring_peer_member_groups.html">Organizing Peers into Logical Member Groups</a> and <a href="../../topologies_and_comm/cs_configuration/configure_servers_into_logical_groups.html">Organizing Servers Into Logical Member Groups</a> for more information. On the client side, you can supply the member group name when configuring a client&rsquo;s connection pool. Use the &lt;pool server-group&gt; element in the client&rsquo;s cache.xml.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

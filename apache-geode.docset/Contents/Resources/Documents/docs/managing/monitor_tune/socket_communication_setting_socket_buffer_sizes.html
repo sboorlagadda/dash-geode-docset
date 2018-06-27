@@ -1,0 +1,204 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Setting Socket Buffer Sizes |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_monitor_tune docs_managing_monitor_tune_socket_communication_setting_socket_buffer_sizes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Setting Socket Buffer Sizes
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>When you determine buffer size settings, you must strike a balance between communication needs and other processing.</p>
+
+<p>Larger socket buffers allow your members to distribute data and events more quickly, but they also take memory away from other things. If you store very large data objects in your cache, finding the right sizing for your buffers while leaving enough memory for the cached data can become critical to system performance.</p>
+
+<p>Ideally, you should have buffers large enough for the distribution of any single data object so you don’t get message fragmentation, which lowers performance. Your buffers should be at least as large as your largest stored objects and their keys plus some overhead for message headers. The overhead varies depending on who is sending and receiving, but 100 bytes should be sufficient. You can also look at the statistics for the communication between your processes to see how many bytes are being sent and received.</p>
+
+<p>If you see performance problems and logging messages indicating blocked writers, increasing your buffer sizes may help.</p>
+
+<p>This table lists the settings for the various member relationships and protocols, and tells where to set them.</p>
+
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Protocol / Area Affected</th>
+<th>Configuration Location</th>
+<th>Property Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TCP / IP</strong></td>
+<td>&mdash;</td>
+<td>&mdash;</td>
+</tr>
+<tr class="even">
+<td>Peer-to-peer send/receive</td>
+<td><p>gemfire.properties</p></td>
+<td>socket-buffer-size</td>
+</tr>
+<tr class="odd">
+<td>Client send/receive</td>
+<td><p>cache.xml &lt;pool&gt;</p></td>
+<td>socket-buffer-size</td>
+</tr>
+<tr class="even">
+<td>Server send/receive</td>
+<td><code class="ph codeph">gfsh start server</code> or
+<p>cache.xml &lt;CacheServer&gt;</p></td>
+<td>socket-buffer-size</td>
+</tr>
+<tr class="odd">
+<td><strong>UDP Multicast</strong></td>
+<td>&mdash;</td>
+<td>&mdash;</td>
+</tr>
+<tr class="even">
+<td>Peer-to-peer send</td>
+<td>gemfire.properties</td>
+<td>mcast-send-buffer-size</td>
+</tr>
+<tr class="odd">
+<td>Peer-to-peer receive</td>
+<td>gemfire.properties</td>
+<td>mcast-recv-buffer-size</td>
+</tr>
+<tr class="even">
+<td><strong>UDP Unicast</strong></td>
+<td>&mdash;</td>
+<td>&mdash;</td>
+</tr>
+<tr class="odd">
+<td>Peer-to-peer send</td>
+<td>gemfire.properties</td>
+<td>udp-send-buffer-size</td>
+</tr>
+<tr class="even">
+<td>Peer-to-peer receive</td>
+<td>gemfire.properties</td>
+<td>udp-recv-buffer-size</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>TCP/IP Buffer Sizes</strong></p>
+
+<p>If possible, your TCP/IP buffer size settings should match across your Geode installation. At a minimum, follow the guidelines listed here.</p>
+
+<ul>
+<li>  <strong>Peer-to-peer</strong>. The socket-buffer-size setting in <code>gemfire.properties</code> should be the same throughout your distributed system.</li>
+<li><p><strong>Client/server</strong>. The client’s pool socket-buffer size-should match the setting for the servers the pool uses, as in these example <code>cache.xml</code> snippets:</p>
+<pre class="highlight plaintext"><code>Client Socket Buffer Size cache.xml Configuration:
+&lt;pool&gt;name="PoolA" server-group="dataSetA" socket-buffer-size="42000"...
+
+Server Socket Buffer Size cache.xml Configuration:
+&lt;cache-server port="40404" socket-buffer-size="42000"&gt;
+    &lt;group&gt;dataSetA&lt;/group&gt;
+&lt;/cache-server&gt;
+</code></pre></li>
+</ul>
+
+<p><strong>UDP Multicast and Unicast Buffer Sizes</strong></p>
+
+<p>With UDP communication, one receiver can have many senders sending to it at once. To accommodate all of the transmissions, the receiving buffer should be larger than the sum of the sending buffers. If you have a system with at most five members running at any time, in which all members update their data regions, you would set the receiving buffer to at least five times the size of the sending buffer. If you have a system with producer and consumer members, where only two producer members ever run at once, the receiving buffer sizes should be set at over two times the sending buffer sizes, as shown in this example:</p>
+<pre class="highlight plaintext"><code>mcast-send-buffer-size=42000
+mcast-recv-buffer-size=90000
+udp-send-buffer-size=42000
+udp-recv-buffer-size=90000
+</code></pre>
+
+<p><strong>Operating System Limits</strong></p>
+
+<p>Your operating system sets limits on the buffer sizes it allows. If you request a size larger than the allowed, you may get warnings or exceptions about the setting during startup. These are two examples of the type of message you may see:</p>
+<pre class="highlight plaintext"><code>[warning 2008/06/24 16:32:20.286 PDT CacheRunner &lt;main&gt; tid=0x1]
+requested multicast send buffer size of 9999999 but got 262144: see 
+system administration guide for how to adjust your OS 
+
+Exception in thread "main" java.lang.IllegalArgumentException: Could not 
+set "socket-buffer-size" to "99262144" because its value can not be 
+greater than "20000000".
+</code></pre>
+
+<p>If you think you are requesting more space for your buffer sizes than your system allows, check with your system administrator about adjusting the operating system limits.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

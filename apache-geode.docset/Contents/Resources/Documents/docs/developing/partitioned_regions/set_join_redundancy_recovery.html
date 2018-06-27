@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Configure Member Join Redundancy Recovery for a Partitioned Region |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_partitioned_regions docs_developing_partitioned_regions_set_join_redundancy_recovery">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Configure Member Join Redundancy Recovery for a Partitioned Region
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This section covers configuring whether and how redundancy is
+recovered in a partitioned region, after a member joins.</p>
+
+<p><a id="set_join_redundancy_recovery__section_D6FB0D69CC454B53B9CF1E656A44465C"></a>
+Use the partition attribute <code>startup-recovery-delay</code> to specify member join redundancy recovery.</p>
+
+<table><thead>
+<tr>
+<th>value of <code>startup-recovery-delay</code></th>
+<th>Effect following a member join</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>-1</td>
+<td>No automatic recovery of redundancy after a new member comes online. With this value and the default <code>recovery-delay</code> setting, redundancy recovery is only achieved by a rebalance operation.</td>
+</tr>
+<tr>
+<td>long &gt;= 0</td>
+<td>Number of milliseconds to wait after a member joins before recovering redundancy. The default is 0 (zero), which causes immediate redundancy recovery whenever a member that hosts the partitioned region joins.</td>
+</tr>
+</tbody></table>
+
+<p>Setting <code>startup-recovery-delay</code> to a value higher than the 
+default of 0 allows multiple new members to join before 
+redundancy recovery begins.
+With the multiple members present during recovery,
+the system will spread redundancy recovery among them.
+With no delay, if multiple members are started in close succession,
+the system may choose only the first member started for most or all
+of the redundancy recovery.</p>
+
+<p><strong>Note:</strong>
+Satisfying redundancy is not the same as adding capacity.
+If redundancy is satisfied, new members do not take buckets
+until the invocation of a rebalance operation.</p>
+
+<p>The parallel recovery implementation recovers quickly.
+For this reason,
+it is even more important to configure <code>startup-recovery-delay</code>
+to an appropriate value when restarting multiple members
+at the same time.
+Set <code>startup-recovery-delay</code> to a value that ensures all members
+are up and available <em>before</em> redundancy recovery kicks in.</p>
+
+<p>Set join redundancy recovery using one of the following:</p>
+
+<ul>
+<li><p>XML:</p>
+<pre class="highlight plaintext"><code>// Wait 5 seconds after a new member joins before  
+// recovering redundancy
+&lt;region name="PR1"&gt; 
+  &lt;region-attributes refid="PARTITION"&gt; 
+    &lt;partition-attributes startup-recovery-delay="5000"/&gt; 
+  &lt;/region-attributes&gt; 
+&lt;/region&gt; 
+</code></pre></li>
+<li><p>Java:</p>
+<pre class="highlight plaintext"><code>PartitionAttributes pa = new PartitionAttributesFactory().setStartupRecoveryDelay(5000).create(); 
+</code></pre></li>
+<li><p>gfsh:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name="PR1" --type=PARTITION --startup-recovery-delay=5000
+</code></pre></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

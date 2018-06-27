@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Implement a Data Loader |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_outside_data_sources docs_developing_outside_data_sources_implementing_data_loaders">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Implement a Data Loader
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To program a data loader and configure your region to use it:</p>
+
+<ol>
+<li><p>Program your loader.</p></li>
+<li><p>Install your loader in each member region where you need it.</p></li>
+</ol>
+
+<h2 id="program-your-loader"><a id="implementing_data_loaders__section_88076AF5EC184FE88AAF4C806A0CA9DF" class="no-quick-link"></a>Program your loader</h2>
+
+<p>To program your loader:</p>
+
+<ol>
+<li><p>Implement <code>org.apache.geode.cache.CacheLoader</code>.</p></li>
+<li><p>If you want to declare the loader in your <code>cache.xml</code>, implement the <code>org.apache.geode.cache.Declarable</code> interface as well.</p></li>
+<li><p>Program the single <code>CacheLoader</code> <code>load</code> method to do whatever your application requires for retrieving the value from outside the cache. If you need to run <code>Region</code> API calls from your loader, spawn separate threads for them. Do not make direct calls to <code>Region</code> methods from your load method implementation as it could cause the cache loader to block, hurting the performance of the distributed system. For example:</p>
+<pre class="highlight plaintext"><code>public class SimpleCacheLoader implements CacheLoader, Declarable {
+    public Object load(LoaderHelper helper) {
+        String key = (String) helper.getKey();
+        System.out.println(" Loader called to retrieve value for " + key);
+        // Create a value using the suffix number of the key (key1, key2, etc.)
+        return "LoadedValue" + (Integer.parseInt(key.substring(3)));
+    }
+    public void close() { // do nothing }
+    public void init(Properties props) { // do nothing }
+}
+</code></pre></li>
+</ol>
+
+<h2 id="install-your-loader-in-each-member-region">Install your loader in each member region</h2>
+
+<p>To install your loader in each member region where you need it:</p>
+
+<ol>
+<li><p>In a partitioned region, install the cache loader in every data store for the region (<code>partition-attributes</code> <code>local-max-memory</code> &gt; 0).</p></li>
+<li><p>In a distributed region, install the loader in the members where it makes sense to do so. Cache loaders are usually defined in only a subset of the members holding the region. You might, for example, assign the job of loading from a database to one or two members for a region hosted by many more members. This can be done to reduce the number of connections when the outside source is a database.</p>
+
+<p>Use one of these methods to install the loader:</p>
+
+<ul>
+<li><p>XML:</p>
+<pre class="highlight plaintext"><code>&lt;region-attributes&gt;
+    &lt;cache-loader&gt;
+        &lt;class-name&gt;myCacheLoader&lt;/class-name&gt;
+    &lt;/cache-loader&gt;
+&lt;/region-attributes&gt;
+</code></pre></li>
+<li><p>XML with parameters:</p>
+<pre class="highlight plaintext"><code>&lt;cache-loader&gt;
+    &lt;class-name&gt;com.company.data.DatabaseLoader&lt;/class-name&gt;
+    &lt;parameter name="URL"&gt;
+        &lt;string&gt;jdbc:cloudscape:rmi:MyData&lt;/string&gt;
+    &lt;/parameter&gt;
+&lt;/cache-loader&gt;
+</code></pre></li>
+<li><p>Java:</p>
+<pre class="highlight plaintext"><code>RegionFactory&lt;String,Object&gt; rf = cache.createRegionFactory(REPLICATE);
+rf.setCacheLoader(new QuoteLoader());
+quotes = rf.create("NASDAQ Quotes");
+</code></pre></li>
+</ul></li>
+</ol>
+
+<p><strong>Note:</strong>
+You can also configure Regions using the gfsh command-line interface, however you cannot configure a <code>cache-loader</code> using gfsh. See <a href="../../tools_modules/gfsh/quick_ref_commands_by_area.html#topic_EF03119A40EE492984F3B6248596E1DD">Region Commands</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

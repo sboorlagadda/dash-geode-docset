@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      backup disk-store |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_backup">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    backup disk-store
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_E74ED23CB60342538B2175C326E7D758"></a></p>
+
+<p>Back up persistent data from all members to the specified directory.</p>
+
+<p>The specified directory must exist on all members, but it can be a local directory on each machine. This command ensures that backup files are not corrupted by concurrent operations. Backing up a running system using the operating system copy command is not recommended.</p>
+
+<p>You can also use this command to perform an incremental backup. See <a href="../../../managing/disk_storage/backup_restore_disk_store.html#backup_restore_disk_store">Creating Backups for System Recovery and Operational Management</a> for more information on incremental backup.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>backup disk-store --dir=value [--baseline-dir=value]
+</code></pre>
+
+<p><a id="topic_E74ED23CB60342538B2175C326E7D758__table_2277A2CE8F6E4731B45FEFA2B1366DB6"></a></p>
+
+<table>
+<caption><span class="tablecap">Table 1. Backup Disk-Store Parameters</span></caption>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="keyword parmname">--dir</span></td>
+<td><em>Required.</em> Directory to which backup files are written.</td>
+</tr>
+<tr class="even">
+<td><span class="keyword parmname">--baseline-dir</span></td>
+<td>Directory that contains the baseline backup used for comparison during an incremental backup.
+<p>An incremental backup operation backs up any data that is not present in the directory specified in <span class="keyword parmname">--baseline-dir</span>. If the member cannot find previously backed up data or if the previously backed up data is corrupt, the command performs a full backup on that member.</p></td>
+</tr>
+</tbody>
+</table>
+
+<p><span class="tablecap">Table 1. Backup Disk-Store Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>backup disk-store --dir=data/backups
+
+backup disk-store --dir=data/backup/disk-store --baselineDir=data/backups/2012-09-24-17-08-50
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;backup disk-store --dir=data/backups
+The following disk stores were backed up successfully
+
+Member  |                 UUID                 |              Directory               | Host
+------- | ------------------------------------ | ------------------------------------ | ---------------
+server2 | a6bb11f0-0baa-45c9-b23e-64876d02a586 | c:\PivotalGemFire70\Latest\server2\. | 192.0.2.0
+server1 | 8dc365bd-c086-4af4-99d0-86b0b521aa04 | c:\PivotalGemFire70\Latest\server1\. | 192.0.2.0
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

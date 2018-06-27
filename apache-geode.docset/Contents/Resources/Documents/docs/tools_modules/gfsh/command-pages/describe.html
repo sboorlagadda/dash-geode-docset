@@ -1,0 +1,546 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      describe |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_describe">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    describe
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Display details of a member&rsquo;s configuration, shell connection, disk-stores, members, or regions.</p>
+
+<ul>
+<li><p><strong><a href="#topic_gyr_jgz_ck">describe client</a></strong></p>
+
+<p>Displays details about a specified client.</p></li>
+<li><p><strong><a href="#topic_3C2C817D999C4E40AF788808B7B6AF99">describe config</a></strong></p>
+
+<p>Display the configuration of a member.</p></li>
+<li><p><strong><a href="#topic_591DC6B781B641168E6173E69AC6D201">describe connection</a></strong></p>
+
+<p>Display connection information details.</p></li>
+<li><p><strong><a href="#topic_C635B500BE6A4F1D9572D0BC98A224F2">describe disk-store</a></strong></p>
+
+<p>Display information about a member&rsquo;s disk store.</p></li>
+<li><p><strong><a href="#describe_lucene_index">describe lucene index</a></strong></p>
+
+<p>Display information about a Lucene index.</p></li>
+<li><p><strong><a href="#topic_D62F3D42B1D84CF68F03D54D5122806A">describe member</a></strong></p>
+
+<p>Display details of a member with given name/id.</p></li>
+<li><p><strong><a href="#topic_kys_yvk_2l">describe offline-disk-store</a></strong></p>
+
+<p>Display information about an offline member&rsquo;s disk store.</p></li>
+<li><p><strong><a href="#topic_DECF7D3D33F54071B6B8AD4EA7E3F90B">describe region</a></strong></p>
+
+<p>Display the attributes and key information of a region.</p></li>
+</ul>
+
+<h2 id="describe-client"><a id="topic_gyr_jgz_ck" class="no-quick-link"></a>describe client</h2>
+
+<p>Displays details about a specified client.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe client --clientID=value
+</code></pre>
+
+<p><strong>Parameters, describe client:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;clientID</span></td>
+<td><em>Required.</em> ID of the client. To find a client ID, you can use the <code>list clients</code> command to display a list of connected clients and their IDs.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe client --clientID=192.0.2.0(4987:loner):58922:7b3398cf
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe client --clientID=192.0.2.0(4987:loner):58922:7b3398cf
+-------------------------------------------------------------------
+Primary Servers                : 192.0.2.0(server1:5764)&lt;v1&gt;:15189
+Secondary Servers              : 192.0.2.0(server2:5891)&lt;v2&gt;:39082
+CPU                            : 0
+Number of Cache Listner Calls  : 0
+Number of Gets                 : 0
+Number of Misses               : 0
+Number of Puts                 : 0
+Number of Threads              : 0
+Process CPU Time (nanoseconds) : 0
+Queue size                     : 1
+UP Time (seconds)              : 67
+Is Durable                     : No
+</code></pre>
+
+<h2 id="describe-config"><a id="topic_3C2C817D999C4E40AF788808B7B6AF99" class="no-quick-link"></a>describe config</h2>
+
+<p>Display the configuration of a member.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe config --member=value [--hide-defaults(=value)?]
+</code></pre>
+
+<p><strong>Parameters, describe config:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--member </span></td>
+<td>Name or ID of a member whose configuration is to be shown.</td>
+<td> </td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--hide-defaults</span></td>
+<td>Whether to hide configuration information for properties with the default value.</td>
+<td>true</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe config --member=Member1;
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe config --member=server1
+Configuration of member : "server1"
+
+
+JVM command line arguments
+-----------------------------------
+-Dgemfire.mcast-port=0
+-Dgemfire.locators=localhost[10334]
+
+GemFire properties defined using the API
+................................................
+log-file                                 : vf.gf.server.log
+name                                     : server1
+
+GemFire properties defined at the runtime
+................................................
+log-level                                 : finest
+statistic-sampling-enabled                : true
+
+Cache attributes
+................................................
+is-server        : true
+
+Cache-server attributes
+ . bind-address         : localhost
+</code></pre>
+
+<h2 id="describe-connection"><a id="topic_591DC6B781B641168E6173E69AC6D201" class="no-quick-link"></a>describe connection</h2>
+
+<p>Display connection information details.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe connection
+</code></pre>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe connection
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe connection
+Connection Endpoints
+--------------------
+GemFireUser[1099]
+</code></pre>
+
+<h2 id="describe-disk-store"><a id="topic_C635B500BE6A4F1D9572D0BC98A224F2" class="no-quick-link"></a>describe disk-store</h2>
+
+<p>Display information about a member&rsquo;s disk store.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe disk-store --member=value --name=value
+</code></pre>
+
+<p><strong>Parameters, describe disk-store:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--member</span></td>
+<td><em>Required.</em> Name/ID of the member with the disk store to be described.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--name </span></td>
+<td><em>Required</em>. Name of the disk store to be described.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe disk-store --member=server1 --name=DiskStore1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe disk-store --name=disk1 --member=server1
+Disk Store ID                      : a531bc7b-5188-4510-85d7-de7de30c6671
+Disk Store Name                    : disk1
+Member ID                          : ubuntu(server1:7467)&lt;v1&gt;:35249
+Member Name                        : server1
+Allow Force Compaction             : No
+Auto Compaction                    : Yes
+Compaction Threshold               : 50
+Max Oplog Size                     : 1024
+Queue Size                         : 0
+Time Interval                      : 1000
+Write Buffer Size                  : 32768
+Disk Usage Warning Percentage      : 90
+Disk Usage Critical Percentage     : 99
+PDX Serialization Meta-Data Stored : No
+
+
+        Disk Directory          | Size
+------------------------------- | ----------
+/home/user/server1/DiskStore1 | 2147483647
+
+</code></pre>
+
+<h2 id="describe-lucene-index"><a id="describe_lucene_index" class="no-quick-link"></a>describe lucene index</h2>
+
+<p>Describe a Lucene index.</p>
+
+<p>See also <a href="create.html#create_lucene_index">create lucene index</a>, <a href="destroy.html#destroy_lucene_index">destroy lucene index</a>, <a href="list.html#list_lucene_indexes">list lucene indexes</a> and <a href="search.html#search_lucene">search lucene</a>.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe lucene index --name=value --region=value
+</code></pre>
+
+<p><strong>Parameters, describe lucene index:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name</span></td>
+<td><em>Required.</em> Name of the Lucene index to describe</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--region</span></td>
+<td><em>Required.</em> Name and path of the region in which the Lucene index exists</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe lucene index --name=personIndex --region=/Person
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe lucene index --name=personIndex --region=/Person
+Index Name  | Region Path |                 Indexed Fields                 | Field Analyzer |   Status    | Query Executions | Updates | Commits | Documents
+----------- | ----------- | ---------------------------------------------- | -------------- | ----------- | ---------------- | ------- | ------- | ---------
+personIndex | /Person     | [name, email, address, streetAddress, revenue] | {}             | Initialized | 339              | 1008    | 962     | 1004
+
+gfsh&gt;describe lucene index --name=analyzerIndex --region=/Person
+ Index Name   | Region Path |     Indexed Fields     |            Field Analyzer             |   Status    | Query Executions | Updates | Commits | Documents
+------------- | ----------- | ---------------------- | ------------------------------------- | ----------- | ---------------- | ------- | ------- | ---------
+analyzerIndex | /Person     | [address, name, email] | {address=MyCharacterAnalyzer, email.. | Initialized | 1695             | 1008    | 962     | 1004
+</code></pre>
+
+<h2 id="describe-member"><a id="topic_D62F3D42B1D84CF68F03D54D5122806A" class="no-quick-link"></a>describe member</h2>
+
+<p>Display details of a member with given name/id.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe member --name=value
+</code></pre>
+
+<p><strong>Parameters, describe member:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;name </span></td>
+<td><em>Required.</em> Display information about a member, including name, ID, groups, regions, etc.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe member --name=server1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe member --name=server1
+Name        : server1
+Id          : GemFireUser(server1:240)&lt;v1&gt;:64871
+Host        : 192.0.2.0
+Regions     : region4
+region5
+region3
+region2
+region1
+
+PID         : 240
+Groups      :
+Used Heap   : 5M
+Max Heap    : 123M
+Working Dir : c:\PivotalGemFire70\Latest\server1
+Log file    : C:\PivotalGemFire70\Latest\server1\vf.gf.server.log
+Locators    : localhost[10334]
+
+Server Bind        : localhost
+Server Port        : 40404
+Running            : true
+Client Connections : 0
+</code></pre>
+
+<h2 id="describe-offline-disk-store"><a id="topic_kys_yvk_2l" class="no-quick-link"></a>describe offline-disk-store</h2>
+
+<p>Display information about an offline member&rsquo;s disk store.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe offline-disk-store --name=value --disk-dirs=value(,value)* [--pdx=value] [--region=value]
+</code></pre>
+
+<p><strong>Parameters, describe offline-disk-store:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name</span></td>
+<td><em>Required.</em> Name of the disk store to be described.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--disk-dirs </span></td>
+<td><em>Required.</em> Directory that contains the disk store files.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--pdx</span></td>
+<td>If set (or set to true), display all the pdx types stored in the disk store.</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--region</span></td>
+<td>Name and path of the region in the disk store to be described.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe offline-disk-store --name=DiskStore1\
+ --disk-dirs=/home/username/gemfire/mydiskStore1Dir
+
+describe offline-disk-store --name=DiskStore1 --disk-dirs=/DiskDir1  --pdx=true
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe offline-disk-store --name=DiskStore1 --disk-dirs=/DiskDir1 --pdx=true
+Regions in the disk store:
+  /PdxTypes: -lru=none -concurrencyLevel=16 -initialCapacity=16 -loadFactor=0.75 -compressor=none -statisticsEnabled=false
+  /Region1: -lru=none -concurrencyLevel=16 -initialCapacity=16 -loadFactor=0.75 -compressor=none -statisticsEnabled=false
+PDX Types:
+  com.app.data.PositionPdx: id=1
+    long avg20DaysVol;
+    String bondRating;
+    double convRatio;
+    String country;
+    double delta;
+    long industry;
+    long issuer;
+    double mktValue;
+    double qty;
+    String secId; // identity
+    String secIdIndexed;
+    String secLinks;
+    double sharesOutstanding;
+    String underlyer;
+    long volatility;
+    int pid;
+    int portfolioId;
+  com.app.data.StockPdx: id=2
+    int ID; // identity
+    String pkid;
+    Object position1;
+    Object position2;
+    Object positions;
+    Object collectionHolderMap;
+    String type;
+    String status;
+    String[] names;
+    String description;
+    long createTime;
+    Object[] position3;
+    Object aDay;
+    Date date;
+PDX Enums:
+  com.app.data.StockPdx$Day.Monday
+</code></pre>
+
+<h2 id="describe-region"><a id="topic_DECF7D3D33F54071B6B8AD4EA7E3F90B" class="no-quick-link"></a>describe region</h2>
+
+<p>Display the attributes and key information of a region.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>describe region --name=value
+</code></pre>
+
+<p><strong>Parameters, describe region:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--name </span></td>
+<td><em>Required.</em> Name/Path of the region to be described.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>describe region --name=region1
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=Region1
+..........................................................
+Name : Region1
+Data Policy : persistent replicate
+Hosting Members : server-5
+server-4
+server-3
+server-2
+
+Non-Default Attributes Shared By Hosting Members 
+
+Type   | Name            | Value
+------ | --------------- | --------------------
+Region | data-policy     | PERSISTENT_REPLICATE
+       | disk-store-name | DiskStore1
+       | size            | 0
+       | scope           | distributed-ack
+
+...........................................................
+Name             : Region1
+Data Policy      : empty
+Accessor Members : server-1
+
+Non-Default Attributes Shared By Accessor Members  
+
+ Type  |    Name     | Value
+------ | ----------- | ---------------
+Region | data-policy | EMPTY
+       | size        | 0
+       | scope       | distributed-ack
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

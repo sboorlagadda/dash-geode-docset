@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Consistency for Region Updates |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_distributed_regions docs_developing_distributed_regions_region_entry_versions">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Consistency for Region Updates
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_CF2798D3E12647F182C2CEC4A46E2045"></a></p>
+
+<p>Geode ensures that all copies of a region eventually reach a consistent state on all members and clients that host the region, including Geode members that distribute region events.</p>
+
+<ul>
+<li><p><strong><a href="how_region_versioning_works.html#topic_7A4B6C6169BD4B1ABD356294F744D236">Consistency Checking by Region Type</a></strong></p>
+
+<p>Geode performs different consistency checks depending on the type of region you have configured.</p></li>
+<li><p><strong><a href="how_region_versioning_works.html#topic_B64891585E7F4358A633C792F10FA23E">Configuring Consistency Checking</a></strong></p>
+
+<p>Geode enables consistency checking by default. You cannot disable consistency checking for persistent regions. For all other regions, you can explicitly enable or disable consistency checking by setting the <code>concurrency-checks-enabled</code> region attribute in <code>cache.xml</code> to &ldquo;true&rdquo; or &ldquo;false.&rdquo;</p></li>
+<li><p><strong><a href="how_region_versioning_works.html#topic_0BDACA590B2C4974AC9C450397FE70B2">Overhead for Consistency Checks</a></strong></p>
+
+<p>Consistency checking requires additional overhead for storing and distributing version and timestamp information, as well as for maintaining destroyed entries for a period of time to meet consistency requirements.</p></li>
+<li><p><strong><a href="how_region_versioning_works.html#topic_C5B74CCDD909403C815639339AA03758">How Consistency Checking Works for Replicated Regions</a></strong></p>
+
+<p>Each region stores version and timestamp information for use in conflict detection. Geode members use the recorded information to detect and resolve conflicts consistently before applying a distributed update.</p></li>
+<li><p><strong><a href="how_region_versioning_works.html#topic_321B05044B6641FCAEFABBF5066BD399">How Destroy and Clear Operations Are Resolved</a></strong></p>
+
+<p>When consistency checking is enabled for a region, a Geode member does not immediately remove an entry from the region when an application destroys the entry. Instead, the member retains the entry with its current version stamp for a period of time in order to detect possible conflicts with operations that have occurred. The retained entry is referred to as a <em>tombstone</em>. Geode retains tombstones for partitioned regions and non-replicated regions as well as for replicated regions, in order to provide consistency.</p></li>
+<li><p><strong><a href="how_region_versioning_works.html#topic_32ACFA5542C74F3583ECD30467F352B0">Transactions with Consistent Regions</a></strong></p>
+
+<p>A transaction that modifies a region having consistency checking enabled generates all necessary version information for region updates when the transaction commits.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

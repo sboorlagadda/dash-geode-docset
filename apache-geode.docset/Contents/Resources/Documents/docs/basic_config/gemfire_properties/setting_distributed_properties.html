@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Setting Properties |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_basic_config docs_basic_config_gemfire_properties docs_basic_config_gemfire_properties_setting_distributed_properties">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Setting Properties
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode provides a default distributed system configuration for out-of-the-box systems. To use non-default configurations and to fine-tune your member communication, you can use a mix of various options to customize your distributed system configuration.</p>
+
+<p><a id="setting_distributed_properties__section_67EBCC53EB174B108DA7271E2CD2B76C"></a>
+Geode properties are used to join a distributed system and configure system member behavior. Configure your Geode properties through the <code>gemfire.properties</code> file, the Java API, or command-line input. Generally, you store all your properties in the <code>gemfire.properties</code> file, but you may need to provide properties through other means, for example, to pass in security properties for a username and password that you have received from keyboard input.</p>
+
+<p><strong>Note:</strong>
+Check with your Geode system administrator before changing properties through the API, including the <code>gemfire.properties</code> and <code>gfsecurity.properties</code> settings. The system administrator may need to set properties at the command line or in configuration files. Any change made through the API overrides those other settings.</p>
+
+<p><strong>Note:</strong>
+The product <code>defaultConfigs</code> directory has a sample <code>gemfire.properties</code> file with all default settings.</p>
+
+<p>Set distributed system properties by any combination of the following. The system looks for the settings in the order listed:</p>
+
+<ol>
+<li><p><code>java.lang.System</code> property setting. Usually set at the command line. For applications, set these in your code or at the command line.</p>
+
+<p>Naming: Specify these properties in the format <code>gemfire.property-name</code>, where <code>property-name</code> matches the name in the <code>gemfire.properties</code> file. To set the gemfire property file name, use <code>gemfirePropertyFile</code> by itself</p>
+
+<ul>
+<li><p>In the API, set the <code>System</code> properties before the cache creation call. Example:</p>
+<pre class="highlight plaintext"><code>System.setProperty("gemfirePropertyFile", "gfTest");
+System.setProperty("gemfire.mcast-port", "10999");
+
+Cache cache = new CacheFactory().create();
+</code></pre></li>
+<li><p>At the <code>java</code> command line, pass in <code>System</code> properties using the <code>-D</code> switch. Example:</p>
+<pre class="highlight plaintext"><code>java -DgemfirePropertyFile=gfTest -Dgemfire.mcast-port=10999 test.Program
+</code></pre></li>
+</ul></li>
+<li><p>Entry in a <code>Properties</code> object.</p>
+
+<p>Naming: Specify these properties using the names in the <code>gemfire.properties</code> file. To set the gemfire property file name, use <code>gemfirePropertyFile</code>.</p>
+
+<ul>
+<li><p>In the API, create a <code>Properties</code> object and pass it to the cache create method. Example:</p>
+<pre class="highlight plaintext"><code>Properties properties= new Properties();
+properties.setProperty("log-level", "warning");
+properties.setProperty("name", "testMember2");
+ClientCache userCache = 
+    new ClientCacheFactory(properties).create();
+</code></pre></li>
+<li><p>For the cache server, pass the properties files on the <code>gfsh</code> command line as command-line options. Example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server_name --mcast-port=10338 --properties-file=serverConfig/gemfire.properties --security-properties-file=gfsecurity.properties
+</code></pre>
+
+<p>See <a href="../../configuring/running/running_the_cacheserver.html">Running Geode Server Processes</a> for more information on running cache servers.</p></li>
+</ul></li>
+<li><p>Entry in a <code>gemfire.properties</code> file. See <a href="../../configuring/running/deploying_config_files.html">Deploying Configuration Files without the Cluster Configuration Service</a>. Example:</p>
+<pre class="highlight plaintext"><code>cache-xml-file=cache.xml
+conserve-sockets=true
+disable-tcp=false
+</code></pre></li>
+<li><p>Default value. The default values are defined within the API for 
+<code>org.apache.geode.distributed.ConfigurationProperties</code>.</p></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

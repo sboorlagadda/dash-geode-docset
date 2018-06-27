@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Geode Data Serialization (DataSerializable and DataSerializer) |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_gemfire_data_serialization">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Geode Data Serialization (DataSerializable and DataSerializer)
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>Geode&rsquo;s <code>DataSerializable</code> interface gives you quick serialization of your objects.</p>
+
+<h2 id="data-serialization-with-the-dataserializable-interface"><a id="gemfire_data_serialization__section_0C84D6BF5E9748CB865E6BB944A077DE" class="no-quick-link"></a>Data Serialization with the DataSerializable Interface</h2>
+
+<p>Geode&rsquo;s <code>DataSerializable</code> interface gives you faster and more compact data serialization than the standard Java serialization or Geode PDX serialization. However, while Geode <code>DataSerializable</code> interface is generally more performant than Geode&rsquo;s <code>PdxSerializable</code>, it requires full deserialization on the server and then reserialization to send the data back to the client.</p>
+
+<p>You can further speed serialization by registering the instantiator for your <code>DataSerializable</code> class through <code>Instantiator</code>, eliminating the need for reflection to find the right serializer. You can provide your own serialization through the API.</p>
+
+<p>The recommended way to register your custom <code>Instantiator</code> is by specifying it in the <code>serialization-registration</code> element of cache.xml.</p>
+
+<p>For more information, see the online Java documentation for <code>DataSerializable</code> and <code>DataSerializer</code>.</p>
+
+<p><strong>Example cache.xml:</strong></p>
+
+<p>The following provides an example of how to register an instantiator using cache.xml.</p>
+<pre class="highlight plaintext"><code>&lt;serialization-registration&gt;
+&lt;instantiator id="30"&gt;
+   &lt;class-name&gt;com.package.MyClass&lt;/class-name&gt;
+&lt;/instantiator&gt;
+&lt;/serialization-registration&gt;
+</code></pre>
+
+<p>In addition to speeding standard object serialization, you can use the <code>DataSerializable</code> interface to serialize any custom objects you store in the cache.</p>
+
+<h2 id="serializing-your-domain-object-with-dataserializer"><a id="gemfire_data_serialization__section_B21408E7090C41B08BF300146F87648B" class="no-quick-link"></a>Serializing Your Domain Object with DataSerializer</h2>
+
+<p>You can also use <code>DataSerializer</code> to serialize domain objects. It serializes data in the same way as <code>DataSerializable</code> but allows you to serialize classes without modifying the domain class code.</p>
+
+<p>See the JavaDocs on <a href="/releases/latest/javadoc/org/apache/geode/DataSerializable.html">DataSerializable</a> and <a href="/releases/latest/javadoc/org/apache/geode/DataSerializer.html">DataSerializer</a> for more information.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Altering When Buffers Are Flushed to Disk |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_managing_disk_buffer_flushes">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Altering When Buffers Are Flushed to Disk
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>You can configure Geode to write immediately to disk and you may be able to modify your operating system behavior to perform buffer flushes more frequently.</p>
+
+<p>Typically, Geode writes disk data into the operating system&rsquo;s disk buffers and the operating system periodically flushes the buffers to disk. Increasing the frequency of writes to disk decreases the likelihood of data loss from application or machine crashes, but it impacts performance. Your other option, which may give you better performance, is to use Geode&rsquo;s in-memory data backups. Do this by storing your data in multiple replicated regions or in partitioned regions that are configured with redundant copies. See <a href="../../developing/region_options/region_types.html#region_types">Region Types</a>.</p>
+
+<h2 id="modifying-disk-flushes-for-the-operating-system"><a id="disk_buffer_flushes__section_448348BD28B14F478D81CC2EDC6C7049" class="no-quick-link"></a>Modifying Disk Flushes for the Operating System</h2>
+
+<p>You may be able to change the operating system settings for periodic flushes. You may also be able to perform explicit disk flushes from your application code. For information on these options, see your operating system&rsquo;s documentation. For example, in Linux you can change the disk flush interval by modifying the setting <code>/proc/sys/vm/dirty_expire_centiseconds</code>. It defaults to 30 seconds. To alter this setting, see the Linux documentation for <code>dirty_expire_centiseconds</code>.</p>
+
+<h2 id="modifying-geode-to-flush-buffers-on-disk-writes"><a id="disk_buffer_flushes__section_D1068505581A43EE8395DBE97297C60F" class="no-quick-link"></a>Modifying Geode to Flush Buffers on Disk Writes</h2>
+
+<p>You can have Geode flush the disk buffers on every disk write. Do this by setting the system property <code>gemfire.syncWrites</code> to true at the command line when you start your Geode member. You can only modify this setting when you start a member. When this is set, Geode uses a Java <code>RandomAccessFile</code> with the flags &ldquo;rwd&rdquo;, which causes every file update to be written synchronously to the storage device. This only guarantees your data if your disk stores are on a local device. See the Java documentation for <code>java.IO.RandomAccessFile</code>.</p>
+
+<p>To modify the setting for a Geode application, add this to the java command line when you start the member:</p>
+<pre class="highlight plaintext"><code>-Dgemfire.syncWrites=true
+</code></pre>
+
+<p>To modify the setting for a cache server, use this syntax:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=... --J=-Dgemfire.syncWrites=true
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

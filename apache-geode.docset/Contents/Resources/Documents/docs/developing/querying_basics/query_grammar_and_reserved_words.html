@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Query Language Grammar |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_querying_basics docs_developing_querying_basics_query_grammar_and_reserved_words">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Query Language Grammar
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2 id="language-grammar"><a id="query_grammar_and_reserved_words__section_F6DF7EBA0201463F9F19645849748D54" class="no-quick-link"></a>Language Grammar</h2>
+
+<p>Notation used in the grammar:
+n<br>
+A nonterminal symbol that has to appear at some place within the grammar on the left side of a rule. All nonterminal symbols have to be derived to be terminal symbols.</p>
+
+<p><strong><em>t</em></strong><br>
+A terminal symbol (shown in italic bold).</p>
+
+<p>x y<br>
+x followed by y</p>
+
+<p>x | y<br>
+x or y</p>
+
+<p>(x | y)<br>
+x or y</p>
+
+<p>[ x ]<br>
+x or empty</p>
+
+<p>{ x }<br>
+A possibly empty sequence of x.</p>
+
+<p><em>comment</em><br>
+descriptive text</p>
+
+<p>Grammar list:</p>
+<pre class="highlight plaintext"><code>symbol ::= expression
+query_program ::= [ imports semicolon ] query [semicolon]
+imports ::= import { semicolon import }
+import ::= IMPORT qualifiedName [ AS identifier ]
+query ::= selectExpr | expr
+selectExpr ::= SELECT DISTINCT projectionAttributes fromClause [ whereClause ]
+projectionAttributes ::= * | projectionList
+projectionList ::= projection { comma projection }
+projection ::= field | expr [ AS identifier ]
+field ::= identifier colon expr
+fromClause ::= FROM iteratorDef { comma iteratorDef }
+iteratorDef ::= expr [ [ AS ] identifier ] [ TYPE identifier ] | identifier IN expr [ TYPE identifier ]
+whereClause ::= WHERE expr
+expr ::= castExpr
+castExpr ::= orExpr | left_paren identifier right_paren castExpr
+orExpr ::= andExpr { OR andExpr }
+andExpr ::= equalityExpr { AND equalityExpr }
+equalityExpr ::= relationalExpr { ( = | &lt;&gt; | != ) relationalExpr }
+relationalExpr ::= additiveExpr { ( &lt; | &lt;= | &gt; | &gt;= ) additiveExpr }
+additiveExpr ::= multiplicativeExpr { (+ | -) multiplicativeExpr }
+multiplicativeExpr ::= inExpr { (MOD | % | / | *) inExpr}
+inExpr ::= unaryExpr { IN unaryExpr }
+unaryExpr ::= [ NOT ] unaryExpr
+postfixExpr ::= primaryExpr { left_bracket expr right_bracket }
+       | primaryExpr { dot identifier [ argList ] }
+argList ::= left_paren [ valueList ] right_paren
+qualifiedName ::= identifier { dot identifier }
+primaryExpr ::= functionExpr
+       | identifier [ argList ]
+       | undefinedExpr
+       | collectionConstruction
+       | queryParam
+       | literal
+       | ( query )
+       | region_path
+functionExpr ::= ELEMENT left_paren query right_paren
+       | NVL left_paren query comma query right_paren
+       | TO_DATE left_paren query right_paren
+undefinedExpr ::= IS_UNDEFINED left_paren query right_paren
+       | IS_DEFINED left_paren query right_paren
+collectionConstruction ::= SET left_paren [ valueList ] right_paren
+valueList ::= expr { comma expr }
+queryParam ::= $ integerLiteral
+region_path ::= forward_slash region_name { forward_slash region_name }
+region_name ::= name_character { name_character }
+identifier ::= letter { name_character }
+literal ::= booleanLiteral
+       | integerLiteral
+       | longLiteral
+       | doubleLiteral
+       | floatLiteral
+       | charLiteral
+       | stringLiteral
+       | dateLiteral
+       | timeLiteral
+       | timestampLiteral
+       | NULL
+       | UNDEFINED
+booleanLiteral ::= TRUE | FALSE
+integerLiteral ::= [ dash ] digit { digit }
+longLiteral ::= integerLiteral L
+floatLiteral ::= [ dash ] digit { digit } dot digit { digit } [ ( E | e ) [ plus | dash ] digit { digit } ] F
+doubleLiteral ::= [ dash ] digit { digit } dot digit { digit } [ ( E | e ) [ plus | dash ] digit { digit } ] [ D ]
+charLiteral ::= CHAR single_quote character single_quote
+stringLiteral ::= single_quote { character } single_quote
+dateLiteral ::= DATE single_quote integerLiteral dash integerLiteral dash integerLiteral single_quote
+timeLiteral ::= TIME single_quote integerLiteral colon
+       integerLiteral colon integerLiteral single_quote
+timestampLiteral ::= TIMESTAMP single_quote
+       integerLiteral dash integerLiteral dash integerLiteral integerLiteral colon
+       integerLiteral colon
+       digit { digit } [ dot digit { digit } ] single_quote
+letter ::= any unicode letter
+character ::= any unicode character except 0xFFFF
+name_character ::= letter | digit | underscore
+digit ::= any unicode digit
+</code></pre>
+
+<p>The expressions in the following are all terminal characters:</p>
+<pre class="highlight plaintext"><code>dot ::= .
+left_paren ::= (
+right_paren ::= )
+left_bracket ::= [
+right_bracket ::= ]
+single_quote ::= ’
+underscore ::= _
+forward_slash ::= /
+comma ::= ,
+semicolon ::= ;
+colon ::= :
+dash ::= -
+plus ::= +
+
+</code></pre>
+
+<h2 id="language-notes"><a id="query_grammar_and_reserved_words__section_B074373F2ED44DC7B98652E70ABC5D5D" class="no-quick-link"></a>Language Notes</h2>
+
+<ul>
+<li>  Query language keywords such as SELECT, NULL, and DATE are case-insensitive. Identifiers such as attribute names, method names, and path expressions are case-sensitive.</li>
+<li>  Comment lines begin with &ndash; (double dash).</li>
+<li>  Comment blocks begin with /* and end with */.</li>
+<li><p>String literals are delimited by single-quotes. Embedded single-quotes are doubled.</p>
+
+<p>Examples:</p>
+<pre class="highlight plaintext"><code>'Hello' value = Hello
+'He said, ''Hello''' value = He said, 'Hello'
+</code></pre></li>
+<li><p>Character literals begin with the CHAR keyword followed by the character in single quotation marks. The single-quotation mark character itself is represented as <code>CHAR &#39;&#39;&#39;&#39;</code> (with four single quotation marks).</p></li>
+<li><p>In the TIMESTAMP literal, there is a maximum of nine digits after the decimal point.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Keeping a Disk Store Synchronized with the Cache |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_keeping_offline_disk_store_in_sync">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Keeping a Disk Store Synchronized with the Cache
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="syncing_offline_disk_store__section_7D01550D750E48289EFBA9BBDB5A334E"></a>
+Recovering data from an offline disk store proceeds most quickly when the configuration of the offline data matches that of the online data.</p>
+
+<p>Whenever you change or remove persistent regions (by modifying your cache.xml or the code that configures
+the regions), then you should alter the corresponding offline disk-store to match. If you don&rsquo;t, then the next time
+this disk-store is recovered it will recover all of that region&rsquo;s data into a temporary region using the
+old configuration. The old configuration will still consume the old configured resources (heap
+memory, off-heap memory). If those resources are no longer available (for example the old
+configuration of the region was off-heap but you decide to no longer configure off-heap memory on
+the JVM), the disk-store recovery will fail.</p>
+
+<p>It is common practice to have more than one off-line disk store, because each member of the cluster usually has its own copy.
+Be sure to apply the same <code>alter disk-store</code> command to each offline copy of the disk store.</p>
+
+<h2 id="change-region-configuration"><a id="syncing_offline_disk_store__section_7B95B20F07BD40699CDB7F3D6A93B905" class="no-quick-link"></a>Change Region Configuration</h2>
+
+<p>When your disk store is offline, you can keep the configuration for its regions up-to-date with your
+<code>cache.xml</code> and API settings. The disk store retains a subset of the region configuration
+attributes.  (For a list of the retained attributes, see <a href="../../tools_modules/gfsh/command-pages/alter.html#topic_99BCAD98BDB5470189662D2F308B68EB">alter
+disk-store</a>).  If the configurations do not
+match at startup, the <code>cache.xml</code> and API override any disk store settings and the disk store is
+automatically updated to match. So you do not need to modify your disk store to keep your cache
+configuration and disk store synchronized, but you will save startup time and memory if you do.</p>
+
+<p>For example, to change the initial capacity of the region named &ldquo;partitioned_region&rdquo; in the disk store:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;alter disk-store --name=myDiskStoreName --region=partitioned_region 
+--disk-dirs=/firstDiskStoreDir,/secondDiskStoreDir,/thirdDiskStoreDir 
+--initialCapacity=20
+</code></pre>
+
+<p>To list all modifiable settings and their current values for a region, run the command with no actions specified:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;alter disk-store --name=myDiskStoreName --region=partitioned_region
+--disk-dirs=/firstDiskStoreDir,/secondDiskStoreDir,/thirdDiskStoreDir  
+</code></pre>
+
+<h2 id="take-a-region-out-of-your-cache-configuration-and-disk-store"><a id="syncing_offline_disk_store__section_0CA17ED106394686A1A5B30601758DA6" class="no-quick-link"></a>Take a Region Out of Your Cache Configuration and Disk Store</h2>
+
+<p>You might remove a region from your application if you decide to rename it or to split its data into two entirely different regions. Any significant data restructuring can cause you to retire some data regions.</p>
+
+<p>This applies to the removal of regions while the disk store is offline. Regions you destroy through API calls or by <code>gfsh</code> are automatically removed from the disk store of online members.</p>
+
+<p>In your application development, when you discontinue use of a persistent region, remove the region from the member’s disk store as well.</p>
+
+<p><strong>Note:</strong>
+Perform the following operations with caution. You are permanently removing data.</p>
+
+<p>You can remove the region from the disk store in one of two ways:</p>
+
+<ul>
+<li>  Delete the entire set of disk store files. Your member will initialize with an empty set of files the next time you start it. Exercise caution when removing the files from the file system, as more than one region can be specified to use the same disk store directories.</li>
+<li><p>Selectively remove the discontinued region from the disk store with a command such as:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;alter disk-store --name=myDiskStoreName --region=partitioned_region
+--disk-dirs=/firstDiskStoreDir,/secondDiskStoreDir,/thirdDiskStoreDir --remove
+</code></pre></li>
+</ul>
+
+<p>To guard against unintended data loss, Geode maintains the region in the disk store until you manually remove it. Regions in the disk stores that are not associated with any region in your application are still loaded into temporary regions in memory and kept there for the life of the member. The system has no way of detecting whether the cache region will be created by your API at some point, so it keeps the temporary region loaded and available.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

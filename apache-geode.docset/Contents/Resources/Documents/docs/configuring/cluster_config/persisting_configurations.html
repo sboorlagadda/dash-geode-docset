@@ -1,0 +1,356 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Tutorial—Creating and Using a Cluster Configuration |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_configuring docs_configuring_cluster_config docs_configuring_cluster_config_persisting_configurations">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Tutorial—Creating and Using a Cluster Configuration
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>A short walk-through that uses a single computer to demonstrate how to use <code>gfsh</code> to create a cluster configuration for a Geode cluster.</p>
+
+<p>The <code>gfsh</code> command-line tool allows you to configure and start a Geode cluster. The cluster configuration service uses Apache Geode locators to store the configuration at the group and cluster levels and serves these configurations to new members as they are started. The locators store the configurations in a hidden region that is available to all locators and also write the configuration data to disk as XML files. Configuration data is updated as <code>gfsh</code> commands are executed.</p>
+
+<p>This section provides a walk-through example of configuring a simple Apache Geode cluster and then re-using that configuration in a new context.</p>
+
+<ol>
+<li><p>Create a working directory (For example:<code>/home/username/my_geode</code>) and switch to the new directory. This directory will contain the configurations for your cluster.</p></li>
+<li><p>Start the <code>gfsh</code> command-line tool. For example:</p>
+<pre class="highlight plaintext"><code>$ gfsh
+</code></pre>
+
+<p>The <code>gfsh</code> command prompt displays.</p>
+<pre class="highlight plaintext"><code>    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    1.6
+
+Monitor and Manage Apache Geode
+gfsh&gt;
+
+</code></pre></li>
+<li><p>Start a locator using the command in the following example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=locator1
+Starting a Geode Locator in /Users/username/my_geode/locator1...
+.............................
+Locator in /Users/username/my_geode/locator1 on 192.0.2.0[10334] as locator1
+is currently online.
+Process ID: 5203
+Uptime: 15 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/my_geode/locator1/locator1.log
+JVM Arguments: -Dgemfire.enable-cluster-configuration=true
+-Dgemfire.load-cluster-configuration-from-dir=false
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+
+Successfully connected to: [host=192.0.2.0, port=1099]
+
+Cluster configuration service is up and running.
+</code></pre>
+
+<p>Note that <code>gfsh</code> responds with a message indicating that the cluster configuration service is up and running. If you see a message indicating a problem, review the locator log file for possible errors. The path to the log file is displayed in the output from <code>gfsh</code>.</p></li>
+<li><p>Start Apache Geode servers using the commands in the following example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server1 --groups=group1
+Starting a Geode Server in /Users/username/my_geode/server1...
+.....
+Server in /Users/username/my_geode/server1 on 192.0.2.0[40404] as server1
+is currently online.
+Process ID: 5627
+Uptime: 2 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/my_geode/server1/server1.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10334] -Dgemfire.groups=group1
+-Dgemfire.use-cluster-configuration=true -XX:OnOutOfMemoryError=kill -KILL %p
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+
+gfsh&gt;start server --name=server2 --groups=group1 --server-port=40405
+Starting a Geode Server in /Users/username/my_geode/server2...
+.....
+Server in /Users/username/my_geode/server2 on 192.0.2.0[40405] as server2
+is currently online.
+Process ID: 5634
+Uptime: 2 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/my_geode/server2/server2.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10334] -Dgemfire.groups=group1
+-Dgemfire.use-cluster-configuration=true -XX:OnOutOfMemoryError=kill -KILL %p
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+
+gfsh&gt;start server --name=server3 --server-port=40406
+Starting a Geode Server in /Users/username/my_geode/server3...
+.....
+Server in /Users/username/my_geode/server3 on 192.0.2.0[40406] as server3
+is currently online.
+Process ID: 5637
+Uptime: 2 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/my_geode/server3/server3.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10334]
+-Dgemfire.use-cluster-configuration=true -XX:OnOutOfMemoryError=kill -KILL %p
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+</code></pre>
+
+<p>Note that the <code>gfsh</code> commands you used to start <code>server1</code> and <code>server2</code> specify a group named <code>group1</code> while the command for <code>server3</code> did not specify a group name.</p></li>
+<li><p>Create some regions using the commands in the following example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=region1 --groups=group1 --type=REPLICATE
+Member  | Status
+------- | --------------------------------------
+server2 | Region "/region1" created on "server2"
+server1 | Region "/region1" created on "server1"
+
+gfsh&gt;create region --name=region2 --type=REPLICATE
+Member  | Status
+------- | --------------------------------------
+server1 | Region "/region2" created on "server1"
+server2 | Region "/region2" created on "server2"
+server3 | Region "/region2" created on "server3"
+</code></pre>
+
+<p>Note that <code>region1</code> is created on all cache servers that specified the group named <code>group1</code> when starting the cache server (<code>server1</code> and <code>server2</code>, in this example). <code>region2</code> is created on all members because no group was specified.</p></li>
+<li><p>Deploy jar files. Use the <code>gfsh deploy</code> command to deploy application jar files to all members or to a specified group of members. The following example deploys the <code>mx4j-3.0.1.jar</code> and <code>ra.jar</code> files from the distribution. (Note: This is only an example, you do not need to deploy these files to use the Cluster Configuration Service. Alternately, you can use any two jar files for this demonstration.)</p>
+<pre class="highlight plaintext"><code>gfsh&gt;deploy --groups=group1 --jars=/lib/mx4j-3.0.1.jar
+Post substitution: deploy --groups=group1 --jars=/Users/username/Apache_Geode_1.0.0_Linux/lib/mx4j-3.0.1.jar
+Member  |    Deployed JAR    | Deployed JAR Location
+------- | ------------------ | -------------------------------------------------------
+server1 | mx4j-3.0.1.jar     | /Users/username/my_geode/server1/vf.gf#mx4j-3.0.1.jar#1
+server2 | mx4j-3.0.1.jar     | /Users/username/my_geode/server2/vf.gf#mx4j-3.0.1.jar#1
+
+gfsh&gt;deploy --jars=/lib/ra.jar
+Post substitution: deploy --jar=/Users/username/Apache_Geode_1.0.0_Linux/lib/ra.jar
+Member  | Deployed JAR | Deployed JAR Location
+------- | ------------ | -----------------------------------------------
+server1 | ra.jar       | /Users/username/my_geode/server1/vf.gf#ra.jar#1
+server2 | ra.jar       | /Users/username/my_geode/server1/vf.gf#ra.jar#1
+server3 | ra.jar       | /Users/username/my_geode/server1/vf.gf#ra.jar#1
+</code></pre>
+
+<p>Note that the <code>mx4j-3.0.1.jar</code> file was deployed only to the members of <code>group1</code> and the <code>ra.jar</code> was deployed to all members.</p></li>
+<li><p>Export the cluster configuration.
+You can use the <code>gfsh export cluster-configuration</code> command to create a zip file that contains the cluster&rsquo;s persisted configuration. The zip file contains a copy of the contents of the <code>cluster_config</code> directory. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;export cluster-configuration --zip-file-name=/Users/username/myClConfig.zip
+</code></pre>
+
+<p>Apache Geode writes the cluster configuration to the specified zip file.</p>
+<pre class="highlight plaintext"><code>Downloading cluster configuration : /Users/username/myClConfig.zip
+</code></pre>
+
+<p>The remaining steps demonstrate how to use the cluster configuration you just created.</p></li>
+<li><p>Shut down the cluster using the following commands:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --include-locators=true
+As a lot of data in memory will be lost, including possibly events in queues, do you
+really want to shutdown the entire distributed system? (Y/n): Y
+Shutdown is triggered
+
+gfsh&gt;
+No longer connected to 192.0.2.0[1099].
+gfsh&gt;
+</code></pre></li>
+<li><p>Exit the <code>gfsh</code> command shell:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;quit
+Exiting...
+</code></pre></li>
+<li><p>Create a new working directory (for example: <code>new_geode</code>) and switch to the new directory.</p></li>
+<li><p>Start the <code>gfsh</code> command shell:</p>
+<pre class="highlight plaintext"><code>$ gfsh
+</code></pre></li>
+<li><p>Start a new locator. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start locator --name=locator2 --port=10335
+Starting a Geode Locator in /Users/username/new_geode/locator2...
+.............................
+Locator in /Users/username/new_geode/locator2 on 192.0.2.0[10335] as locator2
+is currently online.
+Process ID: 5749
+Uptime: 15 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/new_geode/locator2/locator2.log
+JVM Arguments: -Dgemfire.enable-cluster-configuration=true
+-Dgemfire.load-cluster-configuration-from-dir=false
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+
+Successfully connected to: [host=192.0.2.0, port=1099]
+
+Cluster configuration service is up and running.
+</code></pre></li>
+<li><p>Import the cluster configuration using the <code>import cluster-configuration</code> command. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;import cluster-configuration --zip-file-name=/Users/username/myClConfig.zip
+Cluster configuration successfully imported
+</code></pre>
+
+<p>Note that the <code>locator2</code> directory now contains a <code>cluster_config</code> subdirectory.</p></li>
+<li><p>Start a server that does not reference a group:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server4 --server-port=40414
+Starting a Geode Server in /Users/username/new_geode/server4...
+........
+Server in /Users/username/new_geode/server4 on 192.0.2.0[40414] as server4
+is currently online.
+Process ID: 5813
+Uptime: 4 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/new_geode/server4/server4.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10335]
+-Dgemfire.use-cluster-configuration=true -XX:OnOutOfMemoryError=kill -KILL %p
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+</code></pre></li>
+<li><p>Start another server that references <code>group1</code>:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;start server --name=server5 --groups=group1 --server-port=40415
+Starting a Geode Server in /Users/username/new_geode/server5...
+.....
+Server in /Users/username/new_geode/server2 on 192.0.2.0[40415] as server5
+is currently online.
+Process ID: 5954
+Uptime: 2 seconds
+Geode Version: 1.6
+Java Version: 1.8.0_121
+Log File: /Users/username/new_geode/server5/server5.log
+JVM Arguments: -Dgemfire.default.locators=192.0.2.0[10335] -Dgemfire.groups=group1
+-Dgemfire.use-cluster-configuration=true -XX:OnOutOfMemoryError=kill -KILL %p
+-Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true
+-Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/username/Apache_Geode_1.0.0_Linux/lib/geode-dependencies.jar
+</code></pre></li>
+<li><p>Use the <code>list regions</code> command to display the configured regions. Note that region1 and region2, which were configured in the original cluster level are available.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;list regions
+List of regions
+---------------
+region1
+region2
+</code></pre></li>
+<li><p>Use the <code>describe region</code> command to see which members host each region. Note that region1 is hosted only by server5 because server5 was started using the group1 configuration. region2 is hosted on both server4 and server5 because region2 was created without a group specified.</p>
+<pre class="highlight plaintext"><code>gfsh&gt;describe region --name=region1
+..........................................................
+Name            : region1
+Data Policy     : replicate
+Hosting Members : server5
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  |    Name     | Value
+------ | ----------- | ---------------
+Region | data-policy | REPLICATE
+       | size        | 0
+       | scope       | distributed-ack
+
+gfsh&gt;describe region --name=region2
+..........................................................
+Name            : region2
+Data Policy     : replicate
+Hosting Members : server5
+                  server4
+
+Non-Default Attributes Shared By Hosting Members
+
+ Type  |    Name     | Value
+------ | ----------- | ---------------
+Region | data-policy | REPLICATE
+       | size        | 0
+       | scope       | distributed-ack
+</code></pre>
+
+<p>This new cluster uses the same configuration as the original system. You can start any number of servers using this cluster configuration. All servers will receive the cluster-level configuration. Servers that specify <code>group1</code> also receive the <code>group1</code> configuration.</p></li>
+<li><p>Shut down your cluster using the following commands:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;shutdown --include-locators=true
+As a lot of data in memory will be lost, including possibly events in queues,
+  do you really want to shutdown the entire distributed system? (Y/n): Y
+Shutdown is triggered
+
+gfsh&gt;
+No longer connected to 192.0.2.0[1099].
+</code></pre></li>
+</ol>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

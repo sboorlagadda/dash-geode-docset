@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Developing with Apache Geode |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_book_intro">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Developing with Apache Geode
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><em>Developing with Apache Geode</em> explains main concepts of application programming with Apache Geode. It describes how to plan and implement regions, data serialization, event handling, delta propagation, transactions, and more.</p>
+
+<p>For information about Geode REST application development, see <a href="../rest_apps/book_intro.html">Developing REST Applications for Apache Geode</a>.</p>
+
+<ul>
+<li><p><strong><a href="region_options/chapter_overview.html">Region Data Storage and Distribution</a></strong></p>
+
+<p>The Apache Geode data storage and distribution models put your data in the right place at the right time. You should understand all the options for data storage in Geode before you start configuring your data regions.</p></li>
+<li><p><strong><a href="partitioned_regions/chapter_overview.html">Partitioned Regions</a></strong></p>
+
+<p>In addition to basic region management, partitioned regions include options for high availability, data location control, and data balancing across the distributed system.</p></li>
+<li><p><strong><a href="distributed_regions/chapter_overview.html">Distributed and Replicated Regions</a></strong></p>
+
+<p>In addition to basic region management, distributed and replicated regions include options for things like push and pull distribution models, global locking, and region entry versions to ensure consistency across Geode members.</p></li>
+<li><p><strong><a href="distributed_regions/region_entry_versions.html">Consistency for Region Updates</a></strong></p>
+
+<p>Geode ensures that all copies of a region eventually reach a consistent state on all members and clients that host the region, including Geode members that distribute region events.</p></li>
+<li><p><strong><a href="general_region_data_management.html">General Region Data Management</a></strong></p>
+
+<p>For all regions, you have options to control memory use, back up your data to disk, and keep stale data out of your cache.</p></li>
+<li><p><strong><a href="data_serialization/chapter_overview.html">Data Serialization</a></strong></p>
+
+<p>Data that you manage in Geode must be serialized and deserialized for storage and transmittal between processes. You can choose among several options for data serialization.</p></li>
+<li><p><strong><a href="events/chapter_overview.html">Events and Event Handling</a></strong></p>
+
+<p>Geode provides versatile and reliable event distribution and handling for your cached data and system member events.</p></li>
+<li><p><strong><a href="delta_propagation/chapter_overview.html">Delta Propagation</a></strong></p>
+
+<p>Delta propagation allows you to reduce the amount of data you send over the network by including only changes to objects rather than the entire object.</p></li>
+<li><p><strong><a href="querying_basics/chapter_overview.html">Querying</a></strong></p>
+
+<p>Geode provides a SQL-like querying language called OQL that allows you to access data stored in Geode regions.</p></li>
+<li><p><strong><a href="continuous_querying/chapter_overview.html">Continuous Querying</a></strong></p>
+
+<p>Continuous querying continuously returns events that match the queries you set up.</p></li>
+<li><p><strong><a href="transactions/chapter_overview.html">Transactions</a></strong></p>
+
+<p>Geode provides a transactions API, with <code>begin</code>, <code>commit</code>, and <code>rollback</code> methods. These methods are much the same as the familiar relational database transactions methods.</p></li>
+<li><p><strong><a href="function_exec/chapter_overview.html">Function Execution</a></strong></p>
+
+<p>A function is a body of code that resides on a server and that an application can invoke from a client or from another server without the need to send the function code itself. The caller can direct a data-dependent function to operate on a particular dataset, or can direct a data-independent function to operate on a particular server, member, or member group.</p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

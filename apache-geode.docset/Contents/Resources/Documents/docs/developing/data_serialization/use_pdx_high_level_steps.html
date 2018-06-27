@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      High Level Steps for Using PDX Serialization |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_developing docs_developing_data_serialization docs_developing_data_serialization_use_pdx_high_level_steps">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    High Level Steps for Using PDX Serialization
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>To use PDX serialization, you can configure and use Geode&rsquo;s reflection-based autoserializer, or you can program the serialization of your objects by using the PDX interfaces and classes.</p>
+
+<p><a id="concept_A7C8890826394B4293C036DD739835BD__section_7F357A8E56B54BFB9A5778C0F89E034E"></a>
+Optionally, program your application code to deserialize individual fields out of PDX representations of your serialized objects. You may also need to persist your PDX metadata to disk for recovery on startup.</p>
+
+<p><strong>Procedure</strong></p>
+
+<ol>
+<li><p>Use one of these serialization options for each object type that you want to serialize using PDX serialization:</p>
+
+<ul>
+<li>  <a href="auto_serialization.html">Using Automatic Reflection-Based PDX Serialization</a></li>
+<li>  <a href="use_pdx_serializer.html">Serializing Your Domain Object with a PdxSerializer</a></li>
+<li>  <a href="use_pdx_serializable.html">Implementing PdxSerializable in Your Domain Object</a></li>
+</ul></li>
+<li><p>To ensure that your servers do not need to load the application classes, set the <code>pdx</code> <code>read-serialized</code> attribute to true. In gfsh, execute the following command before starting up your servers:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;configure pdx --read-serialized=true
+</code></pre>
+
+<p>By using gfsh, this configuration can propagated across the cluster through the <a href="../../configuring/cluster_config/gfsh_persist.html">Cluster Configuration Service</a>. Alternately, you would need to configure <code>pdx read-serialized</code> in each server&rsquo;s <code>cache.xml</code> file.</p></li>
+<li><p>If you are storing any Geode data on disk, then you must configure PDX serialization to use persistence. See <a href="persist_pdx_metadata_to_disk.html">Persisting PDX Metadata to Disk</a> for more information.</p></li>
+<li><p>(Optional) Wherever you run explicit application code to retrieve and manage your cached entries, you may want to manage your data objects without using full deserialization. To do this, see <a href="program_application_for_pdx.html">Programming Your Application to Use PdxInstances</a>.</p></li>
+</ol>
+
+<h2 id="pdx-and-multi-site-(wan)-deployments">PDX and Multi-Site (WAN) Deployments</h2>
+
+<p>For multisite (WAN) installations only&ndash; if you will use PDX serialization in any of your WAN-enabled regions, for each distributed system, you must choose a unique integer between 0 (zero) and 255 and set the <code>distributed-system-id</code> in every member&rsquo;s <code>gemfire.properties</code> file. See <a href="../../topologies_and_comm/multi_site_configuration/setting_up_a_multisite_system.html">Configuring a Multi-site (WAN) System</a>.</p>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

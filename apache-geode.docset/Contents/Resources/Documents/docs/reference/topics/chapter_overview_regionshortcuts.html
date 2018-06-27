@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Region Shortcuts |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_reference docs_reference_topics docs_reference_topics_chapter_overview_regionshortcuts">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Region Shortcuts
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This topic describes the various region shortcuts you can use to configure Geode regions.</p>
+
+<p>Region shortcuts are groupings of pre-configured attributes that define the characteristics of a region. You can use a region shortcut as a starting point when configuring regions and you can add additional configurations to customize your application. To reference a region shortcut in a Geode <code>cache.xml</code> file, use the <code>refid</code> attribute of the <code>&lt;region&gt;</code> element. For example:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="PARTITION_REDUNDANT"/&gt;
+</code></pre>
+
+<p>You can override the default values and add additional configurations within a <code>&lt;region-attributes&gt;</code> element of the <code>cache.xml</code> file. For example, the following configuration overrides the <span class="keyword parmname">local-max-memory</span> setting and adds the <span class="keyword parmname">recovery-delay</span> attribute:</p>
+<pre class="highlight plaintext"><code>&lt;region name="myRegion" refid="PARTITION_REDUNDANT"&gt;
+    &lt;region-attributes&gt;
+        &lt;partition-attributes 
+          local-max-memory="512" 
+           recovery-delay=-1/&gt;
+    &lt;/region-attributes&gt;
+&lt;/region&gt;
+</code></pre>
+
+<p>You can also create your own, named region shortcuts for common custom configurations. See <a href="../../basic_config/data_regions/region_shortcuts.html">Region Shortcuts and Custom Named Region Attributes</a>.</p>
+
+<p>To configure a region using the gfsh command-line tool, specify the shortcut name with the <code>--type</code> argument. For example:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;create region --name=myRegion --type=PARTITION_REDUNDANT
+</code></pre>
+
+<p><strong>Note:</strong>
+If you change the cache.xml file that defines a region, you must restart the member before the changes take effect.</p>
+
+<p>For more information about configuring regions, see <a href="../../basic_config/data_regions/managing_data_regions.html">Region Management</a>.</p>
+
+<p>For more information about using the various types of Geode regions and when to use them, see <a href="../../developing/region_options/region_types.html#region_types">Region Types</a>.</p>
+
+<ul>
+<li><p><strong><a href="region_shortcuts_table.html">Region Shortcuts Quick Reference</a></strong></p>
+
+<p>This section provides a quick reference for all region shortcuts.</p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_w2h_3cd_lk">LOCAL</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_wd5_lpy_lk">LOCAL_HEAP_LRU</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_adk_y4y_lk">LOCAL_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_l5r_y4y_lk">LOCAL_PERSISTENT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_a45_y4y_lk">LOCAL_PERSISTENT_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_ow5_4qy_lk">PARTITION</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_twx_y4y_lk">PARTITION_HEAP_LRU</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_js1_z4y_lk">PARTITION_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_d4k_jpy_lk">PARTITION_PERSISTENT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_v5l_jpy_lk">PARTITION_PERSISTENT_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_v4m_jpy_lk">PARTITION_PROXY</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_c1n_jpy_lk">PARTITION_PROXY_REDUNDANT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_shn_jpy_lk">PARTITION_REDUNDANT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_m4n_jpy_lk">PARTITION_REDUNDANT_HEAP_LRU</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_own_jpy_lk">PARTITION_REDUNDANT_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_bd4_jpy_lk">PARTITION_REDUNDANT_PERSISTENT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_xqq_tvc_lk">PARTITION_REDUNDANT_PERSISTENT_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_wq4_jpy_lk">REPLICATE</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_xx4_jpy_lk">REPLICATE_HEAP_LRU</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_t2p_jpy_lk">REPLICATE_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_emp_jpy_lk">REPLICATE_PERSISTENT</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_tsp_jpy_lk">REPLICATE_PERSISTENT_OVERFLOW</a></strong></p></li>
+<li><p><strong><a href="region_shortcuts_reference.html#reference_n1q_jpy_lk">REPLICATE_PROXY</a></strong></p></li>
+</ul>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

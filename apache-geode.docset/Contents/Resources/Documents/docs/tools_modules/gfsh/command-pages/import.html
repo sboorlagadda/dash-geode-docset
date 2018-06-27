@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      import |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_import">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    import
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="topic_u55_wkd_2l"></a></p>
+
+<p>You can import an exported cluster configuration to create a new cluster or import data into a region.</p>
+
+<ul>
+<li><p><strong><a href="#topic_vnv_grz_ck">import cluster-configuration</a></strong></p>
+
+<p>Import a cluster configuration.</p></li>
+<li><p><strong><a href="#topic_jw2_2ld_2l">import data</a></strong></p>
+
+<p>Import user data from a file to a region.</p></li>
+</ul>
+
+<h2 id="import-cluster-configuration"><a id="topic_vnv_grz_ck" class="no-quick-link"></a>import cluster-configuration</h2>
+
+<p>Imports a previously exported cluster configuration from a zip file. This command is useful when spinning up a new cluster.</p>
+
+<ul>
+<li>In a given cluster, only one locator needs to perform the import. 
+That locator shares the imported configuration with all other connected locators in the distributed system.</li>
+<li>Locators share the imported configuration with data members (servers) when the servers start, or if the servers have been recently started,
+have no regions defined in them, and have been given no other configuration changes since they started.</li>
+</ul>
+
+<p>To import a cluster configuration, start one or more locators and then run the <code>gfsh</code> <code>import cluster-configuration</code> command.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a locator to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>import cluster-configuration --zip-file-name=value
+</code></pre>
+
+<p><strong>Import Cluster-Configuration Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--zip-file-name</span></td>
+<td><em>Required.</em> Name of the zip file containing the cluster configuration artifacts to be imported.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;import cluster-configuration --zip-file-name=/home/username/myClusterConfig.zip
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;import cluster-configuration --zip-file-name=/home/username/myClusterConfig.zip
+Cluster configuration successfully imported
+</code></pre>
+
+<h2 id="import-data"><a id="topic_jw2_2ld_2l" class="no-quick-link"></a>import data</h2>
+
+<p>Import user data from a file or files to a region.</p>
+
+<p><strong>Availability:</strong> Online. You must be connected in <code>gfsh</code> to a JMX Manager member to use this command.</p>
+
+<p><strong>Syntax:</strong></p>
+
+<p>If the data was exported sequentially to a single file, use the serial form of the <code>import</code> command to import the data:</p>
+<pre class="highlight plaintext"><code>import data --region=value --file=value --member=value [--invoke-callbacks=value]
+</code></pre>
+
+<p>In this scenario, data from replicated and partitioned regions is imported sequentially from a single file on the specified member.</p>
+
+<p>See <a href="export.html#topic_263B70069BFC4A7185F86B3272011734">export data</a> for an explanation of the difference between serial and parallel data exports.</p>
+
+<p>If the data was exported from a partitioned region in parallel format, use the <code>--parallel</code> option to import the data:</p>
+<pre class="highlight plaintext"><code>import data --parallel --region=value --member=value --dir=value
+  [--invoke-callbacks=value]
+</code></pre>
+
+<p>In this scenario, partitioned region data is imported simultaneously on all hosting nodes from directories local to those respective nodes.</p>
+
+<ul>
+<li><p>Parallel import applies only to partitioned regions exported in parallel mode.</p></li>
+<li><p>The <code>--file</code> and <code>--dir</code> options are mutually exclusive; <code>--file</code> can be used only for serial import, <code>--dir</code> can be used for both serial and parallel imports.</p></li>
+</ul>
+
+<p><strong>Import Data Parameters:</strong></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--region</span></td>
+<td><em>Required.</em> Region into which data will be imported.</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;member</span></td>
+<td><em>Required.</em> Name/ID of a member that hosts the region. In a serial import, all data is imported from the specified file on the host where the member is running.  In a parallel import, data from a partitioned region partially hosted on this member is imported for each partition from files on the nodes that host those partitions.</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--file </span></td>
+<td>File from which the imported data will be read. The file must have an extension of <code>.gfd</code> and must be on the file system of the member (or accessible to that member via NFS) that is being targeted for the import. Cannot be specified at the same time as --dir, cannot be used with &#8209;&#8209;parallel.</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--dir</span></td>
+<td>Directory from which the data is to be imported. Required if --parallel is true. Cannot be specified at the same time as --file. If a given node has no data file in the specified directory, the import operation is silently skipped for that node.</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="keyword parmname">&#8209;&#8209;invoke&#8209;callbacks</span></td>
+<td>Boolean value that, when true, invokes callbacks during the data import.</td>
+<td>false</td>
+</tr>
+</tbody></table>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>import data --region=region2 --file=/mnt5/region2_20121001.gfd --member=server1
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

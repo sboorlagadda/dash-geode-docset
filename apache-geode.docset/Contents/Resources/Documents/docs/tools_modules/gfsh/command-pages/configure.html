@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      configure |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_tools_modules docs_tools_modules_gfsh docs_tools_modules_gfsh_command-pages docs_tools_modules_gfsh_command-pages_configure">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    configure
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="concept_C2DCEE6743304549825C9B62E66DBADF"></a></p>
+
+<p>Configure Portable Data eXchange for all the cache(s) in the cluster.</p>
+
+<h2 id="configure-pdx"><a id="topic_jdkdiqbgphqh" class="no-quick-link"></a>configure pdx</h2>
+
+<p><a id="topic_jdkdiqbgphqh__section_C27BE964CE554180A65968DBEBF50B23"></a>
+Configures Geode&rsquo;s Portable Data eXchange for all the cache(s) in the cluster. This command does not effect on the running members in the system. This command persists the pdx configuration in the locator with cluster configuration service.</p>
+
+<p><strong>Note:</strong>
+This command should be issued before starting any data members.</p>
+
+<p><strong>Availability:</strong> Online.</p>
+
+<p><strong>Syntax:</strong></p>
+<pre class="highlight plaintext"><code>configure pdx [--read-serialized=value] [--ignore-unread-fields=value]
+    [--disk-store=value] [--auto-serializable-classes=value(,value)*]
+    [--portable-auto-serializable-classes=value(,value)*
+</code></pre>
+
+<p><a id="topic_jdkdiqbgphqh__table_B25D38C67FA047EB8F00A521573F1375"></a></p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><span class="keyword parmname">--read-serialized</span></td>
+<td>Set to true to have PDX deserialization produce a PdxInstance instead of an instance of the domain class.</td>
+<td>false</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--ignore-unread-fields</span></td>
+<td>Controls whether PDX ignores fields that were unread during deserialization. The default is to preserve unread fields be including their data during serialization. However, if you configure the cache to ignore unread fields then their data will be lost during serialization.You should only set this attribute to true if you know this member will only be reading cache data. In this use case you do not need to pay the cost of preserving the unread fields since you will never be reserializing PDX data.</td>
+<td>false</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--disk-store</span></td>
+<td>Named disk store where the PDX type data will be stored.</td>
+<td>none</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--auto-serializable-classes</span></td>
+<td>Configures ReflectionBasedAutoSerializer as the PDX serializer for member classes. The patterns that are matched against domain class names to determine whether they should be auto-serialized. Classes are not checked for portability to non-java languages (equivalent to <code>check-portability=false</code>).</td>
+<td>none</td>
+</tr>
+<tr>
+<td><span class="keyword parmname">--portable-auto-serializable-classes</span></td>
+<td>Configures ReflectionBasedAutoSerializer as the PDX serializer for member classes. The patterns that are matched against domain class names to determine whether they should be serialized. Serialization done by the PDX autoserializer will throw an exception if the object of these classes are not portable to non-Java languages (equivalent to <code>check-portability=true</code>).</td>
+<td>none</td>
+</tr>
+</tbody></table>
+
+<p><span class="tablecap">Table 1. Configure PDX Parameters</span></p>
+
+<p><strong>Example Commands:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;configure pdx --read-serialized=true
+</code></pre>
+
+<p><strong>Sample Output:</strong></p>
+<pre class="highlight plaintext"><code>gfsh&gt;configure pdx --read-serialized=true
+persistent = false
+read-serialized = true
+ignore-unread-fields = false
+
+gfsh&gt;configure pdx --disk-store=/home/username/server4/DEFAULT.drf
+persistent = true
+disk-store = /home/username/server4/DEFAULT.drf
+read-serialized = false
+ignore-unread-fields = false
+</code></pre>
+
+<p><strong>Error Messages:</strong></p>
+<pre class="highlight plaintext"><code>"Failed to persist the configuration changes due to this command, Revert the command to maintain consistency.
+Please use "status cluster-config-service" to determing whether Cluster configuration service is RUNNING."
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>

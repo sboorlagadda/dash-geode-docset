@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Always force latest IE rendering engine or request Chrome Frame -->
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400italic,400,600' rel='stylesheet' type='text/css'>
+  <!-- Use title if it's in the page YAML frontmatter -->
+  <title>
+      Running Compaction on Disk Store Log Files |
+    Geode Docs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/stylesheets/all.css" rel="stylesheet" media="screen, print" />
+  <link href="/stylesheets/print.css" rel="stylesheet" media="print" />
+  <link href='/images/favicon.ico' rel='shortcut icon'>
+
+  <script src="/javascripts/all.js"></script>
+  
+</head>
+
+<body class="docs docs_managing docs_managing_disk_storage docs_managing_disk_storage_compacting_disk_stores">
+
+<div class="viewport">
+  <div class='wrap'>
+    <script type="text/javascript">
+      document.domain = "apache.org";
+    </script>
+
+    <!--  -->
+
+    <div class="container">
+
+      <!--googleoff: index-->
+      <!--  -->
+      <!--googleon: index-->
+
+      <main class="content content-layout" id="js-content" role="main">
+        <a id="top"></a>
+        <!--  -->
+        <!--   <h1 class="title-container">
+    Running Compaction on Disk Store Log Files
+  </h1>
+ -->
+          <div id="js-quick-links" >
+            
+          </div>
+        <div class="to-top" id="js-to-top">
+          <a href="#top" title="back to top"></a>
+        </div>
+        <!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p><a id="compacting_disk_stores__section_64BA304595364E38A28098EB09494531"></a>
+When a cache operation is added to a disk store, any preexisting operation record for the same entry becomes obsolete, and Apache Geode marks it as garbage. For example, when you create an entry, the create operation is added to the store. If you update the entry later, the update operation is added and the create operation becomes garbage. Geode does not remove garbage records as it goes, but it tracks the percentage of garbage in each operation log, and provides mechanisms for removing garbage to compact your log files.</p>
+
+<p>Geode compacts an old operation log by copying all non-garbage records into the current log and discarding the old files. As with logging, oplogs are rolled as needed during compaction to stay within the max oplog setting.</p>
+
+<p>You can configure the system to automatically compact any closed operation log when its garbage content reaches a certain percentage. You can also manually request compaction for online and offline disk stores. For the online disk store, the current operation log is not available for compaction, no matter how much garbage it contains.</p>
+
+<h2 id="log-file-compaction-for-the-online-disk-store"><a id="compacting_disk_stores__section_98C6B6F48E4F4F0CB7749E426AF4D647" class="no-quick-link"></a>Log File Compaction for the Online Disk Store</h2>
+
+<p><img src="../../images/diskStores-3.gif" id="compacting_disk_stores__image_7E34CC58B13548B196DAA15F5B0A0ECA" class="image" /></p>
+
+<p>Offline compaction runs essentially in the same way, but without the incoming cache operations. Also, because there is no current open log, the compaction creates a new one to get started.</p>
+
+<h2 id="run-online-compaction"><a id="compacting_disk_stores__section_96E774B5502648458E7742B37CA235FF" class="no-quick-link"></a>Run Online Compaction</h2>
+
+<p>Old log files become eligible for online compaction when their garbage content surpasses a configured percentage of the total file. A record is garbage when its operation is superseded by a more recent operation for the same object. During compaction, the non-garbage records are added to the current log along with new cache operations. Online compaction does not block current system operations.</p>
+
+<ul>
+<li>  <strong>Automatic compaction</strong>. When <code>auto-compact</code> is true, Geode automatically compacts each oplog when its garbage content surpasses the <code>compaction-threshold</code>. This takes cycles from your other operations, so you may want to disable this and only do manual compaction, to control the timing.</li>
+<li><p><strong>Manual compaction</strong>. To run manual compaction:</p>
+
+<ul>
+<li>  Set the disk store attribute <code>allow-force-compaction</code> to true. This causes Geode to maintain extra data about the files so it can compact on demand. This is disabled by default to save space. You can run manual online compaction at any time while the system is running. Oplogs eligible for compaction based on the <code>compaction-threshold</code> are compacted into the current oplog.</li>
+<li><p>Run manual compaction as needed. Geode has two types of manual compaction:</p>
+
+<ul>
+<li><p>Compact the logs for a single online disk store through the API, with the <code>forceCompaction</code> method. This method first rolls the oplogs and then compacts them. Example:</p>
+<pre class="highlight plaintext"><code>myCache.getDiskStore("myDiskStore").forceCompaction();
+</code></pre></li>
+<li><p>Using <code>gfsh</code>, compact a disk store in a distributed system with the <a href="../../tools_modules/gfsh/command-pages/compact.html#topic_F113C95C076F424E9AA8AC4F1F6324CC">compact disk-store</a> command. Examples:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;compact disk-store --name=Disk1
+
+gfsh&gt;compact disk-store --name=Disk1 --group=MemberGroup1,MemberGroup2
+</code></pre>
+
+<p><strong>Note:</strong>
+You need to be connected to a JMX Manager in <code>gfsh</code> to run this command.</p></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2 id="run-offline-compaction"><a id="compacting_disk_stores__section_25BDB098E9584EAA9BC6582597544726" class="no-quick-link"></a>Run Offline Compaction</h2>
+
+<p>Offline compaction is a manual process. All log files are compacted as much as possible, regardless of how much garbage they hold. Offline compaction creates new log files for the compacted log records.</p>
+
+<p>Using <code>gfsh</code>, compact individual offline disk stores with the <a href="../../tools_modules/gfsh/command-pages/compact.html#topic_9CCFCB2FA2154E16BD775439C8ABC8FB">compact offline-disk-store</a> command:</p>
+<pre class="highlight plaintext"><code>gfsh&gt;compact offline-disk-store --name=Disk2 --disk-dirs=/Disks/Disk2
+
+gfsh&gt;compact offline-disk-store --name=Disk2 --disk-dirs=/Disks/Disk2 
+--max-oplog-size=512 -J=-Xmx1024m
+</code></pre>
+
+<p><strong>Note:</strong>
+Do not perform offline compaction on the baseline directory of an incremental backup.</p>
+
+<p>You must provide all of the directories in the disk store. If no oplog max size is specified, Geode uses the system default.</p>
+
+<p>Offline compaction can take a lot of memory. If you get a <code>java.lang.OutOfMemory</code> error while running this, you may need to increase your heap size with the <code>-J=-Xmx</code> parameter.</p>
+
+<h2 id="performance-benefits-of-manual-compaction"><a id="compacting_disk_stores__section_D2374039480947C5AE4CC64167E60978" class="no-quick-link"></a>Performance Benefits of Manual Compaction</h2>
+
+<p>You can improve performance during busy times if you disable automatic compaction and run your own manual compaction during lighter system load or during downtimes. You could run the API call after your application performs a large set of data operations. You could run <code>compact disk-store</code> command every night when system use is very low.</p>
+
+<p>To follow a strategy like this, you need to set aside enough disk space to accommodate all non-compacted disk data. You might need to increase system monitoring to make sure you do not overrun your disk space. You may be able to run only offline compaction. If so, you can set <code>allow-force-compaction</code> to false and avoid storing the information required for manual online compaction.</p>
+
+<h2 id="directory-size-limits"><a id="compacting_disk_stores__section_A9EE86F662EE4D46A327C336E901A0F2" class="no-quick-link"></a>Directory Size Limits</h2>
+
+<p>Reaching directory size limits during compaction has different results depending on whether you are running an automatic or manual compaction:</p>
+
+<ul>
+<li>  For automatic compaction, the system logs a warning, but does not stop.</li>
+<li>  For manual compaction, the operation stops and returns a <code>DiskAccessException</code> to the calling process, reporting that the system has run out of disk space.</li>
+</ul>
+
+<h2 id="example-compaction-run"><a id="compacting_disk_stores__section_7A311038408440D49097B8FA4E2BCED9" class="no-quick-link"></a>Example Compaction Run</h2>
+
+<p>In this example offline compaction run listing, the disk store compaction had nothing to do in the <code>*_3.*</code> files, so they were left alone. The <code>*_4.*</code> files had garbage records, so the oplog from them was compacted into the new <code>*_5.*</code> files.</p>
+<pre class="highlight plaintext"><code>bash-2.05$ ls -ltra backupDirectory
+total 28
+-rw-rw-r--   1 user users          3 Apr  7 14:56 BACKUPds1_3.drf
+-rw-rw-r--   1 user users         25 Apr  7 14:56 BACKUPds1_3.crf
+drwxrwxr-x   3 user users       1024 Apr  7 15:02 ..
+-rw-rw-r--   1 user users       7085 Apr  7 15:06 BACKUPds1.if
+-rw-rw-r--   1 user users         18 Apr  7 15:07 BACKUPds1_4.drf
+-rw-rw-r--   1 user users       1070 Apr  7 15:07 BACKUPds1_4.crf
+drwxrwxr-x   2 user users        512 Apr  7 15:07 .
+
+bash-2.05$ gfsh
+
+gfsh&gt;validate offline-disk-store --name=ds1 --disk-dirs=backupDirectory
+
+/root: entryCount=6
+/partitioned_region entryCount=1 bucketCount=10
+Disk store contains 12 compactable records.
+Total number of region entries in this disk store is: 7
+
+gfsh&gt;compact offline-disk-store --name=ds1 --disk-dirs=backupDirectory
+Offline compaction removed 12 records.
+Total number of region entries in this disk store is: 7
+
+gfsh&gt;exit
+
+bash-2.05$ ls -ltra backupDirectory
+total 16
+-rw-rw-r--   1 user users          3 Apr  7 14:56 BACKUPds1_3.drf
+-rw-rw-r--   1 user users         25 Apr  7 14:56 BACKUPds1_3.crf
+drwxrwxr-x   3 user users       1024 Apr  7 15:02 ..
+-rw-rw-r--   1 user users          0 Apr  7 15:08 BACKUPds1_5.drf
+-rw-rw-r--   1 user users        638 Apr  7 15:08 BACKUPds1_5.crf
+-rw-rw-r--   1 user users       2788 Apr  7 15:08 BACKUPds1.if
+drwxrwxr-x   2 user users        512 Apr  7 15:09 .
+bash-2.05$
+</code></pre>
+
+        <!-- 
+ -->
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="scrim"></div>
+
+<div class="container">
+  <footer class="site-footer-links">
+    <!--  -->
+  </footer>
+</div><!--end of container-->
+
+</body>
+</html>
